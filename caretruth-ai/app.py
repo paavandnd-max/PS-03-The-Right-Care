@@ -165,11 +165,12 @@ if df is None:
 summary = dataset_summary(df)
 
 # ── Navigation tabs ────────────────────────────────────────────────────────────
-tab_overview, tab_find, tab_explorer, tab_coverage = st.tabs([
+tab_overview, tab_find, tab_explorer, tab_coverage, tab_commits = st.tabs([
     "📊 Overview",
     "🔍 Find Care",
     "🔬 Evidence Explorer",
     "🗺️ Coverage & Gaps",
+    "📜 Git Commits",
 ])
 
 
@@ -629,3 +630,63 @@ with tab_coverage:
     # State completeness table
     st.subheader("State Completeness Detail")
     st.dataframe(state_cov, use_container_width=True, hide_index=True)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TAB E — GIT COMMITS & REAL-TIME ACTIVITY LOG
+# ═══════════════════════════════════════════════════════════════════════════════
+with tab_commits:
+    st.subheader("📜 Real-Time Git Commit History & Feature Activity")
+    st.caption("Live git commit stream tracking feature implementation for CareTruth AI.")
+
+    import subprocess
+    def fetch_git_commits(limit=25):
+        try:
+            res = subprocess.run(
+                ["git", "log", f"-n{limit}", "--pretty=format:%h|%an|%ar|%s"],
+                capture_output=True, text=True, cwd=str(Path(__file__).resolve().parent)
+            )
+            if res.returncode == 0 and res.stdout:
+                logs = []
+                for line in res.stdout.strip().split("\n"):
+                    p = line.split("|", 3)
+                    if len(p) == 4:
+                        logs.append({"Hash": p[0], "Author": p[1], "When": p[2], "Commit Message": p[3]})
+                return pd.DataFrame(logs)
+        except Exception as exc:
+            st.error(f"Could not fetch git history: {exc}")
+        return pd.DataFrame()
+
+    commit_df = fetch_git_commits(25)
+    if not commit_df.empty:
+        col_c1, col_c2 = st.columns([1, 4])
+        with col_c1:
+            st.metric("Total Commits", len(commit_df))
+        with col_c2:
+            st.markdown(f"**Latest Commit Hash:** `{commit_df['Hash'].iloc[0]}` &nbsp;·&nbsp; **Author:** `{commit_df['Author'].iloc[0]}` &nbsp;·&nbsp; **Last Activity:** `{commit_df['When'].iloc[0]}`")
+
+        st.divider()
+
+        # Display interactive dataframe
+        st.dataframe(
+            commit_df,
+            column_config={
+                "Hash": st.column_config.TextColumn("Hash", width="small"),
+                "Author": st.column_config.TextColumn("Author", width="small"),
+                "When": st.column_config.TextColumn("Timestamp", width="small"),
+                "Commit Message": st.column_config.TextColumn("Feature / Commit Description", width="large"),
+            },
+            use_container_width=True,
+            hide_index=True,
+        )
+
+        st.subheader("Commit Feed")
+        for idx, row in commit_df.iterrows():
+            st.markdown(f"""<div style="background:#0F2040;border-left:4px solid #00C9B1;padding:0.8rem 1.2rem;border-radius:6px;margin-bottom:0.6rem;">
+              <span style="background:#00C9B1;color:#0A1628;font-weight:bold;padding:2px 8px;border-radius:4px;font-family:monospace;">{row['Hash']}</span>
+              &nbsp;&nbsp;<b style="color:#E8F4FD;font-size:1.05rem;">{row['Commit Message']}</b>
+              <br/>
+              <span style="color:#8BA7C7;font-size:0.85rem;">👤 {row['Author']} &nbsp;·&nbsp; 🕒 {row['When']}</span>
+            </div>""", unsafe_allow_html=True)
+    else:
+        st.info("No git commit history found.")
