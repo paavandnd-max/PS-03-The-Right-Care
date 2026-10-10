@@ -29,7 +29,7 @@ from src import config
 
 
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from src.evidence_extractor import extract_evidence_from_row
 from src.contradiction_detector import detect_contradictions
 from src.trust_scorer import calculate_trust_score, compute_trust_score
@@ -111,7 +111,24 @@ def root():
     return {"status": "CareTruth AI API Running", "docs": "/docs", "health": "/health"}
 
 
+@app.get("/styles.css")
+def get_styles():
+    f = frontend_path / "styles.css"
+    if f.exists():
+        return FileResponse(f, media_type="text/css")
+    return Response(content="", media_type="text/css")
+
+
+@app.get("/app.js")
+def get_app_js():
+    f = frontend_path / "app.js"
+    if f.exists():
+        return FileResponse(f, media_type="application/javascript")
+    return Response(content="", media_type="application/javascript")
+
+
 @app.get("/health")
+@app.get("/api/health")
 def health() -> dict:
     """Health check — always returns 200 with {ok: true}."""
     return {"ok": True}
