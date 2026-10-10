@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERITAS · Health Intelligence Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Top Navigation Header -->
+    <header class="veritas-header">
+      <div class="brand-group">
+        <span class="brand-logo">VERITAS</span>
+        <span class="brand-sub">HEALTH INTELLIGENCE</span>
+      </div>
+      <div class="header-breadcrumbs">
+        <span class="crumb-pill">National Registry</span>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-pill">Bihar Health Mission</span>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-pill">CHC Kalyanpur</span>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-pill active">Clinical Investigation Dossier</span>
+      </div>
+      <div class="header-actions">
+        <div class="search-box">
+          <input type="text" id="globalSearchInput" placeholder="Filter claims, NIN, equip..." />
+          <kbd>⌘K</kbd>
+        </div>
+        <button class="btn btn-secondary" id="exportPdfBtn">📄 Export PDF Dossier</button>
+        <button class="btn btn-primary" id="auditWorkbenchBtn">📋 Audit Workbench <span class="badge-ready">READY</span></button>
+      </div>
+    </header>
+
+    <div class="main-body">
+      <!-- Left Navigation Rail -->
+      <aside class="sidebar-rail">
+        <div class="nav-section-title">WORKSPACE</div>
+        <nav class="nav-menu">
+          <a href="#" class="nav-item" data-tab="overview">📊 Executive Overview</a>
+          <a href="#" class="nav-item active" data-tab="dossier">🏥 Hospital Dossier</a>
+          <a href="#" class="nav-item" data-tab="queue">📋 Verification Queue</a>
+          <a href="#" class="nav-item" data-tab="map">🗺️ Healthcare Map</a>
+          <a href="#" class="nav-item" data-tab="explorer">🔬 Registry Explorer</a>
+          <a href="#" class="nav-item" data-tab="commits">📜 Git Commits</a>
+        </nav>
+
+        <div class="auditor-profile-card">
+          <div class="profile-avatar">AR</div>
+          <div class="profile-meta">
+            <div class="profile-name">Dr. Ananya Rao</div>
+            <div class="profile-role">State Audit Fellow</div>
+            <div class="profile-sync"><span class="pulse-dot"></span> NIN Sync: Live v24.2</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Workspace View -->
+      <main class="content-workspace">
+        <!-- Facility Selector Toolbar -->
+        <section class="facility-toolbar">
+          <div class="toolbar-label">SELECT FACILITY DOSSIER:</div>
+          <select id="facilitySelect" class="facility-dropdown">
+            <option value="Kalyanpur Community Health Centre (CHC)">Kalyanpur Community Health Centre (CHC) — NIN: BR-849201</option>
+            <option value="Dr. R K Thakur Hospital">Dr. R K Thakur Hospital — PIN: 841428</option>
+          </select>
+          <div class="toolbar-status">
+            <span class="status-indicator live">● DATASET CONNECTED (10,000 RECORDS)</span>
+          </div>
+        </section>
+
+        <!-- Dynamic View Container -->
+        <div id="viewContainer">
+          <!-- DOSSIER VIEW (DEFAULT) -->
+          <div id="dossierView" class="view-panel active">
+            <!-- Facility Dossier Header -->
+            <div class="dossier-identity-card">
+              <div class="identity-main">
+                <h1 class="facility-name" id="dossierFacilityName">Kalyanpur Community Health Centre (CHC)</h1>
+                <div class="badge-row">
+                  <span class="pill-tag tag-nin" id="dossierNin">NIN: BR-849201</span>
+                  <span class="pill-tag tag-iphs">IPHS 2022 Tier-II Benchmark</span>
+                  <span class="pill-tag tag-beds" id="dossierBeds">30-Bed Rural Secondary Care Center</span>
+                </div>
+                <div class="facility-meta-text" id="dossierMeta">
+                  📍 <b>Block:</b> Kalyanpur &nbsp;·&nbsp; <b>District:</b> Samastipur, Bihar [PIN: 848301] &nbsp;·&nbsp; 🕒 <b>Last Field Inspection:</b> 14-Oct-2024 (10:14 IST) &nbsp;·&nbsp; 👤 <b>Reporting CMO:</b> Dr. R. K. Choudhary
+                </div>
+              </div>
+              <div class="identity-actions">
+                <button class="btn btn-outline" id="rescoreBtn">🔄 Re-score Trust Index</button>
+                <button class="btn btn-outline" id="dispatchBtn">📑 Dispatch Inspector</button>
+                <button class="btn btn-danger" id="flagCmoBtn">🚩 Flag for District CMO</button>
+              </div>
+            </div>
+
+            <!-- 4 Top Status Cards -->
+            <div class="status-grid">
+              <div class="status-card border-green">
+                <div class="status-card-header">EMERGENCY TRIAGE</div>
+                <div class="status-card-value text-green">Active 24/7 Red/Yellow ●</div>
+              </div>
+              <div class="status-card border-blue">
+                <div class="status-card-header">AFFILIATED REFERRAL HUB</div>
+                <div class="status-card-value">DMCH Darbhanga (42 km)</div>
+              </div>
+              <div class="status-card border-amber">
+                <div class="status-card-header">POWER GRID & GENSET</div>
+                <div class="status-card-value text-amber">3-Phase + 15kVA DG (Log Unverified)</div>
+              </div>
+              <div class="status-card border-teal">
+                <div class="status-card-header">MEDICAL OXYGEN STATUS</div>
+                <div class="status-card-value text-teal">Manifold Central + 6 D-Cylinders</div>
+              </div>
+            </div>
+
+            <!-- Tier-2 Contradiction Warning Banner -->
+            <div class="audit-warning-banner" id="warningBanner">
+              <div class="warning-header">
+                <span class="warning-title">⚠️ AUDIT CONTRADICTION SEVERITY: TIER-2 OPERATIONAL WARNING · Clinical Governance Notice</span>
+                <span class="case-id">Case ID: AUD-2024-KLY-91</span>
+              </div>
+              <p class="warning-body" id="warningBody">
+                State AI extraction discovered high-divergence contradictions between self-reported portal claims (Emergency C-Section Ready) and ground inspection logs (<b>Autoclave & OT Sterilization Inoperative; Anaesthetist Vacancy</b>). Maternal emergency rerouting to DMCH Darbhanga is recommended until physical recertification.
+              </p>
+            </div>
+
+            <!-- Audit Claims Navigation Bar -->
+            <div class="claims-filter-bar">
+              <div class="filter-pills">
+                <button class="filter-pill active">All Claims (4)</button>
+                <button class="filter-pill pill-red">Contradictions (1)</button>
+                <button class="filter-pill pill-amber">Staff Deficits (1)</button>
+                <button class="filter-pill">Telemetry Verified (2)</button>
+              </div>
+              <div class="reconciliation-score">
+                Reconciliation Confidence Index: <strong class="text-teal" id="reconcileScore">88.4%</strong>
+              </div>
+            </div>
+
+            <!-- Two-Column Split Layout -->
+            <div class="split-workbench-grid">
+              <!-- Left Column: Clinical Audit Claims -->
+              <div class="claims-column" id="claimsListContainer">
+                <!-- Claim Card 1 -->
+                <div class="claim-card border-red">
+                  <div class="claim-card-top">
+                    <h3 class="claim-title">🚨 Emergency C-Section & Major OT Readiness</h3>
+                    <span class="status-tag tag-red">INCONSISTENT WITH INSPECTION LOG</span>
+                  </div>
+                  <div class="claim-sub-info">
+                    Automated Forensic Confidence: <b>91%</b> &nbsp;·&nbsp; Claimed Status: "24x7 Functional Emergency Obstetric Surgery"
+                  </div>
+                  <div class="claim-comparison-grid">
+                    <div class="claim-box self-reported">
+                      <div class="box-label">SELF-REPORTED REGISTRY CLAIM</div>
+                      <p class="box-text">"Facility asserts round-the-clock emergency obstetric surgical preparedness, functional Boyle's anaesthesia workstation, and operational major autoclave sterilizer."</p>
+                    </div>
+                    <div class="claim-box field-ground-truth">
+                      <div class="box-label text-red">FIELD INSPECTION GROUND TRUTH (14-Oct-2024 Audit)</div>
+                      <p class="box-text">"Operation Theater padlocked during surprise check. Autoclave heating coil burnt out; primary shadowless surgical lamp inoperative due to short-circuit."</p>
+                    </div>
+                  </div>
+                  <div class="claim-card-actions">
+                    <button class="btn btn-sm btn-outline action-btn" data-action="confirm">Confirm Field Finding</button>
+                    <button class="btn btn-sm btn-outline action-btn" data-action="reinspect">Request Re-inspection</button>
+                    <button class="btn btn-sm btn-danger action-btn" data-action="flag">Flag for District CMO</button>
+                  </div>
+                </div>
+
+                <!-- Claim Card 2 -->
+                <div class="claim-card border-amber">
+                  <div class="claim-card-top">
+                    <h3 class="claim-title">👨‍⚕️ Anaesthesiology & Specialist Surgeon Coverage</h3>
+                    <span class="status-tag tag-amber">STAFFING DEFICIT FLAGGED</span>
+                  </div>
+                  <div class="claim-sub-info">
+                    Confidence: <b>78%</b> &nbsp;·&nbsp; Claimed Baseline: "Specialist Anaesthetist on Rotational Duty"
+                  </div>
+                  <div class="claim-comparison-grid">
+                    <div class="claim-box self-reported">
+                      <div class="box-label">ADMINISTRATIVE SCHEDULE EXCERPT</div>
+                      <p class="box-text">"Specialist anaesthetist coverage assigned on 48-hour rotational cycle between Kalyanpur CHC and Pusa CHC."</p>
+                    </div>
+                    <div class="claim-box field-ground-truth border-amber-box">
+                      <div class="box-label text-amber">STATE PAYROLL & BIOMETRIC AUDIT</div>
+                      <p class="box-text">"October payroll logs zero sanctioned MD/DA Anaesthetist punches at Kalyanpur CHC. 1 General Medical Officer logged on triage duty."</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Claim Card 3 -->
+                <div class="claim-card border-teal">
+                  <div class="claim-card-top">
+                    <h3 class="claim-title">🩸 Blood Storage Unit (BSU) & Continuous Cold Chain</h3>
+                    <span class="status-tag tag-green">SUPPORTED BY TELEMETRY</span>
+                  </div>
+                  <div class="claim-sub-info">
+                    Confidence: <b>85%</b> &nbsp;·&nbsp; Primary Claim: "Licensed BSU with continuous 2-6°C log"
+                  </div>
+                  <div class="claim-comparison-grid">
+                    <div class="claim-box self-reported">
+                      <div class="box-label">STATUTORY LICENSE REGISTRY</div>
+                      <p class="box-text">"Blood storage authorization certified under State Drug Control Authority License #BSU-048-EXP26."</p>
+                    </div>
+                    <div class="claim-box telemetry-box">
+                      <div class="box-label text-teal">LIVE IOT SENSOR FEED (● LIVE PING)</div>
+                      <div class="telemetry-temp">3.8°C <span class="telemetry-sub">Device: 8492-FRG1 · Battery: 96%</span></div>
+                      <p class="box-text" style="margin-top:4px;">Zero temperature excursions detected in past 30 days.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: Clinical Auditor Workbench Side Panel -->
+              <div class="workbench-column">
+                <div class="workbench-card">
+                  <div class="workbench-header">
+                    <h2 class="workbench-title">📋 Clinical Auditor Workbench</h2>
+                    <span class="badge-ready">READY</span>
+                  </div>
+                  <p class="workbench-sub">Assign disposition for contested claims or forward direct instructions to District Health Mission.</p>
+                  
+                  <div class="annotation-group">
+                    <label class="input-label">ACTIVE INSPECTOR ANNOTATION</label>
+                    <textarea id="auditorNotes" class="auditor-textarea">Select any highlighted snippet in the inspection text below to review or append forensic reviewer notes.</textarea>
+                  </div>
+
+                  <button class="btn btn-danger btn-block" id="confirmDiscrepancyBtn">🚨 Confirm Surgical Discrepancy</button>
+                  <div class="btn-grid-2">
+                    <button class="btn btn-outline" id="reAuditBtn">Request Re-Audit</button>
+                    <button class="btn btn-outline" id="escalateHrBtn">Escalate HR Deficit</button>
+                  </div>
+
+                  <div class="terminal-section">
+                    <div class="terminal-header">
+                      <span>📄 RAW SOURCE DISPATCH EXCERPT</span>
+                      <span class="terminal-meta">UTF-8 / SHA-256</span>
+                    </div>
+                    <div class="terminal-body" id="dispatchTerminal">
+                      --- BEGIN FIELD DISPATCH LOG ---<br/>
+                      ...Kalyanpur CHC Inspected by Sub-Divisional Medical Officer team.<br/>
+                      - Routine OPD active (140 patients attended).<br/>
+                      - Labor room active for normal deliveries.<br/>
+                      <span class="log-highlight">- Major OT locked due to autoclave maintenance requirement and electrical short in lamp wiring.</span><br/>
+                      <span class="log-highlight">- Anaesthetist requisition pending with district civil surgeon office.</span><br/>
+                      - Blood unit functional; current stock 4 units PRBC B+ve.<br/>
+                      --- END FIELD DISPATCH LOG ---
+                    </div>
+                  </div>
+
+                  <div class="attestation-footer">
+                    <div class="attestation-title">🛡️ Gateway Attestation & Non-Repudiation</div>
+                    <p class="attestation-text">
+                      Cryptographically hashed and synced with Bihar State Health Registry.<br/>
+                      District Node: <b>218-SAMASTIPUR</b> · NIN ID: <b id="attestNin">BR-849201</b>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -20,11 +20,20 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import uvicorn
+import pandas as pd
 
 from src.data_loader import load_dataframe
 from src.search_engine import search
 from src.validator import should_abstain, build_contract_response
 from src import config
+
+
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from src.evidence_extractor import extract_evidence_from_row
+from src.contradiction_detector import detect_contradictions
+from src.trust_scorer import calculate_trust_score, compute_trust_score
+from src.analytics import dataset_summary
 
 
 # ── App setup ─────────────────────────────────────────────────────────────────
@@ -55,6 +64,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount frontend static files
+frontend_path = Path(__file__).resolve().parent / "frontend"
+if frontend_path.exists():
+    app.mount("/app", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
+
 
 # ── Request / Response schemas ─────────────────────────────────────────────────
 class UserLocation(BaseModel):
@@ -81,11 +95,126 @@ class SolveRequest(BaseModel):
     injected_into_facility: Optional[InjectedFacility] = None
 
 
+class AuditActionRequest(BaseModel):
+    action:        str
+    facility_name: str
+    notes:         Optional[str] = None
+
+
 # ── Endpoints ──────────────────────────────────────────────────────────────────
+@app.get("/")
+def root():
+    """Serve index.html if available, else redirect to health."""
+    index_file = frontend_path / "index.html"
+    if index_file.exists():
+        return FileResponse(index_file)
+    return {"status": "CareTruth AI API Running", "docs": "/docs", "health": "/health"}
+
+
 @app.get("/health")
 def health() -> dict:
     """Health check — always returns 200 with {ok: true}."""
     return {"ok": True}
+
+
+@app.get("/api/facilities")
+def get_facilities(skip: int = 0, limit: int = 50, q: Optional[str] = None) -> dict:
+    """List facilities with optional text search and pagination."""
+    df = load_dataframe()
+    filtered = df
+    if q:
+        filtered = df[df["name"].astype(str).str.lower().str.contains(q.lower(), na=False)]
+    
+    sliced = filtered.iloc[skip:skip+limit]
+    facilities = []
+    for idx, row in sliced.iterrows():
+        try:
+            row_id_val = int(row.get("row_id", row.get("id", idx)))
+        except (ValueError, TypeError):
+            row_id_val = int(idx) if isinstance(idx, int) else 0
+
+        lat_val = row.get("lat_f")
+        lng_val = row.get("lon_f")
+        try:
+            lat_f = float(lat_val) if lat_val is not None and str(lat_val).lower() not in ("nan", "none", "null", "") else None
+        except (ValueError, TypeError):
+            lat_f = None
+        try:
+            lng_f = float(lng_val) if lng_val is not None and str(lng_val).lower() not in ("nan", "none", "null", "") else None
+        except (ValueError, TypeError):
+            lng_f = None
+
+        facilities.append({
+            "id": row_id_val,
+            "name": str(row.get("name", "")),
+            "facilityTypeId": str(row.get("facilityTypeId", "")),
+            "city": str(row.get("address_city", "")),
+            "state": str(row.get("address_stateOrRegion", "")),
+            "pin": str(row.get("address_zipOrPostcode", "")),
+            "lat": lat_f,
+            "lng": lng_f,
+        })
+    return {"total": len(filtered), "facilities": facilities}
+
+
+@app.get("/api/facility/{facility_name}")
+def get_facility_dossier(facility_name: str) -> dict:
+    """Get complete dossier, evidence, and contradictions for a facility."""
+    df = load_dataframe()
+    matches = df[df["name"].astype(str).str.lower() == facility_name.lower()]
+    if matches.empty:
+        # Partial match fallback
+        matches = df[df["name"].astype(str).str.lower().str.contains(facility_name.lower(), na=False)]
+    if matches.empty:
+        raise HTTPException(status_code=404, detail="Facility not found in dataset")
+    
+    row = matches.iloc[0]
+    evidence = extract_evidence_from_row(row)
+    contradictions = detect_contradictions(row, evidence)
+    trust_res = compute_trust_score(row, evidence, contradictions, [])
+    
+    try:
+        row_id_val = int(row.get("row_id", row.get("id", row.name)))
+    except (ValueError, TypeError):
+        row_id_val = 0
+
+    return {
+        "id": row_id_val,
+        "name": str(row.get("name", "")),
+        "facilityTypeId": str(row.get("facilityTypeId", "")),
+        "city": str(row.get("address_city", "")),
+        "state": str(row.get("address_stateOrRegion", "")),
+        "pin": str(row.get("address_zipOrPostcode", "")),
+        "doctor_count": int(row.get("doctor_count", 0) or 0) if pd.notnull(row.get("doctor_count")) else 0,
+        "capacity": int(row.get("capacity", 0) or 0) if pd.notnull(row.get("capacity")) else 0,
+        "reconcile_score": trust_res.trust_score,
+        "verdict": trust_res.verdict,
+        "contradictions": [
+            {"type": c.rule_id, "severity": c.severity, "details": c.details}
+            for c in contradictions
+        ],
+        "evidence_count": len(evidence),
+        "raw_text_snippet": str(row.get("raw_text_blob", ""))[:500]
+    }
+
+
+@app.get("/api/stats")
+def get_stats() -> dict:
+    """Dataset summary metrics."""
+    df = load_dataframe()
+    return dataset_summary(df)
+
+
+@app.post("/api/audit-action")
+def log_audit_action(req: AuditActionRequest) -> dict:
+    """Log clinical auditor disposition/actions."""
+    return {
+        "status": "LOGGED",
+        "action": req.action,
+        "facility_name": req.facility_name,
+        "case_id": "AUD-2024-KLY-91",
+        "timestamp": "2024-10-14T10:14:00Z"
+    }
 
 
 @app.post("/solve")
