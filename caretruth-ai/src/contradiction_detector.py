@@ -77,7 +77,7 @@ def _extract_night_contradiction_span(text: str) -> Optional[str]:
 
 def detect_contradictions(
     row: pd.Series,
-    findings: list[EvidenceFinding],
+    findings: Optional[list[EvidenceFinding]] = None,
     time_str: Optional[str] = None,
     injected_text: Optional[str] = None,
 ) -> list[ContradictionFlag]:
@@ -86,7 +86,7 @@ def detect_contradictions(
 
     Args:
         row:           Normalized DataFrame row.
-        findings:      Evidence findings already extracted for this row.
+        findings:      Evidence findings already extracted for this row (optional).
         time_str:      Query time string (e.g. "Tuesday 23:30").
         injected_text: Injected capability line (from injection probe).
 
@@ -94,6 +94,10 @@ def detect_contradictions(
         List of ContradictionFlag objects.
     """
     flags: list[ContradictionFlag] = []
+
+    if findings is None:
+        from src.evidence_extractor import extract_evidence_from_row
+        findings = extract_evidence_from_row(row)
 
     # Combine all text fields for searching
     all_text = " ".join([
