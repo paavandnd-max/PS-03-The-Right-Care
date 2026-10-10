@@ -326,9 +326,15 @@ if nav_selection == "🏥 Hospital Dossier":
             </div>""", unsafe_allow_html=True)
 
         with col_actions:
-            st.button("🔄 Re-score Trust Index", use_container_width=True)
-            st.button("📑 Dispatch Field Inspector", use_container_width=True)
-            st.button("🚩 Flag for District CMO", type="primary", use_container_width=True)
+            if st.button("🔄 Re-score Trust Index", use_container_width=True, key="btn_rescore"):
+                st.toast("Recalculating Facility Trust Index: Adjusted for OT and specialist status.", icon="🔄")
+                st.info("📊 **Facility Trust Index Re-scored:** Recalculated from 88.4% to provisional 64.2% pending OT autoclave restoration.")
+            if st.button("📑 Dispatch Field Inspector", use_container_width=True, key="btn_dispatch"):
+                st.toast("Field summons issued to District Bio-Medical Engineer!", icon="📑")
+                st.warning("🚨 **Field Inspector Dispatched:** Urgent summons sent to Samastipur Bio-Medical Engineer.")
+            if st.button("🚩 Flag for District CMO", type="primary", use_container_width=True, key="btn_cmo"):
+                st.toast("Discrepancy notice transmitted to Civil Surgeon & CMO Desk!", icon="🚩")
+                st.error("⚠️ **Flagged for District CMO:** Discrepancy Case AUD-2024-KLY-91 forwarded to Civil Surgeon Desk.")
 
     # Status Cards (4 KPIs)
     k1, k2, k3, k4 = st.columns(4)
@@ -454,12 +460,18 @@ if nav_selection == "🏥 Hospital Dossier":
             height=90,
         )
 
-        st.button("🚨 Confirm Surgical Discrepancy", type="primary", use_container_width=True)
+        if st.button("🚨 Confirm Surgical Discrepancy", type="primary", use_container_width=True, key="btn_confirm_surg"):
+            st.toast("Discrepancy Confirmed: C-Section emergency suspended; notice served to BHS.", icon="🚨")
+            st.error("🔒 **Discrepancy Confirmed:** C-Section accreditation temporarily suspended in National Registry.")
         col_b1, col_b2 = st.columns(2)
         with col_b1:
-            st.button("Request Field Re-Audit", use_container_width=True)
+            if st.button("Request Field Re-Audit", use_container_width=True, key="btn_reaudit"):
+                st.toast("Field inspection scheduled with District Bio-Medical Engineer.", icon="🔍")
+                st.info("📅 **Re-Audit Scheduled:** Physical verification assigned to Samastipur BME.")
         with col_b2:
-            st.button("Escalate HR Deficit", use_container_width=True)
+            if st.button("Escalate HR Deficit", use_container_width=True, key="btn_hr_deficit"):
+                st.toast("Specialist deficiency escalated to District Collectorate.", icon="👥")
+                st.warning("⚠️ **HR Deficit Escalated:** Emergency Anaesthetist vacancy notice transmitted.")
 
         st.markdown("##### 📄 Raw Source Dispatch Excerpt")
         st.markdown("""<div class="terminal-box">
