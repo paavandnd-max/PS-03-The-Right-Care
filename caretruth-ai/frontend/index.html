@@ -1399,28 +1399,224 @@ function selectSearchedFacility(encodedName, dist, trust, pin) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+
+
+let selectedCareCategory = 'emergency_care';
+
+function selectCareCategory(catKey, btn) {
+  selectedCareCategory = catKey;
+  const buttons = document.querySelectorAll('.care-cat-btn');
+  buttons.forEach(b => {
+    b.classList.remove('active', 'bg-primary-fixed', 'text-primary', 'border-primary', 'font-semibold');
+    b.classList.add('border-outline-variant', 'text-on-surface');
+  });
+  if (btn) {
+    btn.classList.add('active', 'bg-primary-fixed', 'text-primary', 'border-primary', 'font-semibold');
+    btn.classList.remove('border-outline-variant', 'text-on-surface');
+  }
+}
+
+function setCareQuery(text, catKey) {
+  const input = document.getElementById('careSearchQuery');
+  if (input) input.value = text;
+  if (catKey) {
+    const btn = Array.from(document.querySelectorAll('.care-cat-btn')).find(b => b.innerText.toLowerCase().includes(catKey.replace('_', ' ')));
+    selectCareCategory(catKey, btn);
+  }
+}
+
+async function executeIntelligentSearch() {
+  const btn = document.getElementById('btnExecuteSearch');
+  const countEl = document.getElementById('locResultsCount');
+  const listEl = document.getElementById('locResultsList');
+  
+  const query = document.getElementById('careSearchQuery').value.trim();
+  const care_category = selectedCareCategory;
+  const locPreset = document.getElementById('locSearchPreset').value;
+  const locCustom = document.getElementById('locSearchCustom').value.trim();
+  const location = locCustom || locPreset || null;
+  const radiusVal = document.getElementById('locSearchRadius').value;
+  const radius_km = radiusVal ? parseFloat(radiusVal) : null;
+
+  if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span><span>Evaluating Evidence Across 10,000 Facilities...</span>';
+  if (countEl) countEl.innerText = 'Evaluating...';
+
+  try {
+    const res = await fetch('/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: query,
+        care_category: care_category,
+        location: location,
+        radius_km: radius_km,
+        limit: 10
+      })
+    });
+    const data = await res.json();
+    if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[17px]">travel_explore</span><span>Match & Rank Facilities</span>';
+
+    if (data.status === 'OK' && data.results && data.results.length > 0) {
+      const meta = data.metadata;
+      const locText = meta.location_label ? ` near ${meta.location_label}` : ' across registry';
+      if (countEl) countEl.innerText = `${data.results.length} Ranked Facilities for ${meta.category_label}${locText}`;
+
+      let html = '';
+      data.results.forEach((f, idx) => {
+        const isConfirmed = f.relevance_tier === 'confirmed';
+        const tierBadge = isConfirmed
+          ? '<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">CONFIRMED MATCH</span>'
+          : '<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-300">POSSIBLE MATCH</span>';
+
+        const trustStatus = f.trust.status.toUpperCase().replace('_', ' ');
+        const trustBadgeClass = f.trust.status === 'verified'
+          ? 'bg-emerald-950 text-emerald-300 border-emerald-700'
+          : f.trust.status === 'provisional'
+          ? 'bg-amber-950 text-amber-300 border-amber-700'
+          : 'bg-red-950 text-red-300 border-red-700';
+
+        const distLabel = f.distance_km !== null
+          ? `<span class="inline-flex items-center text-primary font-medium">📍 ${f.distance_km} km away</span>`
+          : '<span class="text-on-surface-variant">📍 All-India Skill Match</span>';
+
+        // Supporting evidence citations
+        let evidenceHtml = '';
+        if (f.supporting_evidence && f.supporting_evidence.length > 0) {
+          evidenceHtml = f.supporting_evidence.map(e => `<div><b>[${e.field}]:</b> "${e.span.slice(0, 90)}..."</div>`).join('');
+        } else {
+          evidenceHtml = '<div>No specific verbatim procedure span found in record.</div>';
+        }
+
+        // Missing evidence list
+        let missingHtml = '';
+        if (f.trust.missing_evidence && f.trust.missing_evidence.length > 0) {
+          missingHtml = `<div class="mt-1 text-xs text-amber-800"><b>Unverified Caveats:</b> ${f.trust.missing_evidence.slice(0, 2).join(' · ')}</div>`;
+        }
+
+        html += `
+          <div class="p-3.5 rounded-xl bg-surface-container-low border border-outline-variant hover:border-primary transition-all flex flex-col gap-2">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex flex-col gap-0.5">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-headline-sm text-headline-sm font-semibold text-on-surface">${idx + 1}. ${f.name}</span>
+                  ${tierBadge}
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold border ${trustBadgeClass}">${trustStatus}</span>
+                </div>
+                <div class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-2 pt-0.5 flex-wrap">
+                  ${distLabel}
+                  <span>•</span>
+                  <span>Type: <b>${f.facility_type}</b></span>
+                  <span>•</span>
+                  <span>Trust Score: <b class="text-on-surface">${f.trust.score_100}%</b> (${f.trust.score}/1.0)</span>
+                </div>
+              </div>
+
+              <button onclick="selectSearchedFacility('${encodeURIComponent(f.name)}', ${f.distance_km || 0}, ${f.trust.score_100}, '${f.pin || ''}')" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-medium hover:bg-primary/90 cursor-pointer shrink-0 shadow-xs">
+                Inspect in Dossier
+              </button>
+            </div>
+
+            <div class="p-2 rounded-lg bg-surface-container-lowest border border-surface-container-high text-xs text-on-surface-variant">
+              <div class="font-semibold text-on-surface mb-0.5">Why this facility matched:</div>
+              <div class="text-emerald-900 mb-1">${f.why_matched}</div>
+              <div class="font-mono-data text-[11px] text-on-surface-variant/80 border-t border-surface-container-high pt-1">
+                ${evidenceHtml}
+              </div>
+              ${missingHtml}
+            </div>
+          </div>
+        `;
+      });
+      listEl.innerHTML = html;
+      showGlobalToast(`Found ${data.results.length} facilities relevant to ${meta.category_label}`, 'success');
+    } else {
+      if (countEl) countEl.innerText = 'No relevant facilities';
+      listEl.innerHTML = `<div class="p-4 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 text-sm">No facilities in the dataset have confirmed or possible evidence for this service within the selected area. Try expanding radius or changing location.</div>`;
+      showGlobalToast('No facilities match this service criteria', 'warning');
+    }
+  } catch (err) {
+    if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[17px]">travel_explore</span><span>Match & Rank Facilities</span>';
+    if (countEl) countEl.innerText = 'Search failed';
+    listEl.innerHTML = `<div class="p-4 rounded-lg bg-red-50 text-red-900 border border-red-200 text-sm">Search error: ${err.message}</div>`;
+    showGlobalToast('Search request failed', 'error');
+  }
+}
+
 </script>
 
-<!-- Geospatial Location Search Modal -->
+<!-- Intelligent Care Matching & Evidence-Based Trust Search Modal -->
 <div class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4" id="locationSearchModal">
-  <div class="bg-surface-container-lowest rounded-xl max-w-2xl w-full p-6 border border-outline-variant/80 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+  <div class="bg-surface-container-lowest rounded-xl max-w-3xl w-full p-6 border border-outline-variant/80 shadow-2xl flex flex-col gap-4 max-h-[92vh] overflow-y-auto">
+    
+    <!-- Modal Header -->
     <div class="flex items-center justify-between border-b border-surface-container-high pb-3">
-      <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary text-[24px]">location_on</span>
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px]">manage_search</span>
+        </div>
         <div>
-          <h3 class="font-headline-md text-headline-md font-semibold text-on-surface">Search by Location & Clinical Need</h3>
-          <p class="font-body-sm text-body-sm text-on-surface-variant">Haversine spatial matching against 10,000 Indian facilities with verbatim evidence</p>
+          <h3 class="font-headline-md text-headline-md font-semibold text-on-surface">Intelligent Care Matching & Evidence Trust</h3>
+          <p class="font-body-sm text-body-sm text-on-surface-variant">Matches patient clinical intent against 10,000 facilities with verbatim record citations</p>
         </div>
       </div>
       <button class="material-symbols-outlined text-outline hover:text-on-surface cursor-pointer p-1 rounded hover:bg-surface-container-high" onclick="closeSearchModal()">close</button>
     </div>
 
-    <!-- Location Inputs -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <!-- Category Selector (8 Canonical Intent Categories) -->
+    <div class="flex flex-col gap-1.5">
+      <label class="font-label-sm text-label-sm font-semibold text-on-surface uppercase tracking-wider text-xs">1. Select Patient Care Category</label>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5" id="careCategoryPills">
+        <button type="button" onclick="selectCareCategory('eye_examination', this)" class="care-cat-btn px-2.5 py-1.5 rounded-lg border border-outline-variant text-xs font-medium hover:border-primary text-on-surface text-left flex items-center gap-1.5 transition-all">
+          <span class="material-symbols-outlined text-[15px] text-primary">visibility</span><span>Eye Examination</span>
+        </button>
+        <button type="button" onclick="selectCareCategory('general_checkup', this)" class="care-cat-btn px-2.5 py-1.5 rounded-lg border border-outline-variant text-xs font-medium hover:border-primary text-on-surface text-left flex items-center gap-1.5 transition-all">
+          <span class="material-symbols-outlined text-[15px] text-primary">stethoscope</span><span>General Check-up</span>
+        </button>
+        <button type="button" onclick="selectCareCategory('dental_care', this)" class="care-cat-btn px-2.5 py-1.5 rounded-lg border border-outline-variant text-xs font-medium hover:border-primary text-on-surface text-left flex items-center gap-1.5 transition-all">
+          <span class="material-symbols-outlined text-[15px] text-primary">dentistry</span><span>Dental Care</span>
+        </button>
+        <button type="button" onclick="selectCareCategory('emergency_care', this)" class="care-cat-btn active bg-primary-fixed text-primary border-primary font-semibold px-2.5 py-1.5 rounded-lg border text-xs text-left flex items-center gap-1.5 transition-all">
+          <span class="material-symbols-outlined text-[15px] text-primary">emergency</span><span>Emergency Care</span>
+        </button>
+        <button type="button" onclick="selectCareCategory('specialist_consultation', this)" class="care-cat-btn px-2.5 py-1.5 rounded-lg border border-outline-variant text-xs font-medium hover:border-primary text-on-surface text-left flex items-center gap-1.5 transition-all">
+          <span class="material-symbols-outlined text-[15px] text-primary">medical_services</span><span>Specialist Consult</span>
+        </button>
+        <button type="button" onclick="selectCareCategory('diagnostic_tests', this)" class="care-cat-btn px-2.5 py-1.5 rounded-lg border border-outline-variant text-xs font-medium hover:border-primary text-on-surface text-left flex items-center gap-1.5 transition-all">
+          <span class="material-symbols-outlined text-[15px] text-primary">biotechnology</span><span>Diagnostic / Lab</span>
+        </button>
+        <button type="button" onclick="selectCareCategory('pharmacy', this)" class="care-cat-btn px-2.5 py-1.5 rounded-lg border border-outline-variant text-xs font-medium hover:border-primary text-on-surface text-left flex items-center gap-1.5 transition-all">
+          <span class="material-symbols-outlined text-[15px] text-primary">prescriptions</span><span>Pharmacy</span>
+        </button>
+        <button type="button" onclick="selectCareCategory('other', this)" class="care-cat-btn px-2.5 py-1.5 rounded-lg border border-outline-variant text-xs font-medium hover:border-primary text-on-surface text-left flex items-center gap-1.5 transition-all">
+          <span class="material-symbols-outlined text-[15px] text-primary">search</span><span>Custom Request</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Natural Language Request -->
+    <div class="flex flex-col gap-1.5">
+      <div class="flex items-center justify-between">
+        <label class="font-label-sm text-label-sm font-semibold text-on-surface uppercase tracking-wider text-xs">2. Patient Request (Natural Language)</label>
+        <span class="text-[11px] text-on-surface-variant">Type any symptom, procedure, or care request</span>
+      </div>
+      <input type="text" id="careSearchQuery" value="Severe abdominal pain, suspected appendicitis. Father needs emergency surgery tonight." class="p-2.5 rounded-lg bg-surface-container-low border border-outline-variant font-body-sm text-body-sm text-on-surface focus:border-primary outline-none" />
+      
+      <!-- Recommended Request Starters -->
+      <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+        <span class="text-[11px] text-on-surface-variant font-medium">Examples:</span>
+        <button type="button" class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline-variant cursor-pointer" onclick="setCareQuery('I need a routine eye test and cataract examination.', 'eye_examination')">"Routine eye test"</button>
+        <button type="button" class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline-variant cursor-pointer" onclick="setCareQuery('Find a clinic for a general health check-up and blood pressure test.', 'general_checkup')">"General check-up"</button>
+        <button type="button" class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline-variant cursor-pointer" onclick="setCareQuery('I need dental care for toothache and root canal treatment.', 'dental_care')">"Dental care"</button>
+        <button type="button" class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline-variant cursor-pointer" onclick="setCareQuery('Find facilities offering emergency surgery and trauma services.', 'emergency_care')">"Emergency services"</button>
+      </div>
+    </div>
+
+    <!-- Optional Location & Radius -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 rounded-lg bg-surface-container-low border border-surface-container-high">
       <div class="flex flex-col gap-1">
-        <label class="font-label-sm text-label-sm font-semibold text-on-surface">Preset Locations (Probes & Hubs)</label>
-        <select id="locSearchPreset" onchange="onPresetSelected(this.value)" class="p-2 rounded-lg bg-surface-container-low border border-outline-variant font-body-sm text-body-sm text-on-surface">
-          <option value="Siwan / Gopalganj, Bihar (Probe g1/g4)">Siwan / Gopalganj, Bihar (Probe g1/g4)</option>
+        <label class="font-label-sm text-label-sm font-semibold text-on-surface text-xs">Preset Location Hubs</label>
+        <select id="locSearchPreset" onchange="onPresetSelected(this.value)" class="p-1.5 rounded-md bg-surface-container-lowest border border-outline-variant text-xs text-on-surface">
+          <option value="Siwan / Gopalganj, Bihar (Probe g1/g4)">Siwan / Gopalganj (Probe g1/g4)</option>
           <option value="Begusarai, Bihar (Probe g2)">Begusarai, Bihar (Probe g2)</option>
           <option value="Patna, Bihar">Patna, Bihar (AIIMS / PMCH)</option>
           <option value="Darbhanga">Darbhanga (DMCH Hub)</option>
@@ -1428,60 +1624,55 @@ function selectSearchedFacility(encodedName, dist, trust, pin) {
           <option value="New Delhi">New Delhi</option>
           <option value="Mumbai, Maharashtra">Mumbai, Maharashtra</option>
           <option value="Bengaluru, Karnataka">Bengaluru, Karnataka</option>
+          <option value="">-- No Location (All India / Skill-Only) --</option>
         </select>
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="font-label-sm text-label-sm font-semibold text-on-surface">Or Custom Location / PIN / Coordinates</label>
-        <input type="text" id="locSearchCustom" placeholder="e.g. Patna, Begusarai, 841226, 26.24, 84.4" class="p-2 rounded-lg bg-surface-container-low border border-outline-variant font-body-sm text-body-sm text-on-surface" />
+        <label class="font-label-sm text-label-sm font-semibold text-on-surface text-xs">Custom Location / PIN</label>
+        <input type="text" id="locSearchCustom" placeholder="e.g. Patna, 841226, 26.24, 84.4" class="p-1.5 rounded-md bg-surface-container-lowest border border-outline-variant text-xs text-on-surface" />
       </div>
-    </div>
 
-    <!-- Query Inputs -->
-    <div class="flex flex-col gap-1.5">
-      <label class="font-label-sm text-label-sm font-semibold text-on-surface">Clinical Requirement / Emergency Query</label>
-      <input type="text" id="locSearchQuery" value="Severe abdominal pain, suspected appendicitis. Father needs emergency surgery tonight." class="p-2 rounded-lg bg-surface-container-low border border-outline-variant font-body-sm text-body-sm text-on-surface" />
-      
-      <!-- Quick Chips -->
-      <div class="flex flex-wrap gap-1.5 pt-0.5">
-        <button type="button" class="px-2 py-0.5 rounded-full text-xs font-medium bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline-variant cursor-pointer" onclick="setSearchQuery('Severe abdominal pain, emergency appendicitis surgery tonight.')">Emergency Surgery</button>
-        <button type="button" class="px-2 py-0.5 rounded-full text-xs font-medium bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline-variant cursor-pointer" onclick="setSearchQuery('Emergency C-Section delivery required immediately, high risk pregnancy.')">Obstetric C-Section</button>
-        <button type="button" class="px-2 py-0.5 rounded-full text-xs font-medium bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline-variant cursor-pointer" onclick="setSearchQuery('Cardiac arrest, need immediate cath lab or ICU ventilator.')">Cardiac / ICU</button>
-        <button type="button" class="px-2 py-0.5 rounded-full text-xs font-medium bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline-variant cursor-pointer" onclick="setSearchQuery('Trauma accident patient with bleeding, need blood storage unit.')">Blood Bank / Trauma</button>
-      </div>
-    </div>
-
-    <!-- Search Controls -->
-    <div class="flex items-center justify-between pt-2 border-t border-surface-container-high">
-      <div class="flex items-center gap-2">
-        <label class="font-label-sm text-label-sm text-on-surface-variant">Radius:</label>
-        <select id="locSearchRadius" class="p-1.5 rounded bg-surface-container-low border border-outline-variant font-body-sm text-body-sm text-on-surface">
-          <option value="25">25 km (Local)</option>
-          <option value="50">50 km (Sub-District)</option>
+      <div class="flex flex-col gap-1">
+        <label class="font-label-sm text-label-sm font-semibold text-on-surface text-xs">Max Distance Radius</label>
+        <select id="locSearchRadius" class="p-1.5 rounded-md bg-surface-container-lowest border border-outline-variant text-xs text-on-surface">
+          <option value="25">25 km (Local District)</option>
+          <option value="50">50 km (Sub-Regional)</option>
           <option value="100" selected>100 km (Regional)</option>
-          <option value="150">150 km (State)</option>
+          <option value="250">250 km (Inter-District)</option>
+          <option value="">No Distance Cap</option>
         </select>
       </div>
+    </div>
 
-      <button type="button" id="btnExecuteSearch" onclick="executeLocationSearch()" class="px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold hover:bg-primary/90 flex items-center gap-1.5 shadow-md cursor-pointer transition-all">
-        <span class="material-symbols-outlined text-[16px]">travel_explore</span>
-        <span>Find Verified Facilities</span>
+    <!-- Action Bar -->
+    <div class="flex items-center justify-between pt-1">
+      <span class="text-xs text-on-surface-variant flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        Zero LLM calls · Verbatim dataset citations · Tiered ranking
+      </span>
+
+      <button type="button" id="btnExecuteSearch" onclick="executeIntelligentSearch()" class="px-5 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold hover:bg-primary/90 flex items-center gap-2 shadow-md cursor-pointer transition-all">
+        <span class="material-symbols-outlined text-[17px]">travel_explore</span>
+        <span>Match & Rank Facilities</span>
       </button>
     </div>
 
     <!-- Results Section -->
-    <div id="locSearchResultsContainer" class="flex flex-col gap-2.5 pt-2 border-t border-surface-container-high">
+    <div id="locSearchResultsContainer" class="flex flex-col gap-2.5 pt-3 border-t border-surface-container-high">
       <div class="font-label-sm text-label-sm text-on-surface-variant flex items-center justify-between">
-        <span id="locResultsHeader">Search Results</span>
-        <span id="locResultsCount" class="font-medium text-primary">Ready to search</span>
+        <span id="locResultsHeader" class="font-semibold text-on-surface">Matching Results</span>
+        <span id="locResultsCount" class="font-medium text-primary">Click Match & Rank Facilities</span>
       </div>
-      <div id="locResultsList" class="flex flex-col gap-2 max-h-72 overflow-y-auto pr-1">
+      <div id="locResultsList" class="flex flex-col gap-2.5 max-h-80 overflow-y-auto pr-1">
         <!-- Results injected here -->
         <div class="p-4 rounded-lg bg-surface-container-low border border-outline-variant/60 text-center text-on-surface-variant font-body-sm text-body-sm">
-          Select or type a location and click <strong>Find Verified Facilities</strong> to compute real Haversine distances against 10,000 facilities.
+          Select a category above or enter a natural-language query to evaluate evidence and rank facilities.
         </div>
       </div>
     </div>
+
   </div>
 </div>
+
 </body></html>

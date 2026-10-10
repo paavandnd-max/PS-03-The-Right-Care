@@ -35,6 +35,8 @@ from src.evidence_extractor import extract_evidence_from_row
 from src.contradiction_detector import detect_contradictions
 from src.trust_scorer import calculate_trust_score, compute_trust_score
 from src.analytics import dataset_summary
+from src.care_matcher import CARE_CATEGORIES
+from src.care_scorer import match_facilities
 
 
 # ── App setup ─────────────────────────────────────────────────────────────────
@@ -107,6 +109,16 @@ class LocationSearchRequest(BaseModel):
     query_text:    str                  = "emergency surgery"
     radius_km:     Optional[float]      = 100.0
     time:          Optional[str]        = None
+
+
+class CareSearchRequest(BaseModel):
+    query:         Optional[str]        = ""
+    care_category: Optional[str]        = None
+    location:      Optional[str]        = None
+    latitude:      Optional[float]      = None
+    longitude:     Optional[float]      = None
+    radius_km:     Optional[float]      = 100.0
+    limit:         Optional[int]        = 10
 
 
 # ── Endpoints ──────────────────────────────────────────────────────────────────
@@ -299,6 +311,72 @@ def search_location(req: LocationSearchRequest) -> dict:
         "count": len(fac_list),
         "deserts": deserts,
         "facilities": fac_list,
+    }
+
+
+@app.get("/api/care-categories")
+def get_care_categories() -> dict:
+    """Return all supported patient care-intent categories."""
+    return {
+        "categories": [
+            {"key": k, "label": v["label"]}
+            for k, v in CARE_CATEGORIES.items()
+        ]
+    }
+
+
+@app.post("/search")
+@app.post("/api/care-search")
+def search_care_intent(req: CareSearchRequest) -> dict:
+    """
+    Intelligent Care Matching & Evidence-Based Trust Scoring endpoint.
+    Understands user clinical need, evaluates evidence, and ranks facilities.
+    """
+    df = load_dataframe()
+    results, meta = match_facilities(
+        user_need=req.query or "",
+        dataset=df,
+        location=req.location,
+        care_category=req.care_category,
+        latitude=req.latitude,
+        longitude=req.longitude,
+        radius_km=req.radius_km,
+        limit=req.limit or 10,
+    )
+
+    fac_list = []
+    for m in results:
+        fac_list.append({
+            "name": m.facility_name,
+            "facility_type": m.facility_type,
+            "city": m.city,
+            "state": m.state,
+            "pin": m.pin,
+            "row_id": m.row_id,
+            "relevance_tier": m.relevance_tier,
+            "matched_category": m.matched_category,
+            "why_matched": m.why_matched,
+            "distance_km": m.distance_km,
+            "ranking_score": m.ranking_score,
+            "trust": {
+                "score_100": m.trust.trust_score_100,
+                "score": m.trust.trust_score,
+                "status": m.trust.evidence_status,
+                "factors_raised": m.trust.factors_raised,
+                "factors_lowered": m.trust.factors_lowered,
+                "missing_evidence": m.trust.missing_evidence,
+                "score_breakdown": m.trust.score_breakdown,
+                "caveats": m.trust.caveats,
+            },
+            "supporting_evidence": m.trust.supporting_evidence,
+            "contradictory_evidence": m.trust.contradictory_evidence,
+            "data_provenance": m.data_provenance,
+        })
+
+    return {
+        "status": "OK",
+        "metadata": meta,
+        "results": fac_list,
     }
 
 
