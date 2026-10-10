@@ -139,3 +139,20 @@ def compute_trust_score(
         negative_evidence_count=len([f for f in findings if f.polarity == "negative"]),
         conditional_evidence_count=len([f for f in findings if f.polarity == "conditional"]),
     )
+
+
+def calculate_trust_score(
+    row: pd.Series,
+    contradiction_flags: list[ContradictionFlag] = None,
+    findings: list[EvidenceFinding] = None,
+    target_capabilities: list[str] = None,
+) -> float:
+    """
+    Convenience wrapper returning float trust score for a facility.
+    """
+    findings = findings or []
+    contradiction_flags = contradiction_flags or []
+    target_capabilities = target_capabilities or []
+    res = compute_trust_score(row, findings, contradiction_flags, target_capabilities)
+    return res.trust_score
+
