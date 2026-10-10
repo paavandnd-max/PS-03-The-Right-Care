@@ -254,6 +254,49 @@ def log_audit_action(req: AuditActionRequest) -> dict:
     }
 
 
+_locations_cache: Optional[list[dict]] = None
+
+
+def _get_all_dataset_locations() -> list[dict]:
+    global _locations_cache
+    if _locations_cache is not None:
+        return _locations_cache
+    df = load_dataframe()
+    grouped = df.groupby(["address_city", "address_stateOrRegion"]).size().reset_index(name="count")
+    locations = []
+    for _, r in grouped.iterrows():
+        c = str(r["address_city"]).strip()
+        s = str(r["address_stateOrRegion"]).strip()
+        cnt = int(r["count"])
+        if c and c.lower() not in ("nan", "none", "null", ""):
+            state_clean = s if s.lower() not in ("nan", "none", "null", "") else ""
+            label_clean = f"{c}, {state_clean}" if state_clean else c
+            locations.append({
+                "city": c,
+                "state": state_clean,
+                "label": label_clean,
+                "display": f"{label_clean} ({cnt} facilities)",
+                "count": cnt,
+            })
+    locations.sort(key=lambda x: x["count"], reverse=True)
+    _locations_cache = locations
+    return _locations_cache
+
+
+@app.get("/api/locations")
+def search_locations(q: Optional[str] = None, limit: int = 30) -> dict:
+    """Autocomplete search across all cities and districts in the dataset."""
+    locs = _get_all_dataset_locations()
+    if not q or not q.strip():
+        return {"locations": locs[:limit]}
+    query = q.strip().lower()
+    matches = [
+        item for item in locs
+        if query in item["city"].lower() or (item["state"] and query in item["state"].lower()) or query in item["label"].lower()
+    ]
+    return {"locations": matches[:limit]}
+
+
 @app.get("/api/preset-locations")
 def get_preset_locations() -> dict:
     """Return all preset search locations."""

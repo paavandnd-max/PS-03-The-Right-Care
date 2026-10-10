@@ -315,30 +315,114 @@
                   id="homeLocInput"
                   list="locationSuggestions"
                   value="Samastipur"
-                  placeholder="Type any city, district, or PIN code..."
+                  placeholder="Type any city, district, or PIN code (e.g. Amritsar, Ludhiana, Patna)..."
                   class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md font-medium text-slate-800 focus:bg-white focus:border-gov-500 outline-none"
+                  oninput="onLocationInput(this.value)"
                   onchange="executeHomeSearch()"
                   onkeyup="if(event.key==='Enter') executeHomeSearch()"
                 />
                 <datalist id="locationSuggestions">
-                  <option value="Samastipur">Samastipur, Bihar (कल्याणपुर / समस्तीपुर)</option>
-                  <option value="Darbhanga">Darbhanga (DMCH Medical Hub)</option>
-                  <option value="Patna, Bihar">Patna, Bihar (AIIMS / PMCH)</option>
-                  <option value="Muzaffarpur">Muzaffarpur (SKMCH Hub)</option>
-                  <option value="Gaya">Gaya, Bihar</option>
-                  <option value="Bhagalpur">Bhagalpur, Bihar</option>
-                  <option value="Siwan / Gopalganj, Bihar (Probe g1/g4)">Siwan / Gopalganj District</option>
-                  <option value="Begusarai, Bihar (Probe g2)">Begusarai District</option>
-                  <option value="Ranchi">Ranchi, Jharkhand</option>
-                  <option value="Varanasi">Varanasi, Uttar Pradesh</option>
-                  <option value="Lucknow">Lucknow, Uttar Pradesh</option>
-                  <option value="Kolkata">Kolkata, West Bengal</option>
-                  <option value="New Delhi">New Delhi (National Capital)</option>
-                  <option value="Mumbai, Maharashtra">Mumbai, Maharashtra</option>
-                  <option value="Bengaluru, Karnataka">Bengaluru, Karnataka</option>
-                  <option value="Pune">Pune, Maharashtra</option>
-                  <option value="Hyderabad">Hyderabad, Telangana</option>
                   <option value="">All-India / Any Location (पूरे भारत में)</option>
+                  <option value="Mumbai, Maharashtra">Mumbai, Maharashtra (288 facilities)</option>
+                  <option value="Hyderabad, Telangana">Hyderabad, Telangana (287 facilities)</option>
+                  <option value="Chennai, Tamil Nadu">Chennai, Tamil Nadu (231 facilities)</option>
+                  <option value="Pune, Maharashtra">Pune, Maharashtra (205 facilities)</option>
+                  <option value="Ahmedabad, Gujarat">Ahmedabad, Gujarat (200 facilities)</option>
+                  <option value="Delhi, Delhi">Delhi, Delhi (192 facilities)</option>
+                  <option value="Kolkata, West Bengal">Kolkata, West Bengal (182 facilities)</option>
+                  <option value="Lucknow, Uttar Pradesh">Lucknow, Uttar Pradesh (168 facilities)</option>
+                  <option value="Jaipur, Rajasthan">Jaipur, Rajasthan (159 facilities)</option>
+                  <option value="Surat, Gujarat">Surat, Gujarat (151 facilities)</option>
+                  <option value="New Delhi, Delhi">New Delhi, Delhi (150 facilities)</option>
+                  <option value="Bangalore, Karnataka">Bangalore, Karnataka (139 facilities)</option>
+                  <option value="Patna, Bihar">Patna, Bihar (126 facilities)</option>
+                  <option value="Vadodara, Gujarat">Vadodara, Gujarat (105 facilities)</option>
+                  <option value="Bengaluru, Karnataka">Bengaluru, Karnataka (100 facilities)</option>
+                  <option value="Indore, Madhya Pradesh">Indore, Madhya Pradesh (99 facilities)</option>
+                  <option value="Nagpur, Maharashtra">Nagpur, Maharashtra (83 facilities)</option>
+                  <option value="Nashik, Maharashtra">Nashik, Maharashtra (76 facilities)</option>
+                  <option value="Bhopal, Madhya Pradesh">Bhopal, Madhya Pradesh (73 facilities)</option>
+                  <option value="Noida, Uttar Pradesh">Noida, Uttar Pradesh (68 facilities)</option>
+                  <option value="Rajkot, Gujarat">Rajkot, Gujarat (67 facilities)</option>
+                  <option value="Ludhiana, Punjab">Ludhiana, Punjab (67 facilities)</option>
+                  <option value="Agra, Uttar Pradesh">Agra, Uttar Pradesh (60 facilities)</option>
+                  <option value="Kanpur, Uttar Pradesh">Kanpur, Uttar Pradesh (58 facilities)</option>
+                  <option value="Varanasi, Uttar Pradesh">Varanasi, Uttar Pradesh (57 facilities)</option>
+                  <option value="Ghaziabad, Uttar Pradesh">Ghaziabad, Uttar Pradesh (56 facilities)</option>
+                  <option value="Thane, Maharashtra">Thane, Maharashtra (55 facilities)</option>
+                  <option value="Coimbatore, Tamil Nadu">Coimbatore, Tamil Nadu (55 facilities)</option>
+                  <option value="Thiruvananthapuram, Kerala">Thiruvananthapuram, Kerala (53 facilities)</option>
+                  <option value="Kochi, Kerala">Kochi, Kerala (46 facilities)</option>
+                  <option value="Raipur, Chhattisgarh">Raipur, Chhattisgarh (46 facilities)</option>
+                  <option value="Ranchi, Jharkhand">Ranchi, Jharkhand (45 facilities)</option>
+                  <option value="Faridabad, Haryana">Faridabad, Haryana (44 facilities)</option>
+                  <option value="Visakhapatnam, Andhra Pradesh">Visakhapatnam, Andhra Pradesh (42 facilities)</option>
+                  <option value="Gurgaon, Haryana">Gurgaon, Haryana (40 facilities)</option>
+                  <option value="Amritsar, Punjab">Amritsar, Punjab (38 facilities)</option>
+                  <option value="Madurai, Tamil Nadu">Madurai, Tamil Nadu (37 facilities)</option>
+                  <option value="Navi Mumbai, Maharashtra">Navi Mumbai, Maharashtra (37 facilities)</option>
+                  <option value="Siliguri, West Bengal">Siliguri, West Bengal (36 facilities)</option>
+                  <option value="Kolhapur, Maharashtra">Kolhapur, Maharashtra (36 facilities)</option>
+                  <option value="Gurugram, Haryana">Gurugram, Haryana (34 facilities)</option>
+                  <option value="Bhubaneswar, Odisha">Bhubaneswar, Odisha (33 facilities)</option>
+                  <option value="Jalandhar, Punjab">Jalandhar, Punjab (33 facilities)</option>
+                  <option value="Gwalior, Madhya Pradesh">Gwalior, Madhya Pradesh (32 facilities)</option>
+                  <option value="Jabalpur, Madhya Pradesh">Jabalpur, Madhya Pradesh (32 facilities)</option>
+                  <option value="Dehradun, Uttarakhand">Dehradun, Uttarakhand (30 facilities)</option>
+                  <option value="Gorakhpur, Uttar Pradesh">Gorakhpur, Uttar Pradesh (29 facilities)</option>
+                  <option value="Greater Noida, Uttar Pradesh">Greater Noida, Uttar Pradesh (28 facilities)</option>
+                  <option value="Bareilly, Uttar Pradesh">Bareilly, Uttar Pradesh (27 facilities)</option>
+                  <option value="Agartala, Tripura">Agartala, Tripura (26 facilities)</option>
+                  <option value="Solapur, Maharashtra">Solapur, Maharashtra (26 facilities)</option>
+                  <option value="Jodhpur, Rajasthan">Jodhpur, Rajasthan (26 facilities)</option>
+                  <option value="Meerut, Uttar Pradesh">Meerut, Uttar Pradesh (25 facilities)</option>
+                  <option value="Chandigarh, Chandigarh">Chandigarh, Chandigarh (25 facilities)</option>
+                  <option value="Muzaffarpur, Bihar">Muzaffarpur, Bihar (24 facilities)</option>
+                  <option value="Thrissur, Kerala">Thrissur, Kerala (24 facilities)</option>
+                  <option value="Udaipur, Rajasthan">Udaipur, Rajasthan (24 facilities)</option>
+                  <option value="Vijayawada, Andhra Pradesh">Vijayawada, Andhra Pradesh (23 facilities)</option>
+                  <option value="Kota, Rajasthan">Kota, Rajasthan (23 facilities)</option>
+                  <option value="Bathinda, Punjab">Bathinda, Punjab (22 facilities)</option>
+                  <option value="Latur, Maharashtra">Latur, Maharashtra (22 facilities)</option>
+                  <option value="Patiala, Punjab">Patiala, Punjab (22 facilities)</option>
+                  <option value="Mangalore, Karnataka">Mangalore, Karnataka (22 facilities)</option>
+                  <option value="Jamshedpur, Jharkhand">Jamshedpur, Jharkhand (21 facilities)</option>
+                  <option value="Prayagraj, Uttar Pradesh">Prayagraj, Uttar Pradesh (21 facilities)</option>
+                  <option value="Rohtak, Haryana">Rohtak, Haryana (21 facilities)</option>
+                  <option value="Bilaspur, Chhattisgarh">Bilaspur, Chhattisgarh (20 facilities)</option>
+                  <option value="Kottayam, Kerala">Kottayam, Kerala (20 facilities)</option>
+                  <option value="Moradabad, Uttar Pradesh">Moradabad, Uttar Pradesh (20 facilities)</option>
+                  <option value="Bhavnagar, Gujarat">Bhavnagar, Gujarat (20 facilities)</option>
+                  <option value="Guwahati, Assam">Guwahati, Assam (20 facilities)</option>
+                  <option value="Aurangabad, Maharashtra">Aurangabad, Maharashtra (20 facilities)</option>
+                  <option value="Guntur, Andhra Pradesh">Guntur, Andhra Pradesh (19 facilities)</option>
+                  <option value="Nanded, Maharashtra">Nanded, Maharashtra (19 facilities)</option>
+                  <option value="Hisar, Haryana">Hisar, Haryana (19 facilities)</option>
+                  <option value="Calicut, Kerala">Calicut, Kerala (19 facilities)</option>
+                  <option value="Sikar, Rajasthan">Sikar, Rajasthan (17 facilities)</option>
+                  <option value="Nellore, Andhra Pradesh">Nellore, Andhra Pradesh (17 facilities)</option>
+                  <option value="Kollam, Kerala">Kollam, Kerala (17 facilities)</option>
+                  <option value="Salem, Tamil Nadu">Salem, Tamil Nadu (17 facilities)</option>
+                  <option value="Sangli, Maharashtra">Sangli, Maharashtra (17 facilities)</option>
+                  <option value="Srinagar, Jammu And Kashmir">Srinagar, Jammu And Kashmir (17 facilities)</option>
+                  <option value="Haridwar, Uttarakhand">Haridwar, Uttarakhand (17 facilities)</option>
+                  <option value="Aligarh, Uttar Pradesh">Aligarh, Uttar Pradesh (16 facilities)</option>
+                  <option value="Durgapur, West Bengal">Durgapur, West Bengal (16 facilities)</option>
+                  <option value="Akola, Maharashtra">Akola, Maharashtra (16 facilities)</option>
+                  <option value="Jammu, Jammu And Kashmir">Jammu, Jammu And Kashmir (16 facilities)</option>
+                  <option value="Howrah, West Bengal">Howrah, West Bengal (15 facilities)</option>
+                  <option value="Rewari, Haryana">Rewari, Haryana (15 facilities)</option>
+                  <option value="Mohali, Punjab">Mohali, Punjab (15 facilities)</option>
+                  <option value="Azamgarh, Uttar Pradesh">Azamgarh, Uttar Pradesh (15 facilities)</option>
+                  <option value="Palakkad, Kerala">Palakkad, Kerala (15 facilities)</option>
+                  <option value="Darbhanga, Bihar">Darbhanga, Bihar (15 facilities)</option>
+                  <option value="Kurnool, Andhra Pradesh">Kurnool, Andhra Pradesh (15 facilities)</option>
+                  <option value="Bikaner, Rajasthan">Bikaner, Rajasthan (15 facilities)</option>
+                  <option value="Kozhikode, Kerala">Kozhikode, Kerala (15 facilities)</option>
+                  <option value="Hubli, Karnataka">Hubli, Karnataka (14 facilities)</option>
+                  <option value="Haldwani, Uttarakhand">Haldwani, Uttarakhand (14 facilities)</option>
+                  <option value="Secunderabad, Telangana">Secunderabad, Telangana (14 facilities)</option>
+                  <option value="Imphal, Manipur">Imphal, Manipur (14 facilities)</option>
                 </datalist>
               </div>
             </div>
@@ -1084,6 +1168,38 @@
       }
     }
 
+    let currentDisplayList = [];
+
+    // Dynamic Location Autocomplete across all 2,300+ dataset cities
+    let locationDebounceTimer = null;
+    async function onLocationInput(query) {
+      clearTimeout(locationDebounceTimer);
+      if (!query || query.trim().length < 1) return;
+      locationDebounceTimer = setTimeout(async () => {
+        try {
+          const res = await fetch('/api/locations?q=' + encodeURIComponent(query.trim()) + '&limit=40');
+          const data = await res.json();
+          if (data && data.locations && data.locations.length > 0) {
+            const dl = document.getElementById('locationSuggestions');
+            if (dl) {
+              dl.innerHTML = data.locations.map(loc => 
+                `<option value="${loc.label}">${loc.display}</option>`
+              ).join('');
+            }
+          }
+        } catch (e) {
+          // ignore network debounce failure
+        }
+      }, 150);
+    }
+
+    function showDossierByIndex(idx) {
+      if (!currentDisplayList || !currentDisplayList[idx]) return;
+      const f = currentDisplayList[idx];
+      const trustScore = (f.trust && f.trust.score_100) ? f.trust.score_100 : 70;
+      showDossierView(f.name, f.distance_km || 0, trustScore, f.pin || '');
+    }
+
     // Render Cards with Type Filter & Trust Score Calculation Breakdown
     function reSortHomeResults() {
       const sortMode = document.getElementById('homeSortOption').value;
@@ -1093,6 +1209,7 @@
       if (!cachedResults || cachedResults.length === 0) return;
 
       let list = [...cachedResults];
+      currentDisplayList = list;
 
       // Facility Type Filtering (Clinics, Hospitals, Dentists, Doctors, Pharmacies)
       if (typeFilter !== 'all') {
@@ -1203,7 +1320,7 @@
             <!-- Card Action Button -->
             <button
               type="button"
-              onclick="showDossierView('${f.name.replace(/'/g, "\'")}', ${f.distance_km || 0}, ${trustScore}, '${f.pin || ''}')"
+              onclick="showDossierByIndex(${idx})"
               class="w-full py-2.5 px-3 rounded-lg bg-gov-500 hover:bg-gov-600 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
             >
               <span>View Full Dossier & Beds (अस्पताल विवरण)</span>
