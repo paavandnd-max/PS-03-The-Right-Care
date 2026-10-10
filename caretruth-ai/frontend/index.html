@@ -9,7 +9,7 @@
 .annotated-text { background-color: #fef3c7; cursor: pointer; border-bottom: 2px dashed #d97706; padding: 0 3px; border-radius: 2px; }
 .annotated-text:hover { background-color: #fde68a; }
 .annotated-text.selected { background-color: #fed7aa; border-color: #ea580c; }
-</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container": "#edeeec", "outline": "#717972", "surface-dim": "#d9dad8", "primary-fixed": "#b5f0c8", "surface-variant": "#e1e3e1", "on-primary": "#ffffff", "tertiary-fixed": "#ffdbca", "on-tertiary-fixed-variant": "#763300", "on-primary-container": "#90caa3", "on-primary-fixed-variant": "#185033", "on-secondary-container": "#606663", "outline-variant": "#c0c9c0", "surface-container-high": "#e7e8e6", "on-tertiary-container": "#ffa877", "secondary-fixed": "#dee4e0", "primary-container": "#1e5638", "inverse-primary": "#99d4ad", "on-error-container": "#93000a", "tertiary-container": "#7f3700", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#331200", "on-secondary-fixed": "#171d1b", "tertiary-fixed-dim": "#ffb68e", "secondary": "#5a605d", "inverse-on-surface": "#f0f1ef", "secondary-fixed-dim": "#c2c8c4", "surface-container-low": "#f3f4f2", "on-secondary-fixed-variant": "#424845", "on-secondary": "#ffffff", "tertiary": "#5c2600", "error": "#ba1a1a", "background": "#f8f9f7", "on-error": "#ffffff", "surface": "#f9faf8", "surface-container-highest": "#e1e3e1", "surface-tint": "#326949", "primary": "#003e23", "on-tertiary": "#ffffff", "on-surface-variant": "#404942", "secondary-container": "#dee4e0", "on-surface": "#1a251e", "primary-fixed-dim": "#99d4ad", "surface-bright": "#f9faf8", "inverse-surface": "#2e3130", "on-primary-fixed": "#002110", "on-background": "#1a251e", "error-container": "#ffdad6" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-md": "0.75rem", "space-xl": "1.5rem", "gutter-compact": "0.5rem", "margin": "1.25rem", "space-xs": "0.25rem", "space-lg": "1rem", "margin-compact": "0.75rem", "space-sm": "0.5rem", "gutter": "1rem" }, "fontFamily": { "headline-md": ["Inter"], "label-sm": ["Inter"], "mono-data": ["Inter"], "headline-xl": ["Inter"], "headline-sm": ["Inter"], "body-sm": ["Inter"], "body-lg": ["Inter"], "body-md": ["Inter"], "headline-lg": ["Inter"], "label-md": ["Inter"] }, "fontSize": { "headline-md": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }], "mono-data": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "500" }], "headline-xl": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "headline-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "-0.005em", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }], "body-lg": ["15px", { "lineHeight": "22px", "letterSpacing": "-0.005em", "fontWeight": "400" }], "body-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-lg": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "500" }] } } } };</script></head><body class="bg-background font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-[220px] bg-surface-container-low flex flex-col justify-between z-30 select-none border-r border-outline-variant/60"><div class="flex flex-col"><div class="h-12 px-space-md flex flex-col justify-center border-b border-surface-container-high"><div class="flex items-center gap-1.5"><span class="font-headline-sm text-headline-sm tracking-tight text-on-surface font-semibold">VERITAS</span><span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span><span class="font-label-sm text-label-sm text-on-surface-variant font-medium uppercase tracking-wider">Health Intelligence</span></div></div><div class="px-space-xs mt-space-xs"><div class="px-space-sm py-1 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Workspace</div><nav class="flex flex-col gap-0.5 mt-0.5" id="sidebarNav"><a class="sidebar-nav-item flex items-center gap-2.5 px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md cursor-pointer" onclick="navigateSidebar('overview', this)"><span class="material-symbols-outlined text-[16px]">dashboard</span><span>Overview</span></a><a aria-current="page" class="sidebar-nav-item flex items-center gap-2.5 px-space-sm py-1.5 transition-colors bg-primary-fixed text-primary font-medium rounded-lg cursor-pointer" onclick="navigateSidebar('dossier', this)"><span class="material-symbols-outlined text-[16px]">local_hospital</span><span>Hospital Dossier</span></a><a class="sidebar-nav-item flex items-center gap-2.5 px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md cursor-pointer" onclick="navigateSidebar('queue', this)"><span class="material-symbols-outlined text-[16px]">fact_check</span><span>Verification Queue</span></a><a class="sidebar-nav-item flex items-center gap-2.5 px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md cursor-pointer" onclick="navigateSidebar('map', this)"><span class="material-symbols-outlined text-[16px]">map</span><span>Healthcare Map</span></a><a class="sidebar-nav-item flex items-center gap-2.5 px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md cursor-pointer" onclick="navigateSidebar('registry', this)"><span class="material-symbols-outlined text-[16px]">database</span><span>Registry Explorer</span></a></nav></div></div><div class="p-space-md flex flex-col gap-space-xs border-t border-surface-container-high"><div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center shrink-0 text-xs">AR</div><div class="flex flex-col min-w-0"><span class="font-label-md text-label-md text-on-surface truncate leading-tight font-semibold">Dr. Ananya Rao</span><span class="font-label-sm text-label-sm text-on-surface-variant truncate leading-tight">State Audit Fellow</span></div></div><div class="pt-1 font-label-sm text-label-sm text-on-surface-variant leading-tight opacity-80 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>NIN Audit Sync: Live v24.2</div></div></aside><div class="pl-[220px]"><header class="fixed top-0 left-[220px] right-0 h-12 bg-surface/95 backdrop-blur-md z-20 flex items-center justify-between px-space-lg border-b border-outline-variant/50"><div class="flex items-center gap-space-md"><div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm"><span class="material-symbols-outlined text-[15px] text-primary">local_hospital</span><span>National Registry</span><span class="text-outline-variant">/</span><span>Bihar Health Mission</span><span class="text-outline-variant">/</span><span class="text-on-surface font-medium">CHC Kalyanpur [Secondary Care]</span></div><div class="hidden md:inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-label-sm text-label-sm"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>Clinical Investigation Dossier</div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container text-on-surface-variant font-body-sm text-body-sm cursor-pointer hover:bg-surface-container-high transition-colors" onclick="openSearchModal()"><span class="material-symbols-outlined text-[14px]">search</span><input type="text" id="headerSearchInput" placeholder="Filter claims, NIN, equip..." onkeyup="handleQuickSearch(event)" class="bg-transparent border-none outline-none text-on-surface font-body-sm text-body-sm w-44 focus:w-60 transition-all placeholder:text-on-surface-variant" /><kbd class="px-1 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant font-mono-data text-mono-data text-[10px]">↵</kbd></div><button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container text-on-surface font-label-sm text-label-sm hover:bg-surface-container-high transition-colors" onclick="downloadDossierSummary()" type="button"><span class="material-symbols-outlined text-[14px]">picture_as_pdf</span><span>Export PDF Dossier</span></button><button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary-container text-on-primary font-label-sm text-label-sm hover:bg-primary transition-colors" onclick="openInspectDrawer()" type="button"><span class="material-symbols-outlined text-[14px]">assignment_turned_in</span><span>Audit Workbench</span></button></div></header><main class="relative pt-12 w-full px-space-lg py-space-lg min-h-screen bg-background"><div class="flex flex-col w-full max-w-7xl mx-auto">
+</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container": "#edeeec", "outline": "#717972", "surface-dim": "#d9dad8", "primary-fixed": "#b5f0c8", "surface-variant": "#e1e3e1", "on-primary": "#ffffff", "tertiary-fixed": "#ffdbca", "on-tertiary-fixed-variant": "#763300", "on-primary-container": "#90caa3", "on-primary-fixed-variant": "#185033", "on-secondary-container": "#606663", "outline-variant": "#c0c9c0", "surface-container-high": "#e7e8e6", "on-tertiary-container": "#ffa877", "secondary-fixed": "#dee4e0", "primary-container": "#1e5638", "inverse-primary": "#99d4ad", "on-error-container": "#93000a", "tertiary-container": "#7f3700", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#331200", "on-secondary-fixed": "#171d1b", "tertiary-fixed-dim": "#ffb68e", "secondary": "#5a605d", "inverse-on-surface": "#f0f1ef", "secondary-fixed-dim": "#c2c8c4", "surface-container-low": "#f3f4f2", "on-secondary-fixed-variant": "#424845", "on-secondary": "#ffffff", "tertiary": "#5c2600", "error": "#ba1a1a", "background": "#f8f9f7", "on-error": "#ffffff", "surface": "#f9faf8", "surface-container-highest": "#e1e3e1", "surface-tint": "#326949", "primary": "#003e23", "on-tertiary": "#ffffff", "on-surface-variant": "#404942", "secondary-container": "#dee4e0", "on-surface": "#1a251e", "primary-fixed-dim": "#99d4ad", "surface-bright": "#f9faf8", "inverse-surface": "#2e3130", "on-primary-fixed": "#002110", "on-background": "#1a251e", "error-container": "#ffdad6" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-md": "0.75rem", "space-xl": "1.5rem", "gutter-compact": "0.5rem", "margin": "1.25rem", "space-xs": "0.25rem", "space-lg": "1rem", "margin-compact": "0.75rem", "space-sm": "0.5rem", "gutter": "1rem" }, "fontFamily": { "headline-md": ["Inter"], "label-sm": ["Inter"], "mono-data": ["Inter"], "headline-xl": ["Inter"], "headline-sm": ["Inter"], "body-sm": ["Inter"], "body-lg": ["Inter"], "body-md": ["Inter"], "headline-lg": ["Inter"], "label-md": ["Inter"] }, "fontSize": { "headline-md": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }], "mono-data": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "500" }], "headline-xl": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "headline-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "-0.005em", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }], "body-lg": ["15px", { "lineHeight": "22px", "letterSpacing": "-0.005em", "fontWeight": "400" }], "body-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-lg": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "500" }] } } } };</script></head><body class="bg-background font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-[220px] bg-surface-container-low flex flex-col justify-between z-30 select-none border-r border-outline-variant/60"><div class="flex flex-col"><div class="h-12 px-space-md flex flex-col justify-center border-b border-surface-container-high"><div class="flex items-center gap-1.5"><span class="font-headline-sm text-headline-sm tracking-tight text-on-surface font-semibold">VERITAS</span><span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span><span class="font-label-sm text-label-sm text-on-surface-variant font-medium uppercase tracking-wider">Health Intelligence</span></div></div><div class="px-space-xs mt-space-xs"><div class="px-space-sm py-1 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Workspace</div><nav class="flex flex-col gap-0.5 mt-0.5" id="sidebarNav"><a class="sidebar-nav-item flex items-center gap-2.5 px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md cursor-pointer" onclick="navigateSidebar('overview', this)"><span class="material-symbols-outlined text-[16px]">dashboard</span><span>Overview</span></a><a aria-current="page" class="sidebar-nav-item flex items-center gap-2.5 px-space-sm py-1.5 transition-colors bg-primary-fixed text-primary font-medium rounded-lg cursor-pointer" onclick="navigateSidebar('dossier', this)"><span class="material-symbols-outlined text-[16px]">local_hospital</span><span>Hospital Dossier</span></a><a class="sidebar-nav-item flex items-center gap-2.5 px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md cursor-pointer" onclick="navigateSidebar('queue', this)"><span class="material-symbols-outlined text-[16px]">fact_check</span><span>Verification Queue</span></a><a class="sidebar-nav-item flex items-center gap-2.5 px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md cursor-pointer" onclick="navigateSidebar('map', this)"><span class="material-symbols-outlined text-[16px]">map</span><span>Healthcare Map</span></a><a class="sidebar-nav-item flex items-center gap-2.5 px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md cursor-pointer" onclick="navigateSidebar('registry', this)"><span class="material-symbols-outlined text-[16px]">database</span><span>Registry Explorer</span></a></nav></div></div><div class="p-space-md flex flex-col gap-space-xs border-t border-surface-container-high"><div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center shrink-0 text-xs">AR</div><div class="flex flex-col min-w-0"><span class="font-label-md text-label-md text-on-surface truncate leading-tight font-semibold">Dr. Ananya Rao</span><span class="font-label-sm text-label-sm text-on-surface-variant truncate leading-tight">State Audit Fellow</span></div></div><div class="pt-1 font-label-sm text-label-sm text-on-surface-variant leading-tight opacity-80 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>NIN Audit Sync: Live v24.2</div></div></aside><div class="pl-[220px]"><header class="fixed top-0 left-[220px] right-0 h-12 bg-surface/95 backdrop-blur-md z-20 flex items-center justify-between px-space-lg border-b border-outline-variant/50"><div class="flex items-center gap-space-md"><div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm"><span class="material-symbols-outlined text-[15px] text-primary">local_hospital</span><span>National Registry</span><span class="text-outline-variant">/</span><span>Bihar Health Mission</span><span class="text-outline-variant">/</span><span class="text-on-surface font-medium">CHC Kalyanpur [Secondary Care]</span></div><div class="hidden md:inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-label-sm text-label-sm"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>Clinical Investigation Dossier</div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container text-on-surface-variant font-body-sm text-body-sm cursor-pointer hover:bg-surface-container-high transition-colors" onclick="openSearchModal()"><span class="material-symbols-outlined text-[14px]">search</span><input type="text" id="headerSearchInput" placeholder="Filter claims, NIN, equip..." onkeyup="handleQuickSearch(event)" class="bg-transparent border-none outline-none text-on-surface font-body-sm text-body-sm w-44 focus:w-60 transition-all placeholder:text-on-surface-variant" /><kbd class="px-1 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant font-mono-data text-mono-data text-[10px]">↵</kbd></div><button class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-700/80 font-label-md text-label-md hover:bg-emerald-900 transition-colors shadow-sm" onclick="openSearchModal()" type="button"><span class="material-symbols-outlined text-[15px] text-emerald-400">near_me</span><span class="font-semibold">Search by Location</span></button><button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container text-on-surface font-label-sm text-label-sm hover:bg-surface-container-high transition-colors" onclick="downloadDossierSummary()" type="button"><span class="material-symbols-outlined text-[14px]">picture_as_pdf</span><span>Export PDF</span></button><button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary-container text-on-primary font-label-sm text-label-sm hover:bg-primary transition-colors" onclick="openInspectDrawer()" type="button"><span class="material-symbols-outlined text-[14px]">assignment_turned_in</span><span>Audit Workbench</span></button></div></header><main class="relative pt-12 w-full px-space-lg py-space-lg min-h-screen bg-background"><div class="flex flex-col w-full max-w-7xl mx-auto">
 <div class="w-full flex flex-col gap-space-md pb-space-xl">
 <!-- 1. Header with Authentic Clinical Context & Indian Healthcare Badges -->
 <section class="flex flex-col gap-3 pb-3 border-b border-surface-variant">
@@ -1280,5 +1280,208 @@ function openInspectDrawer() {
   window.scrollTo({ top: 350, behavior: 'smooth' });
   showGlobalToast('Navigated to Clinical Capabilities & Audit Workbench', 'info');
 }
+
+// Location Search Modal Logic
+function openSearchModal() {
+  const modal = document.getElementById('locationSearchModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    modal.classList.remove('hidden');
+  }
+}
+
+function closeSearchModal() {
+  const modal = document.getElementById('locationSearchModal');
+  if (modal) {
+    modal.style.display = 'none';
+    modal.classList.add('hidden');
+  }
+}
+
+function onPresetSelected(val) {
+  const custom = document.getElementById('locSearchCustom');
+  if (custom) custom.value = val;
+}
+
+function setSearchQuery(q) {
+  const queryInput = document.getElementById('locSearchQuery');
+  if (queryInput) queryInput.value = q;
+}
+
+async function executeLocationSearch() {
+  const btn = document.getElementById('btnExecuteSearch');
+  const countEl = document.getElementById('locResultsCount');
+  const listEl = document.getElementById('locResultsList');
+  const locPreset = document.getElementById('locSearchPreset').value;
+  const locCustom = document.getElementById('locSearchCustom').value.trim();
+  const location = locCustom || locPreset;
+  const query_text = document.getElementById('locSearchQuery').value.trim();
+  const radius_km = parseFloat(document.getElementById('locSearchRadius').value) || 100.0;
+
+  if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span><span>Searching 10,000 Facilities...</span>';
+  if (countEl) countEl.innerText = 'Searching...';
+
+  try {
+    const res = await fetch('/api/search-location', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ location, query_text, radius_km })
+    });
+    const data = await res.json();
+    if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">travel_explore</span><span>Find Verified Facilities</span>';
+
+    if (data.status === 'OK' && data.facilities && data.facilities.length > 0) {
+      if (countEl) countEl.innerText = `${data.facilities.length} Verified Facilities within ${radius_km} km of ${data.location.label}`;
+      let html = '';
+      data.facilities.forEach((f, idx) => {
+        const isVerified = f.verdict === 'verified';
+        const badgeColor = isVerified ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-amber-100 text-amber-800 border-amber-300';
+        const trustPercent = Math.round(f.trust_score * 100);
+        
+        let citationText = 'Verified through primary records.';
+        if (f.citations && f.citations.length > 0) {
+          citationText = f.citations.map(c => `<b>${c.field}:</b> "${c.span.slice(0, 75)}..."`).join('<br/>');
+        }
+
+        html += `
+          <div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant hover:border-primary transition-all flex flex-col gap-2">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="font-headline-sm text-headline-sm font-semibold text-on-surface flex items-center gap-1.5">
+                  <span>${f.name}</span>
+                  <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[11px] font-semibold border ${badgeColor}">${f.verdict.toUpperCase()}</span>
+                </div>
+                <div class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-2 pt-0.5">
+                  <span class="inline-flex items-center text-primary font-medium">📍 ${f.distance_km} km away</span>
+                  <span>•</span>
+                  <span>PIN: ${f.pin || 'N/A'}</span>
+                  <span>•</span>
+                  <span>Trust Score: <b>${trustPercent}%</b></span>
+                </div>
+              </div>
+              <button onclick="selectSearchedFacility('${encodeURIComponent(f.name)}', ${f.distance_km}, ${trustPercent}, '${f.pin || ''}')" class="px-2.5 py-1 rounded bg-primary text-on-primary font-label-sm text-label-sm font-medium hover:bg-primary/90 cursor-pointer shrink-0">
+                Inspect in Dossier
+              </button>
+            </div>
+            <div class="p-2 rounded bg-surface-container-lowest border border-surface-container-high text-xs text-on-surface-variant font-mono-data">
+              ${citationText}
+            </div>
+          </div>
+        `;
+      });
+      listEl.innerHTML = html;
+      showGlobalToast(`Found ${data.facilities.length} verified facilities near ${data.location.label}`, 'success');
+    } else {
+      if (countEl) countEl.innerText = 'No facilities in radius';
+      listEl.innerHTML = `<div class="p-4 rounded-lg bg-red-50 text-red-900 border border-red-200 text-sm">No facilities within ${radius_km} km match this clinical criterion. Try expanding the search radius.</div>`;
+      showGlobalToast(`No facilities found in ${radius_km} km`, 'warning');
+    }
+  } catch (err) {
+    if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">travel_explore</span><span>Find Verified Facilities</span>';
+    if (countEl) countEl.innerText = 'Search failed';
+    listEl.innerHTML = `<div class="p-4 rounded-lg bg-red-50 text-red-900 border border-red-200 text-sm">Search error: ${err.message}</div>`;
+    showGlobalToast('Location search failed', 'error');
+  }
+}
+
+function selectSearchedFacility(encodedName, dist, trust, pin) {
+  const name = decodeURIComponent(encodedName);
+  closeSearchModal();
+  
+  // Dynamically update dossier title and badges to show the selected facility
+  const title = document.querySelector('h1.font-headline-xl');
+  if (title) {
+    title.innerHTML = `${name} <span class="material-symbols-outlined text-emerald-700 text-[20px]" title="Registered Public Healthcare Node">verified</span>`;
+  }
+  
+  showGlobalToast(`Loaded dossier: ${name} (${dist} km away · ${trust}% Trust)`, 'success');
+  switchTab('capabilities');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 </script>
+
+<!-- Geospatial Location Search Modal -->
+<div class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4" id="locationSearchModal">
+  <div class="bg-surface-container-lowest rounded-xl max-w-2xl w-full p-6 border border-outline-variant/80 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between border-b border-surface-container-high pb-3">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-[24px]">location_on</span>
+        <div>
+          <h3 class="font-headline-md text-headline-md font-semibold text-on-surface">Search by Location & Clinical Need</h3>
+          <p class="font-body-sm text-body-sm text-on-surface-variant">Haversine spatial matching against 10,000 Indian facilities with verbatim evidence</p>
+        </div>
+      </div>
+      <button class="material-symbols-outlined text-outline hover:text-on-surface cursor-pointer p-1 rounded hover:bg-surface-container-high" onclick="closeSearchModal()">close</button>
+    </div>
+
+    <!-- Location Inputs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div class="flex flex-col gap-1">
+        <label class="font-label-sm text-label-sm font-semibold text-on-surface">Preset Locations (Probes & Hubs)</label>
+        <select id="locSearchPreset" onchange="onPresetSelected(this.value)" class="p-2 rounded-lg bg-surface-container-low border border-outline-variant font-body-sm text-body-sm text-on-surface">
+          <option value="Siwan / Gopalganj, Bihar (Probe g1/g4)">Siwan / Gopalganj, Bihar (Probe g1/g4)</option>
+          <option value="Begusarai, Bihar (Probe g2)">Begusarai, Bihar (Probe g2)</option>
+          <option value="Patna, Bihar">Patna, Bihar (AIIMS / PMCH)</option>
+          <option value="Darbhanga">Darbhanga (DMCH Hub)</option>
+          <option value="Samastipur">Samastipur District</option>
+          <option value="New Delhi">New Delhi</option>
+          <option value="Mumbai, Maharashtra">Mumbai, Maharashtra</option>
+          <option value="Bengaluru, Karnataka">Bengaluru, Karnataka</option>
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="font-label-sm text-label-sm font-semibold text-on-surface">Or Custom Location / PIN / Coordinates</label>
+        <input type="text" id="locSearchCustom" placeholder="e.g. Patna, Begusarai, 841226, 26.24, 84.4" class="p-2 rounded-lg bg-surface-container-low border border-outline-variant font-body-sm text-body-sm text-on-surface" />
+      </div>
+    </div>
+
+    <!-- Query Inputs -->
+    <div class="flex flex-col gap-1.5">
+      <label class="font-label-sm text-label-sm font-semibold text-on-surface">Clinical Requirement / Emergency Query</label>
+      <input type="text" id="locSearchQuery" value="Severe abdominal pain, suspected appendicitis. Father needs emergency surgery tonight." class="p-2 rounded-lg bg-surface-container-low border border-outline-variant font-body-sm text-body-sm text-on-surface" />
+      
+      <!-- Quick Chips -->
+      <div class="flex flex-wrap gap-1.5 pt-0.5">
+        <button type="button" class="px-2 py-0.5 rounded-full text-xs font-medium bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline-variant cursor-pointer" onclick="setSearchQuery('Severe abdominal pain, emergency appendicitis surgery tonight.')">Emergency Surgery</button>
+        <button type="button" class="px-2 py-0.5 rounded-full text-xs font-medium bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline-variant cursor-pointer" onclick="setSearchQuery('Emergency C-Section delivery required immediately, high risk pregnancy.')">Obstetric C-Section</button>
+        <button type="button" class="px-2 py-0.5 rounded-full text-xs font-medium bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline-variant cursor-pointer" onclick="setSearchQuery('Cardiac arrest, need immediate cath lab or ICU ventilator.')">Cardiac / ICU</button>
+        <button type="button" class="px-2 py-0.5 rounded-full text-xs font-medium bg-surface-container text-on-surface hover:bg-surface-container-high border border-outline-variant cursor-pointer" onclick="setSearchQuery('Trauma accident patient with bleeding, need blood storage unit.')">Blood Bank / Trauma</button>
+      </div>
+    </div>
+
+    <!-- Search Controls -->
+    <div class="flex items-center justify-between pt-2 border-t border-surface-container-high">
+      <div class="flex items-center gap-2">
+        <label class="font-label-sm text-label-sm text-on-surface-variant">Radius:</label>
+        <select id="locSearchRadius" class="p-1.5 rounded bg-surface-container-low border border-outline-variant font-body-sm text-body-sm text-on-surface">
+          <option value="25">25 km (Local)</option>
+          <option value="50">50 km (Sub-District)</option>
+          <option value="100" selected>100 km (Regional)</option>
+          <option value="150">150 km (State)</option>
+        </select>
+      </div>
+
+      <button type="button" id="btnExecuteSearch" onclick="executeLocationSearch()" class="px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold hover:bg-primary/90 flex items-center gap-1.5 shadow-md cursor-pointer transition-all">
+        <span class="material-symbols-outlined text-[16px]">travel_explore</span>
+        <span>Find Verified Facilities</span>
+      </button>
+    </div>
+
+    <!-- Results Section -->
+    <div id="locSearchResultsContainer" class="flex flex-col gap-2.5 pt-2 border-t border-surface-container-high">
+      <div class="font-label-sm text-label-sm text-on-surface-variant flex items-center justify-between">
+        <span id="locResultsHeader">Search Results</span>
+        <span id="locResultsCount" class="font-medium text-primary">Ready to search</span>
+      </div>
+      <div id="locResultsList" class="flex flex-col gap-2 max-h-72 overflow-y-auto pr-1">
+        <!-- Results injected here -->
+        <div class="p-4 rounded-lg bg-surface-container-low border border-outline-variant/60 text-center text-on-surface-variant font-body-sm text-body-sm">
+          Select or type a location and click <strong>Find Verified Facilities</strong> to compute real Haversine distances against 10,000 facilities.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </body></html>
