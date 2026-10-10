@@ -1297,6 +1297,38 @@
                 <span class="text-slate-600">${f.why_matched}</span>
               </div>
 
+              <!-- Attending Doctor / Specialist Badge Grounded in Dataset -->
+              ${f.doctor && f.doctor.is_named && f.doctor.name ? `
+                <div class="p-2.5 rounded-lg bg-emerald-50/80 border border-emerald-200/90 flex items-center justify-between gap-2 text-xs shadow-2xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center shrink-0">
+                      <span class="material-symbols-outlined text-[16px]">stethoscope</span>
+                    </span>
+                    <div>
+                      <div class="font-bold text-emerald-950 flex items-center gap-1.5 flex-wrap">
+                        <span>${f.doctor.name}</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-emerald-200/80 text-emerald-900 px-1.5 py-0.5 rounded">Specialist Doctor</span>
+                      </div>
+                      <div class="text-emerald-800 text-[11px] font-medium">${f.doctor.specialty} · <span class="text-slate-500 font-normal">via ${f.doctor.source || 'Hospital Record'}</span></div>
+                    </div>
+                  </div>
+                  ${f.doctor.staff_summary ? `<span class="hidden sm:inline-block text-[11px] text-emerald-800 bg-white/90 px-2 py-0.5 rounded border border-emerald-200 font-semibold shrink-0">${f.doctor.staff_summary}</span>` : ''}
+                </div>
+              ` : `
+                <div class="p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center gap-2 text-xs text-slate-700">
+                  <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[15px]">medical_services</span>
+                  </span>
+                  <div class="flex items-center justify-between w-full">
+                    <div>
+                      <span class="font-bold text-slate-800">Specialist Field:</span>
+                      <span class="text-slate-700 font-medium">${(f.doctor && f.doctor.specialty) ? f.doctor.specialty : 'Consultant Physician'}</span>
+                    </div>
+                    <span class="text-[11px] text-slate-500 italic">${(f.doctor && f.doctor.staff_summary) ? f.doctor.staff_summary : 'Resident Clinicians On Duty'}</span>
+                  </div>
+                </div>
+              `}
+
               ${problemWarning}
 
               <!-- Trust Score Calculation Breakdown Details -->

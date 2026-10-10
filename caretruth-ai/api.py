@@ -401,6 +401,7 @@ def search_care_intent(req: CareSearchRequest) -> dict:
             "why_matched": m.why_matched,
             "distance_km": m.distance_km,
             "ranking_score": m.ranking_score,
+            "doctor": m.doctor_info,
             "trust": {
                 "score_100": m.trust.trust_score_100,
                 "score": m.trust.trust_score,
