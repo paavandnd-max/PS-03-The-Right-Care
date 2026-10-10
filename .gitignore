@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.env
+
+# Data & Large Files
+*.csv
+reference/
+data/raw/*.csv
+caretruth-ai/data/raw/*.csv
+
+# Agent & System Metadata
+.agent/
+.agents/
+.gemini/
+.gsd/
+*.log
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

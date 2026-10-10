@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.bed-node:hover .bed-tooltip { display: flex; }
+.annotated-text { background-color: #fef3c7; cursor: pointer; border-bottom: 2px dashed #d97706; padding: 0 3px; border-radius: 2px; }
+.annotated-text:hover { background-color: #fde68a; }
+.annotated-text.selected { background-color: #fed7aa; border-color: #ea580c; }
+</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container": "#edeeec", "outline": "#717972", "surface-dim": "#d9dad8", "primary-fixed": "#b5f0c8", "surface-variant": "#e1e3e1", "on-primary": "#ffffff", "tertiary-fixed": "#ffdbca", "on-tertiary-fixed-variant": "#763300", "on-primary-container": "#90caa3", "on-primary-fixed-variant": "#185033", "on-secondary-container": "#606663", "outline-variant": "#c0c9c0", "surface-container-high": "#e7e8e6", "on-tertiary-container": "#ffa877", "secondary-fixed": "#dee4e0", "primary-container": "#1e5638", "inverse-primary": "#99d4ad", "on-error-container": "#93000a", "tertiary-container": "#7f3700", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#331200", "on-secondary-fixed": "#171d1b", "tertiary-fixed-dim": "#ffb68e", "secondary": "#5a605d", "inverse-on-surface": "#f0f1ef", "secondary-fixed-dim": "#c2c8c4", "surface-container-low": "#f3f4f2", "on-secondary-fixed-variant": "#424845", "on-secondary": "#ffffff", "tertiary": "#5c2600", "error": "#ba1a1a", "background": "#f8f9f7", "on-error": "#ffffff", "surface": "#f9faf8", "surface-container-highest": "#e1e3e1", "surface-tint": "#326949", "primary": "#003e23", "on-tertiary": "#ffffff", "on-surface-variant": "#404942", "secondary-container": "#dee4e0", "on-surface": "#1a251e", "primary-fixed-dim": "#99d4ad", "surface-bright": "#f9faf8", "inverse-surface": "#2e3130", "on-primary-fixed": "#002110", "on-background": "#1a251e", "error-container": "#ffdad6" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-md": "0.75rem", "space-xl": "1.5rem", "gutter-compact": "0.5rem", "margin": "1.25rem", "space-xs": "0.25rem", "space-lg": "1rem", "margin-compact": "0.75rem", "space-sm": "0.5rem", "gutter": "1rem" }, "fontFamily": { "headline-md": ["Inter"], "label-sm": ["Inter"], "mono-data": ["Inter"], "headline-xl": ["Inter"], "headline-sm": ["Inter"], "body-sm": ["Inter"], "body-lg": ["Inter"], "body-md": ["Inter"], "headline-lg": ["Inter"], "label-md": ["Inter"] }, "fontSize": { "headline-md": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }], "mono-data": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "500" }], "headline-xl": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "headline-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "-0.005em", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }], "body-lg": ["15px", { "lineHeight": "22px", "letterSpacing": "-0.005em", "fontWeight": "400" }], "body-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-lg": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "500" }] } } } };</script></head><body class="bg-background font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-[220px] bg-surface-container-low flex flex-col justify-between z-30 select-none border-r border-outline-variant/60"><div class="flex flex-col"><div class="h-12 px-space-md flex flex-col justify-center border-b border-surface-container-high"><div class="flex items-center gap-1.5"><span class="font-headline-sm text-headline-sm tracking-tight text-on-surface font-semibold">VERITAS</span><span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span><span class="font-label-sm text-label-sm text-on-surface-variant font-medium uppercase tracking-wider">Health Intelligence</span></div></div><div class="px-space-xs mt-space-xs"><div class="px-space-sm py-1 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Workspace</div><nav class="flex flex-col gap-0.5 mt-0.5"><a class="flex items-center gap-2.5 px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" href="#"><span class="material-symbols-outlined text-[16px]">dashboard</span><span>Overview</span></a><a aria-current="page" class="flex items-center gap-2.5 px-space-sm py-1.5 transition-colors bg-primary-fixed text-primary font-medium rounded-lg" href="#"><span class="material-symbols-outlined text-[16px]">local_hospital</span><span>Hospital Dossier</span></a><a class="flex items-center gap-2.5 px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" href="#"><span class="material-symbols-outlined text-[16px]">fact_check</span><span>Verification Queue</span></a><a class="flex items-center gap-2.5 px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" href="#"><span class="material-symbols-outlined text-[16px]">map</span><span>Healthcare Map</span></a><a class="flex items-center gap-2.5 px-space-sm py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" href="#"><span class="material-symbols-outlined text-[16px]">database</span><span>Registry Explorer</span></a></nav></div></div><div class="p-space-md flex flex-col gap-space-xs border-t border-surface-container-high"><div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center shrink-0 text-xs">AR</div><div class="flex flex-col min-w-0"><span class="font-label-md text-label-md text-on-surface truncate leading-tight font-semibold">Dr. Ananya Rao</span><span class="font-label-sm text-label-sm text-on-surface-variant truncate leading-tight">State Audit Fellow</span></div></div><div class="pt-1 font-label-sm text-label-sm text-on-surface-variant leading-tight opacity-80 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>NIN Audit Sync: Live v24.2</div></div></aside><div class="pl-[220px]"><header class="fixed top-0 left-[220px] right-0 h-12 bg-surface/95 backdrop-blur-md z-20 flex items-center justify-between px-space-lg border-b border-outline-variant/50"><div class="flex items-center gap-space-md"><div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm"><span class="material-symbols-outlined text-[15px] text-primary">local_hospital</span><span>National Registry</span><span class="text-outline-variant">/</span><span>Bihar Health Mission</span><span class="text-outline-variant">/</span><span class="text-on-surface font-medium">CHC Kalyanpur [Secondary Care]</span></div><div class="hidden md:inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-label-sm text-label-sm"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>Clinical Investigation Dossier</div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container text-on-surface-variant font-body-sm text-body-sm cursor-pointer hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[14px]">search</span><span>Filter claims, NIN, equip...</span><kbd class="px-1 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant font-mono-data text-mono-data text-[10px]">⌘K</kbd></div><button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container text-on-surface font-label-sm text-label-sm hover:bg-surface-container-high transition-colors" onclick="downloadDossierSummary()" type="button"><span class="material-symbols-outlined text-[14px]">picture_as_pdf</span><span>Export PDF Dossier</span></button><button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary-container text-on-primary font-label-sm text-label-sm hover:bg-primary transition-colors" onclick="openInspectDrawer()" type="button"><span class="material-symbols-outlined text-[14px]">assignment_turned_in</span><span>Audit Workbench</span></button></div></header><main class="relative pt-12 w-full px-space-lg py-space-lg min-h-screen bg-background"><div class="flex flex-col w-full max-w-7xl mx-auto">
+<div class="w-full flex flex-col gap-space-md pb-space-xl">
+<!-- 1. Header with Authentic Clinical Context & Indian Healthcare Badges -->
+<section class="flex flex-col gap-3 pb-3 border-b border-surface-variant">
+<div class="flex flex-col lg:flex-row lg:items-start justify-between gap-space-md">
+<div class="flex flex-col gap-1 min-w-0">
+<nav aria-label="Breadcrumb" class="flex items-center gap-1.5 font-label-sm text-label-sm text-on-surface-variant">
+<a class="hover:text-primary transition-colors" href="#">Public Health Directory</a>
+<span class="text-outline-variant">/</span>
+<a class="hover:text-primary transition-colors" href="#">Bihar State Health Society</a>
+<span class="text-outline-variant">/</span>
+<a class="hover:text-primary transition-colors" href="#">Samastipur District</a>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold truncate">Block Kalyanpur</span>
+</nav>
+<div class="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1">
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight font-semibold flex items-center gap-2">
+          Kalyanpur Community Health Centre (CHC)
+          <span class="material-symbols-outlined text-emerald-700 text-[20px]" title="Registered Public Healthcare Node">verified</span>
+</h1>
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/60 font-mono-data text-mono-data text-[11px] font-semibold text-on-surface">
+            NIN: BR-849201
+          </span>
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-primary-fixed text-primary font-label-sm text-label-sm font-semibold">
+            IPHS 2022 Tier-II Benchmark
+          </span>
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-medium">
+            30-Bed Rural Secondary Care Center
+          </span>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-on-surface-variant font-body-sm text-body-sm pt-1">
+<div class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[15px] text-primary">pin_drop</span>
+<span>Block: Kalyanpur • District: Samastipur, Bihar (PIN: 848302)</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-outline">history</span>
+<span>Last Field Inspection: <strong class="text-on-surface font-medium font-mono-data">14-Oct-2024 (10:14 IST)</strong></span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-outline">person_outline</span>
+<span>Reporting CMO: <span class="text-on-surface font-medium">Dr. R. K. Choudhary</span></span>
+</div>
+</div>
+</div>
+<!-- Quick Action Bar -->
+<div class="flex flex-wrap items-center gap-2 self-start lg:self-center shrink-0">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container-low transition-colors font-label-md text-label-md shadow-sm" onclick="triggerActionModal('reAudit')" type="button">
+<span class="material-symbols-outlined text-[16px] text-amber-700">clinical_notes</span>
+<span>Re-score Trust Index</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-colors font-label-md text-label-md shadow-sm" onclick="triggerActionModal('dispatch')" type="button">
+<span class="material-symbols-outlined text-[16px]">local_shipping</span>
+<span>Dispatch Field Inspector</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-red-50 border border-red-200 text-red-800 hover:bg-red-100 transition-colors font-label-md text-label-md" onclick="triggerActionModal('flagCMO')" title="Formal Alert" type="button">
+<span class="material-symbols-outlined text-[16px] text-red-600">flag</span>
+<span>Flag for District CMO</span>
+</button>
+</div>
+</div>
+<!-- Authentic Hospital Metadata Chips Bar -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-lg p-2.5 flex items-center gap-2.5">
+<div class="w-8 h-8 rounded bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">emergency</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-[11px] text-on-surface-variant font-label-sm uppercase tracking-wider">Emergency Triage</span>
+<span class="text-body-sm font-semibold text-emerald-800 flex items-center gap-1">Active 24/7 Red/Yellow <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span></span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-lg p-2.5 flex items-center gap-2.5">
+<div class="w-8 h-8 rounded bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">alt_route</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-[11px] text-on-surface-variant font-label-sm uppercase tracking-wider">Affiliated Referral Hub</span>
+<span class="text-body-sm font-medium text-on-surface truncate" title="Darbhanga Medical College Hospital (DMCH)">DMCH Darbhanga (42 km)</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-lg p-2.5 flex items-center gap-2.5">
+<div class="w-8 h-8 rounded bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">power</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-[11px] text-on-surface-variant font-label-sm uppercase tracking-wider">Power Grid &amp; Genset</span>
+<span class="text-body-sm font-medium text-amber-900">3-Phase + 15kVA DG (Log Unverified)</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-lg p-2.5 flex items-center gap-2.5">
+<div class="w-8 h-8 rounded bg-cyan-50 text-cyan-700 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">mode_fan</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-[11px] text-on-surface-variant font-label-sm uppercase tracking-wider">Medical Oxygen Status</span>
+<span class="text-body-sm font-medium text-on-surface">Manifold Central + 8 D-Cylinders</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Operational Advisory Banner -->
+<div class="w-full rounded-lg bg-amber-50/80 border-l-4 border-amber-600 p-space-md border border-amber-200/60 shadow-xs">
+<div class="flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-amber-700 text-[22px] shrink-0 mt-0.5">warning</span>
+<div class="flex flex-col gap-1 text-on-surface w-full">
+<div class="flex flex-wrap items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-amber-900 font-semibold uppercase tracking-wider text-[11px]">Audit Contradiction Severity: Tier-2 Operational Warning</span>
+<span class="font-label-sm text-label-sm text-amber-800">• Clinical Governance Notice</span>
+</div>
+<span class="font-mono-data text-mono-data text-[11px] text-amber-900 bg-amber-100 px-2 py-0.5 rounded border border-amber-300">Case ID: AUD-2024-KLY-91</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+        State AI extraction discovered high-divergence contradictions between self-reported portal claims (<span class="font-semibold text-emerald-900">Emergency C-Section Ready</span>) and ground inspection logs (<span class="font-semibold text-red-700">Autoclave &amp; OT Sterilization Inoperative; Anaesthetist Vacancy</span>). Maternal emergency rerouting to DMCH Darbhanga is recommended until physical recertification.
+      </p>
+</div>
+</div>
+</div>
+<!-- 2. Interactive Navigation & Hospital Tabs -->
+<div class="w-full border-b border-outline-variant/60 bg-surface-container-lowest rounded-t-lg pt-1 px-2 flex items-center justify-between overflow-x-auto select-none">
+<div class="flex items-center gap-1 shrink-0" id="mainTabList">
+<button class="tab-button active flex items-center gap-2 px-3.5 py-2.5 font-label-md text-label-md font-semibold border-b-2 border-primary text-primary bg-primary/5 rounded-t transition-all" id="tab-btn-capabilities" onclick="switchTab('capabilities')">
+<span class="material-symbols-outlined text-[17px]">fact_check</span>
+<span>Clinical Capabilities &amp; Audits</span>
+<span class="w-5 h-5 rounded-full bg-red-100 text-red-800 text-[11px] font-bold flex items-center justify-center">2</span>
+</button>
+<button class="tab-button flex items-center gap-2 px-3.5 py-2.5 font-label-md text-label-md font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-t transition-all" id="tab-btn-census" onclick="switchTab('census')">
+<span class="material-symbols-outlined text-[17px]">single_bed</span>
+<span>Ward &amp; Bed Census (30 Beds)</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-high text-on-surface-variant text-[10px] font-mono-data">70% Occ</span>
+</button>
+<button class="tab-button flex items-center gap-2 px-3.5 py-2.5 font-label-md text-label-md font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-t transition-all" id="tab-btn-equipment" onclick="switchTab('equipment')">
+<span class="material-symbols-outlined text-[17px]">ac_unit</span>
+<span>Medical Equipment &amp; Cold Chain</span>
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+</button>
+<button class="tab-button flex items-center gap-2 px-3.5 py-2.5 font-label-md text-label-md font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-t transition-all" id="tab-btn-staff" onclick="switchTab('staff')">
+<span class="material-symbols-outlined text-[17px]">badge</span>
+<span>Staff Roster &amp; Biometrics</span>
+<span class="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[10px] font-mono-data">1 Deficit</span>
+</button>
+<button class="tab-button flex items-center gap-2 px-3.5 py-2.5 font-label-md text-label-md font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-t transition-all" id="tab-btn-dossier" onclick="switchTab('dossier')">
+<span class="material-symbols-outlined text-[17px]">history_edu</span>
+<span>Original Inspection Dossier</span>
+<span class="font-mono-data text-[10px] text-outline">RAW</span>
+</button>
+</div>
+<div class="hidden md:flex items-center gap-2 px-2 py-1 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">security</span>
+<span>Audited by Bihar State Health Gateway</span>
+</div>
+</div>
+<!-- ============================================================== -->
+<!-- TAB 1: CLINICAL CAPABILITIES & AUDITS -->
+<!-- ============================================================== -->
+<div class="tab-content active" id="tab-content-capabilities">
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start pt-2">
+<!-- Left Column: Verification Cards & Baseline -->
+<div class="xl:col-span-8 flex flex-col gap-space-lg">
+<!-- Interactive Claim Filter Pills -->
+<div class="flex flex-wrap items-center justify-between gap-2 bg-surface-container-lowest p-2.5 rounded-lg border border-outline-variant/60">
+<div class="flex items-center gap-1.5">
+<span class="text-on-surface-variant font-label-sm text-label-sm uppercase font-semibold mr-1">Filter Audit Claims:</span>
+<button class="px-2.5 py-1 rounded bg-primary-container text-on-primary font-label-sm text-label-sm font-medium transition-colors" id="claim-filter-all" onclick="filterClaims('all')">
+            All Claims (4)
+          </button>
+<button class="px-2.5 py-1 rounded bg-surface-container-low hover:bg-surface-container text-red-800 font-label-sm text-label-sm font-medium transition-colors border border-red-200" id="claim-filter-discrepancy" onclick="filterClaims('discrepancy')">
+            Contradictions (1)
+          </button>
+<button class="px-2.5 py-1 rounded bg-surface-container-low hover:bg-surface-container text-amber-800 font-label-sm text-label-sm font-medium transition-colors border border-amber-200" id="claim-filter-staffing" onclick="filterClaims('staffing')">
+            Staff Deficits (1)
+          </button>
+<button class="px-2.5 py-1 rounded bg-surface-container-low hover:bg-surface-container text-emerald-800 font-label-sm text-label-sm font-medium transition-colors border border-emerald-200" id="claim-filter-verified" onclick="filterClaims('verified')">
+            Telemetry Verified (2)
+          </button>
+</div>
+<span class="text-outline font-mono-data text-mono-data text-[11px] hidden sm:inline">Reconciliation Confidence Index: 88.4%</span>
+</div>
+<!-- CARD 1: Emergency C-Section & OT Readiness (Discrepancy) -->
+<div class="claim-card rounded-lg bg-surface-container-lowest border-2 border-red-200 p-space-md flex flex-col gap-space-sm shadow-xs" data-claim-type="discrepancy">
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2 pb-2 border-b border-surface-container-high">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-red-600"></span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-semibold">Emergency C-Section &amp; Major OT Readiness</h3>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono-data text-mono-data text-[10px] uppercase">CAP-SURG-01</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span>Automated Forensic Confidence: <strong class="font-mono-data text-mono-data text-on-surface">91%</strong></span>
+<span class="text-outline-variant">•</span>
+<span>Claimed Status: <em class="text-on-surface not-italic font-medium">"24x7 Functional Emergency Obstetric Surgery"</em></span>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-red-100 text-red-900 border border-red-200 font-label-sm text-label-sm uppercase font-semibold shrink-0">
+<span class="material-symbols-outlined text-[14px]">cancel</span>
+            Inconsistent with Inspection Log
+          </span>
+</div>
+<!-- Two-Column Side-by-Side Comparison -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md pt-1">
+<div class="rounded bg-surface-container-low p-3 flex flex-col gap-1 border-l-3 border-outline-variant">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Self-Reported Registry Claim</span>
+<span class="font-mono-data text-[10px] text-outline">State Portal CHC v24.1</span>
+</div>
+<blockquote class="font-body-sm text-body-sm text-on-surface italic leading-relaxed pt-1">
+              “Facility asserts round-the-clock emergency obstetric surgical preparedness, functional Boyle's anaesthesia workstation, and operational major autoclave sterilizer.”
+            </blockquote>
+<span class="font-label-sm text-label-sm text-outline mt-1 font-mono-data">Table 8-A: Institutional Delivery Capabilities</span>
+</div>
+<div class="rounded bg-red-50/80 p-3 flex flex-col gap-1 border-l-3 border-red-600 border border-red-100">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-red-800 font-semibold uppercase tracking-wider">Field Inspection Ground Truth</span>
+<span class="font-mono-data text-[10px] text-red-700 font-medium">14-Oct-2024 Audit</span>
+</div>
+<blockquote class="font-body-sm text-body-sm text-red-950 font-medium leading-relaxed pt-1">
+              “Operation Theater padlocked during surprise check. Autoclave heating coil burnt out; primary shadowless surgical lamp inoperative due to short-circuit. Reagents for surgical swab tests expired.”
+            </blockquote>
+<span class="font-mono-data text-mono-data text-[11px] text-red-800 mt-1">Inspection Note Ref: field_inspection_notes_2024.txt [Line 184]</span>
+</div>
+</div>
+<!-- Interactive Action Bar for this Claim -->
+<div class="rounded bg-surface-container p-2.5 flex flex-wrap items-center justify-between gap-2 border border-outline-variant/40">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">gavel</span>
+<span class="font-body-sm text-body-sm font-medium text-on-surface">Auditor Action:</span>
+<span class="text-body-sm text-red-800 font-semibold" id="status-CAP-SURG-01">Flagged for District CMO Intervention</span>
+</div>
+<div class="flex items-center gap-1.5">
+<button class="px-2.5 py-1 rounded bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container-high transition-colors font-label-sm text-label-sm font-medium" onclick="confirmClaimAction('CAP-SURG-01', 'Confirmed Finding recorded. Log signed by Dr. Rao.')">
+              Confirm Field Finding
+            </button>
+<button class="px-2.5 py-1 rounded bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container-high transition-colors font-label-sm text-label-sm font-medium" onclick="confirmClaimAction('CAP-SURG-01', 'Re-inspection expedited with Samastipur Civil Surgeon.')">
+              Request Re-inspection
+            </button>
+<button class="px-2.5 py-1 rounded bg-red-700 text-white hover:bg-red-800 transition-colors font-label-sm text-label-sm font-medium" onclick="confirmClaimAction('CAP-SURG-01', 'Formal Red-Alert dispatched to District CMO Desk.')">
+              Flag for District CMO
+            </button>
+</div>
+</div>
+</div>
+<!-- CARD 2: Anaesthesiology Staffing Allocation (Staff Deficit) -->
+<div class="claim-card rounded-lg bg-surface-container-lowest border border-amber-300 p-space-md flex flex-col gap-space-sm shadow-xs" data-claim-type="staffing">
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2 pb-2 border-b border-surface-container-high">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-semibold">Anaesthesiology &amp; Specialist Surgeon Coverage</h3>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono-data text-mono-data text-[10px] uppercase">CAP-HR-04</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span>Confidence: <strong class="font-mono-data text-mono-data text-on-surface">78%</strong></span>
+<span class="text-outline-variant">•</span>
+<span>Claimed Baseline: <em class="text-on-surface not-italic font-medium">"Specialist Anaesthetist on Rotational Duty"</em></span>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-amber-100 text-amber-900 border border-amber-200 font-label-sm text-label-sm uppercase font-semibold shrink-0">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+            Staffing Deficit Flagged
+          </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md pt-1">
+<div class="rounded bg-surface-container-low p-3 flex flex-col gap-1 border-l-3 border-outline-variant">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Administrative Schedule Excerpt</span>
+<blockquote class="font-body-sm text-body-sm text-on-surface italic leading-relaxed pt-1">
+              “Specialist anaesthesia coverage assigned on 48-hour rotational cycle between Kalyanpur CHC and Pusa CHC.”
+            </blockquote>
+<span class="font-label-sm text-label-sm text-outline mt-1 font-mono-data">Source: HR-SAM-24 Sub-Division Roster</span>
+</div>
+<div class="rounded bg-amber-50/80 p-3 flex flex-col gap-1 border-l-3 border-amber-600 border border-amber-100">
+<span class="font-label-sm text-label-sm text-amber-900 font-semibold uppercase tracking-wider">State Payroll &amp; Biometric Audit</span>
+<blockquote class="font-body-sm text-body-sm text-amber-950 font-medium leading-relaxed pt-1">
+              “October payroll logs zero sanctioned MD/DA Anaesthetist punches at Kalyanpur CHC. 1 General Medical Officer logged on triage duty. No record of on-call specialist compensation.”
+            </blockquote>
+<span class="font-mono-data text-mono-data text-[11px] text-amber-900 mt-1">Source: payroll_q3_2024.csv [Row #8492-STAFF]</span>
+</div>
+</div>
+<!-- Interactive 30-Day Shift Roster Drawer Button -->
+<div class="flex items-center justify-between pt-1">
+<button class="inline-flex items-center gap-1 text-primary hover:text-primary-container font-label-sm text-label-sm font-semibold" onclick="toggleShiftRoster()">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+<span id="shiftRosterBtnText">View 30-Day Biometric Shift Roster Logs</span>
+<span class="material-symbols-outlined text-[16px]" id="shiftRosterChevron">expand_more</span>
+</button>
+<span class="text-body-sm text-outline font-mono-data">Biometric Machine ID: BIO-CHC-04</span>
+</div>
+<!-- Collapsible 30-Day Shift Roster Table -->
+<div class="hidden rounded-lg bg-surface-container-low p-3 border border-outline-variant/60 flex flex-col gap-2 mt-1" id="shiftRosterDrawer">
+<span class="font-label-sm text-label-sm font-semibold text-on-surface uppercase">Last 5 Shift Punch Records (Sample from 30-Day Window)</span>
+<div class="overflow-x-auto">
+<table class="w-full text-left font-body-sm text-body-sm border-collapse">
+<thead>
+<tr class="border-b border-outline-variant text-on-surface-variant font-label-sm text-label-sm uppercase">
+<th class="py-1">Date</th>
+<th class="py-1">Cadre</th>
+<th class="py-1">Designated Doctor</th>
+<th class="py-1">Biometric In</th>
+<th class="py-1">Biometric Out</th>
+<th class="py-1">Verification</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high font-mono-data text-[11px]">
+<tr>
+<td class="py-1.5 text-on-surface">14-Oct-2024</td>
+<td class="py-1.5 font-sans">General MO</td>
+<td class="py-1.5 font-sans">Dr. Prabhat Mishra</td>
+<td class="py-1.5 text-emerald-700">08:02 IST</td>
+<td class="py-1.5 text-emerald-700">16:15 IST</td>
+<td class="py-1.5 text-emerald-800 font-sans">Present</td>
+</tr>
+<tr>
+<td class="py-1.5 text-on-surface">14-Oct-2024</td>
+<td class="py-1.5 font-sans">Anaesthetist</td>
+<td class="py-1.5 font-sans text-red-600">[Unfilled Post]</td>
+<td class="py-1.5 text-outline">--:--</td>
+<td class="py-1.5 text-outline">--:--</td>
+<td class="py-1.5 text-red-700 font-bold font-sans">Absent / Vacant</td>
+</tr>
+<tr>
+<td class="py-1.5 text-on-surface">13-Oct-2024</td>
+<td class="py-1.5 font-sans">Gynaecologist</td>
+<td class="py-1.5 font-sans">Dr. Meena Kumari</td>
+<td class="py-1.5 text-emerald-700">09:10 IST</td>
+<td class="py-1.5 text-emerald-700">14:45 IST</td>
+<td class="py-1.5 text-emerald-800 font-sans">Present</td>
+</tr>
+<tr>
+<td class="py-1.5 text-on-surface">13-Oct-2024</td>
+<td class="py-1.5 font-sans">Anaesthetist</td>
+<td class="py-1.5 font-sans text-red-600">[Rotational Call]</td>
+<td class="py-1.5 text-outline">--:--</td>
+<td class="py-1.5 text-outline">--:--</td>
+<td class="py-1.5 text-red-700 font-sans">No Record</td>
+</tr>
+<tr>
+<td class="py-1.5 text-on-surface">12-Oct-2024</td>
+<td class="py-1.5 font-sans">General MO</td>
+<td class="py-1.5 font-sans">Dr. Suresh Prasad</td>
+<td class="py-1.5 text-emerald-700">08:15 IST</td>
+<td class="py-1.5 text-emerald-700">18:00 IST</td>
+<td class="py-1.5 text-emerald-800 font-sans">Present</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- CARD 3: Blood Storage Unit (BSU) & Cold Chain (Telemetry Verified) -->
+<div class="claim-card rounded-lg bg-surface-container-lowest border border-emerald-300 p-space-md flex flex-col gap-space-sm shadow-xs" data-claim-type="verified">
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2 pb-2 border-b border-surface-container-high">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-semibold">Blood Storage Unit (BSU) &amp; Continuous Cold Chain</h3>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono-data text-mono-data text-[10px] uppercase">CAP-BSU-02</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span>Confidence: <strong class="font-mono-data text-mono-data text-on-surface">95%</strong></span>
+<span class="text-outline-variant">•</span>
+<span>Primary Claim: <em class="text-on-surface not-italic font-medium">"Licensed BSU with continuous 2-6°C log"</em></span>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-100 text-emerald-900 border border-emerald-200 font-label-sm text-label-sm uppercase font-semibold shrink-0">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+            Supported by Telemetry
+          </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md pt-1">
+<div class="rounded bg-surface-container-low p-3 flex flex-col gap-1 border-l-3 border-outline-variant">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Statutory License Registry</span>
+<blockquote class="font-body-sm text-body-sm text-on-surface italic leading-relaxed pt-1">
+              “Blood storage authorization certified under State Drug Control Authority License #BSU-048-EXP26. Current stock verified: 4 PRBC units (B+ve).”
+            </blockquote>
+<span class="font-label-sm text-label-sm text-outline mt-1 font-mono-data">Drug Control Directorate Archive</span>
+</div>
+<!-- Live Telemetry Simulation Widget -->
+<div class="rounded bg-emerald-50/70 p-3 flex flex-col gap-1 border-l-3 border-emerald-600 border border-emerald-100">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-emerald-800 font-semibold uppercase tracking-wider">Live IoT Sensor Feed</span>
+<span class="flex items-center gap-1 font-mono-data text-[10px] text-emerald-700"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> LIVE PING</span>
+</div>
+<div class="flex items-center justify-between py-1">
+<div>
+<span class="text-2xl font-bold font-mono-data text-emerald-950" id="liveTempDisplay">3.8°C</span>
+<span class="text-[11px] text-emerald-800 block">Nominal (Permissible: 2.0°C - 6.0°C)</span>
+</div>
+<div class="text-right">
+<span class="font-mono-data text-mono-data text-[11px] text-on-surface block">Device: 8492-FRG1</span>
+<span class="font-mono-data text-[10px] text-outline block">Battery: 98% • AC Grid On</span>
+</div>
+</div>
+<span class="font-mono-data text-mono-data text-[11px] text-emerald-900">Zero excursions detected in past 30 days.</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<button class="inline-flex items-center gap-1 text-primary hover:text-primary-container font-label-sm text-label-sm font-semibold" onclick="toggleTempGraph()">
+<span class="material-symbols-outlined text-[16px]">show_chart</span>
+<span id="tempGraphBtnText">View 7-day temperature log graph</span>
+<span class="material-symbols-outlined text-[16px]" id="tempGraphChevron">expand_more</span>
+</button>
+<span class="text-body-sm text-emerald-800 font-medium">Whole Blood / PRBC Compliant</span>
+</div>
+<!-- 7-day Temperature Chart Simulation -->
+<div class="hidden rounded-lg bg-surface-container-low p-3 border border-outline-variant/60 flex flex-col gap-2 mt-1" id="tempGraphDrawer">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>7-Day Continuous Cold Chain Telemetry Profile (Hourly Sampling)</span>
+<span class="font-mono-data text-emerald-800">Mean: 3.78°C ± 0.3°C</span>
+</div>
+<!-- Visual SVG Graph -->
+<div class="w-full h-24 bg-surface-container-lowest rounded p-2 border border-outline-variant/40 flex items-end justify-between gap-1">
+<div class="flex flex-col items-center flex-1 h-full justify-end"><div class="w-full bg-emerald-500 rounded-t h-[60%]" title="Day 1: 3.6°C"></div><span class="text-[9px] font-mono-data mt-1 text-outline">D-7</span></div>
+<div class="flex flex-col items-center flex-1 h-full justify-end"><div class="w-full bg-emerald-500 rounded-t h-[65%]" title="Day 2: 3.9°C"></div><span class="text-[9px] font-mono-data mt-1 text-outline">D-6</span></div>
+<div class="flex flex-col items-center flex-1 h-full justify-end"><div class="w-full bg-emerald-500 rounded-t h-[58%]" title="Day 3: 3.5°C"></div><span class="text-[9px] font-mono-data mt-1 text-outline">D-5</span></div>
+<div class="flex flex-col items-center flex-1 h-full justify-end"><div class="w-full bg-emerald-500 rounded-t h-[68%]" title="Day 4: 4.1°C"></div><span class="text-[9px] font-mono-data mt-1 text-outline">D-4</span></div>
+<div class="flex flex-col items-center flex-1 h-full justify-end"><div class="w-full bg-emerald-500 rounded-t h-[62%]" title="Day 5: 3.7°C"></div><span class="text-[9px] font-mono-data mt-1 text-outline">D-3</span></div>
+<div class="flex flex-col items-center flex-1 h-full justify-end"><div class="w-full bg-emerald-500 rounded-t h-[60%]" title="Day 6: 3.6°C"></div><span class="text-[9px] font-mono-data mt-1 text-outline">D-2</span></div>
+<div class="flex flex-col items-center flex-1 h-full justify-end"><div class="w-full bg-emerald-600 rounded-t h-[64%]" title="Today: 3.8°C"></div><span class="text-[9px] font-mono-data mt-1 text-emerald-800 font-bold">Today</span></div>
+</div>
+<div class="flex items-center justify-between text-[11px] text-outline font-mono-data">
+<span>Lower Threshold: 2.0°C</span>
+<span class="text-emerald-700">Safe Operating Range</span>
+<span>Upper Threshold: 6.0°C</span>
+</div>
+</div>
+</div>
+<!-- CARD 4: Neonatal Stabilization Unit (NBSU) (Verified) -->
+<div class="claim-card rounded-lg bg-surface-container-lowest border border-emerald-300 p-space-md flex flex-col gap-space-sm shadow-xs" data-claim-type="verified">
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2 pb-2 border-b border-surface-container-high">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-semibold">Neonatal Stabilization Unit (NBSU) &amp; Radiant Warmers</h3>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono-data text-mono-data text-[10px] uppercase">CAP-NBSU-03</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span>Confidence: <strong class="font-mono-data text-mono-data text-on-surface">94%</strong></span>
+<span class="text-outline-variant">•</span>
+<span>Paediatrician On-Duty: <span class="text-on-surface font-medium">Dr. S. K. Verma (M.D. Paediatrics)</span></span>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-100 text-emerald-900 border border-emerald-200 font-label-sm text-label-sm uppercase font-semibold shrink-0">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+            Functional &amp; Inspected
+          </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md pt-1">
+<div class="rounded bg-surface-container-low p-3 flex flex-col gap-1 border-l-3 border-outline-variant">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Facility Hardware Specification</span>
+<p class="font-body-sm text-body-sm text-on-surface leading-relaxed">
+              4 Microprocessor Radiant Warmers with servo control, 2 Phototherapy units (CFL/LED array), and resuscitation bag-valve-mask pediatric kits verified in working order.
+            </p>
+</div>
+<div class="rounded bg-emerald-50/70 p-3 flex flex-col gap-1 border-l-3 border-emerald-600 border border-emerald-100">
+<span class="font-label-sm text-label-sm text-emerald-800 font-semibold uppercase tracking-wider">Neonatal Audit Findings</span>
+<p class="font-body-sm text-body-sm text-emerald-950 font-medium leading-relaxed">
+              NBSU maintained 2 neonates stabilized successfully over past 48 hours prior to safe secondary transfer. Oxygen delivery manifold calibrated on 10-Oct-2024.
+            </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Clinical Auditor Workbench & Raw Document Inspector -->
+<div class="xl:col-span-4 flex flex-col gap-space-lg">
+<!-- Interactive Clinical Auditor Workbench Box -->
+<div class="rounded-lg bg-surface-container-lowest border border-outline-variant p-space-md flex flex-col gap-3 shadow-xs">
+<div class="flex items-center justify-between border-b border-surface-container-high pb-2">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">clinical_notes</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">
+              Clinical Auditor Workbench
+            </h3>
+</div>
+<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 font-mono-data text-[10px] font-bold">READY</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Assign disposition for contested claims or forward direct instructions to the Samastipur District Health Mission.
+        </p>
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Active Inspector Annotation:</label>
+<div class="p-2.5 rounded bg-surface-container-low border border-outline-variant/60 font-body-sm text-body-sm text-on-surface" id="inspectorNoteBox">
+            Select any yellow highlighted snippet in the inspection text below to review or append forensic reviewer notes.
+          </div>
+</div>
+<div class="flex flex-col gap-2 pt-1">
+<button class="w-full py-2 px-3 rounded-lg bg-red-700 text-white font-label-md text-label-md font-semibold hover:bg-red-800 transition-colors flex items-center justify-center gap-1.5 shadow-sm" onclick="saveAuditorDecision('Discrepancy Confirmed: C-Section emergency suspended; notice served to BHS.')">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+            Confirm Surgical Discrepancy
+          </button>
+<div class="grid grid-cols-2 gap-2">
+<button class="py-1.5 px-2 rounded border border-outline-variant text-on-surface bg-surface-container-lowest hover:bg-surface-container-low transition-colors font-label-sm text-label-sm font-medium text-center" onclick="saveAuditorDecision('Field inspection scheduled with District Bio-Medical Engineer.')">
+              Request Field Re-Audit
+            </button>
+<button class="py-1.5 px-2 rounded border border-outline-variant text-on-surface bg-surface-container-lowest hover:bg-surface-container-low transition-colors font-label-sm text-label-sm font-medium text-center" onclick="saveAuditorDecision('Specialist deficiency escalated to District Collectorate.')">
+              Escalate HR Deficit
+            </button>
+</div>
+</div>
+<div class="hidden p-2 rounded bg-emerald-100 text-emerald-900 text-body-sm font-medium border border-emerald-300" id="decisionNotification">
+          Decision logged successfully into VERITAS audit trail.
+        </div>
+</div>
+<!-- Raw Source Record Inspection Drawer with Clickable Annotations -->
+<div class="rounded-lg bg-surface-container-lowest border border-outline-variant overflow-hidden shadow-xs">
+<div class="px-space-md py-2.5 bg-surface-container-low border-b border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">terminal</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">
+              Raw Source Dispatch Excerpt
+            </h2>
+</div>
+<span class="font-mono-data text-mono-data text-[10px] text-on-surface-variant bg-surface-container px-1 py-0.5 rounded">UTF-8 / SHA-256</span>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between font-mono-data text-mono-data text-[11px] text-on-surface-variant pb-1 border-b border-surface-variant">
+<span>RECORD #ROW-8492-BR</span>
+<span>14-Oct-2024 10:14 IST</span>
+</div>
+<div class="p-3 bg-stone-900 text-stone-200 rounded font-mono-data text-mono-data text-[11px] leading-relaxed select-text border border-stone-800">
+<span class="text-stone-500">--- BEGIN FIELD DISPATCH LOG ---</span><br/>
+            ...Kalyanpur CHC inspected by Sub-Divisional Medical Officer team.<br/>
+            - <span class="annotated-text text-stone-900" onclick="selectAnnotation('opd')">Routine OPD active (140 patients attended)</span>.<br/>
+            - Labor room active for normal deliveries.<br/>
+            - <span class="annotated-text text-stone-900" onclick="selectAnnotation('ot')">Major OT locked due to autoclave maintenance requirement and electrical short in surgical lamp wiring</span>.<br/>
+            - <span class="annotated-text text-stone-900" onclick="selectAnnotation('staff')">Anesthetist requisition pending with district civil surgeon office</span>.<br/>
+            - <span class="annotated-text text-stone-900" onclick="selectAnnotation('bsu')">Blood unit functional; current stock 4 units PRBC B+ve</span>.<br/>
+<span class="text-stone-500">--- END FIELD DISPATCH LOG ---</span>
+</div>
+<div class="text-[11px] text-outline font-sans flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">touch_app</span>
+<span>Tip: Click highlighted phrases above to reveal forensic auditor insights.</span>
+</div>
+</div>
+</div>
+<!-- Institutional Authority & Gateway Chain -->
+<div class="rounded-lg bg-surface-container-low border border-outline-variant p-space-md flex flex-col gap-2 text-on-surface-variant">
+<div class="flex items-center gap-1.5 text-on-surface font-label-md text-label-md font-semibold">
+<span class="material-symbols-outlined text-[16px] text-primary">verified_user</span>
+<span>Gateway Attestation &amp; Non-Repudiation</span>
+</div>
+<p class="font-body-sm text-body-sm leading-relaxed">
+          Record cryptographically hashed and synced with Bihar State Health Registry. Facility Chief Administrative Officer notified regarding emergency surgical status revocation on 16-Oct-2024.
+        </p>
+<div class="pt-1 flex items-center justify-between font-label-sm text-label-sm text-outline border-t border-outline-variant/40 pt-1.5">
+<span>District Node: <strong>218-SAMASTIPUR</strong></span>
+<span>NIN ID: <strong>BR-849201</strong></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ============================================================== -->
+<!-- TAB 2: WARD & BED CENSUS (30 BEDS) -->
+<!-- ============================================================== -->
+<div class="tab-content" id="tab-content-census">
+<div class="flex flex-col gap-space-lg pt-2">
+<!-- Bed Overview Metrics -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Total Bed Capacity</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-2xl font-bold font-mono-data text-on-surface">30 Beds</span>
+<span class="text-xs text-outline font-medium">IPHS Sanctioned</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Active Occupancy</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-2xl font-bold font-mono-data text-emerald-800">21 Beds</span>
+<span class="text-xs font-semibold text-emerald-700 font-mono-data">70.0% Rate</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Maternity Census</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-2xl font-bold font-mono-data text-purple-900">11 / 12 Beds</span>
+<span class="text-xs text-red-600 font-semibold">91.6% (Near Cap)</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Vacant Available</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-2xl font-bold font-mono-data text-outline">9 Beds</span>
+<span class="text-xs text-emerald-700 font-medium">Immediate Intake</span>
+</div>
+</div>
+</div>
+<!-- Interactive Bed Capacity Explorer by Ward -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-space-md">
+<!-- Male General Ward -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-space-md flex flex-col gap-3">
+<div class="flex items-center justify-between border-b border-surface-container-high pb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">man</span>
+<h4 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Male General Ward</h4>
+</div>
+<span class="font-mono-data text-mono-data text-[12px] font-semibold text-on-surface">7 Occupied / 10 Beds</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Attending Senior Staff Nurse: Sister Pushpa Devi (Shift B)</p>
+<!-- Interactive Bed Node Grid -->
+<div class="grid grid-cols-5 gap-2 pt-1" id="maleWardGrid">
+<!-- 10 beds generated with realistic data -->
+<button class="bed-node relative p-2 rounded border border-emerald-300 bg-emerald-50 text-center hover:shadow transition" onclick="showBedDetails('M-01', 'Occupied', 'Ramesh Yadav (Age 42)', 'Post-fever observation', '13-Oct 14:20', 'Sister Pushpa')">
+<span class="font-mono-data text-[11px] font-bold text-emerald-950 block">M-01</span>
+<span class="text-[9px] uppercase font-semibold text-emerald-700">Occupied</span>
+</button>
+<button class="bed-node relative p-2 rounded border border-emerald-300 bg-emerald-50 text-center hover:shadow transition" onclick="showBedDetails('M-02', 'Occupied', 'Dilip Paswan (Age 55)', 'Respiratory distress', '14-Oct 03:10', 'Sister Pushpa')">
+<span class="font-mono-data text-[11px] font-bold text-emerald-950 block">M-02</span>
+<span class="text-[9px] uppercase font-semibold text-emerald-700">Occupied</span>
+</button>
+<button class="bed-node relative p-2 rounded border border-emerald-300 bg-emerald-50 text-center hover:shadow transition" onclick="showBedDetails('M-03', 'Occupied', 'Mohan Mahto (Age 31)', 'Gastroenteritis', '14-Oct 07:45', 'Sister Pushpa')">
+<span class="font-mono-data text-[11px] font-bold text-emerald-950 block">M-03</span>
+<span class="text-[9px] uppercase font-semibold text-emerald-700">Occupied</span>
+</button>
+<button class="bed-node relative p-2 rounded border border-outline-variant bg-surface-container-low text-center hover:shadow transition" onclick="showBedDetails('M-04', 'Vacant', 'None', 'Sanitized &amp; Ready', 'N/A', 'Sister Pushpa')">
+<span class="font-mono-data text-[11px] font-bold text-outline block">M-04</span>
+<span class="text-[9px] uppercase font-semibold text-outline">Vacant</span>
+</button>
+<button class="bed-node relative p-2 rounded border border-emerald-300 bg-emerald-50 text-center hover:shadow transition" onclick="showBedDetails('M-05', 'Occupied', 'Alok Ranjan (Age 28)', 'Accident trauma dressing', '14-Oct 09:00', 'Sister Pushpa')">
+<span class="font-mono-data text-[11px] font-bold text-emerald-950 block">M-05</span>
+<span class="text-[9px] uppercase font-semibold text-emerald-700">Occupied</span>
+</button>
+<button class="bed-node relative p-2 rounded border border-emerald-300 bg-emerald-50 text-center hover:shadow transition" onclick="showBedDetails('M-06', 'Occupied', 'Sunil Jha (Age 64)', 'Hypertensive monitoring', '13-Oct 22:30', 'Sister Pushpa')">
+<span class="font-mono-data text-[11px] font-bold text-emerald-950 block">M-06</span>
+<span class="text-[9px] uppercase font-semibold text-emerald-700">Occupied</span>
+</button>
+<button class="bed-node relative p-2 rounded border border-outline-variant bg-surface-container-low text-center hover:shadow transition" onclick="showBedDetails('M-07', 'Vacant', 'None', 'Cleaned &amp; Ready', 'N/A', 'Sister Pushpa')">
+<span class="font-mono-data text-[11px] font-bold text-outline block">M-07</span>
+<span class="text-[9px] uppercase font-semibold text-outline">Vacant</span>
+</button>
+<button class="bed-node relative p-2 rounded border border-emerald-300 bg-emerald-50 text-center hover:shadow transition" onclick="showBedDetails('M-08', 'Occupied', 'Praveen Das (Age 39)', 'Dengue suspect / Hydration', '14-Oct 01:15', 'Sister Pushpa')">
+<span class="font-mono-data text-[11px] font-bold text-emerald-950 block">M-08</span>
+<span class="text-[9px] uppercase font-semibold text-emerald-700">Occupied</span>
+</button>
+<button class="bed-node relative p-2 rounded border border-emerald-300 bg-emerald-50 text-center hover:shadow transition" onclick="showBedDetails('M-09', 'Occupied', 'Md. Imran (Age 50)', 'Asthma flare', '14-Oct 08:30', 'Sister Pushpa')">
+<span class="font-mono-data text-[11px] font-bold text-emerald-950 block">M-09</span>
+<span class="text-[9px] uppercase font-semibold text-emerald-700">Occupied</span>
+</button>
+<button class="bed-node relative p-2 rounded border border-outline-variant bg-surface-container-low text-center hover:shadow transition" onclick="showBedDetails('M-10', 'Vacant', 'None', 'Disinfected', 'N/A', 'Sister Pushpa')">
+<span class="font-mono-data text-[11px] font-bold text-outline block">M-10</span>
+<span class="text-[9px] uppercase font-semibold text-outline">Vacant</span>
+</button>
+</div>
+</div>
+<!-- Female Maternity Ward -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-space-md flex flex-col gap-3">
+<div class="flex items-center justify-between border-b border-surface-container-high pb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-purple-700 text-[18px]">pregnant_woman</span>
+<h4 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Female Maternity Ward</h4>
+</div>
+<span class="font-mono-data text-mono-data text-[12px] font-semibold text-purple-900">11 Occupied / 12 Beds</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Attending Midwife &amp; GNM: Sunita Soren, ANM Renu Kumari</p>
+<!-- 12 Beds Grid -->
+<div class="grid grid-cols-6 gap-2 pt-1" id="maternityWardGrid">
+<button class="bed-node p-2 rounded border border-purple-300 bg-purple-50 text-center hover:shadow transition" onclick="showBedDetails('F-01', 'Occupied', 'Pooja Devi (Age 23)', 'Post-partum Day 1 (Normal Delivery)', '13-Oct 11:20', 'GNM Sunita')">
+<span class="font-mono-data text-[11px] font-bold text-purple-950 block">F-01</span>
+<span class="text-[9px] uppercase font-semibold text-purple-700">Occ</span>
+</button>
+<button class="bed-node p-2 rounded border border-purple-300 bg-purple-50 text-center hover:shadow transition" onclick="showBedDetails('F-02', 'Occupied', 'Sita Kumari (Age 26)', 'Active Labor Room Transfer', '14-Oct 04:30', 'GNM Sunita')">
+<span class="font-mono-data text-[11px] font-bold text-purple-950 block">F-02</span>
+<span class="text-[9px] uppercase font-semibold text-purple-700">Occ</span>
+</button>
+<button class="bed-node p-2 rounded border border-purple-300 bg-purple-50 text-center hover:shadow transition" onclick="showBedDetails('F-03', 'Occupied', 'Archana Singh (Age 21)', 'Post-partum Care', '13-Oct 20:10', 'GNM Sunita')">
+<span class="font-mono-data text-[11px] font-bold text-purple-950 block">F-03</span>
+<span class="text-[9px] uppercase font-semibold text-purple-700">Occ</span>
+</button>
+<button class="bed-node p-2 rounded border border-purple-300 bg-purple-50 text-center hover:shadow transition" onclick="showBedDetails('F-04', 'Occupied', 'Rekha Devi (Age 29)', 'Severe Anaemia with Pregnancy', '14-Oct 01:25', 'GNM Sunita')">
+<span class="font-mono-data text-[11px] font-bold text-purple-950 block">F-04</span>
+<span class="text-[9px] uppercase font-semibold text-purple-700">Occ</span>
+</button>
+<button class="bed-node p-2 rounded border border-purple-300 bg-purple-50 text-center hover:shadow transition" onclick="showBedDetails('F-05', 'Occupied', 'Chanda Khatun (Age 24)', 'Post-partum Observation', '13-Oct 15:40', 'GNM Sunita')">
+<span class="font-mono-data text-[11px] font-bold text-purple-950 block">F-05</span>
+<span class="text-[9px] uppercase font-semibold text-purple-700">Occ</span>
+</button>
+<button class="bed-node p-2 rounded border border-purple-300 bg-purple-50 text-center hover:shadow transition" onclick="showBedDetails('F-06', 'Occupied', 'Kavita Kumari (Age 27)', 'Pre-eclampsia Monitoring', '14-Oct 06:15', 'GNM Sunita')">
+<span class="font-mono-data text-[11px] font-bold text-purple-950 block">F-06</span>
+<span class="text-[9px] uppercase font-semibold text-purple-700">Occ</span>
+</button>
+<button class="bed-node p-2 rounded border border-purple-300 bg-purple-50 text-center hover:shadow transition" onclick="showBedDetails('F-07', 'Occupied', 'Manju Devi (Age 22)', 'Post-partum Day 2', '12-Oct 21:00', 'GNM Sunita')">
+<span class="font-mono-data text-[11px] font-bold text-purple-950 block">F-07</span>
+<span class="text-[9px] uppercase font-semibold text-purple-700">Occ</span>
+</button>
+<button class="bed-node p-2 rounded border border-purple-300 bg-purple-50 text-center hover:shadow transition" onclick="showBedDetails('F-08', 'Occupied', 'Radha Ray (Age 25)', 'Post-partum Day 1', '13-Oct 17:30', 'GNM Sunita')">
+<span class="font-mono-data text-[11px] font-bold text-purple-950 block">F-08</span>
+<span class="text-[9px] uppercase font-semibold text-purple-700">Occ</span>
+</button>
+<button class="bed-node p-2 rounded border border-purple-300 bg-purple-50 text-center hover:shadow transition" onclick="showBedDetails('F-09', 'Occupied', 'Geeta Devi (Age 32)', 'Post-natal Recovery', '13-Oct 19:45', 'GNM Sunita')">
+<span class="font-mono-data text-[11px] font-bold text-purple-950 block">F-09</span>
+<span class="text-[9px] uppercase font-semibold text-purple-700">Occ</span>
+</button>
+<button class="bed-node p-2 rounded border border-purple-300 bg-purple-50 text-center hover:shadow transition" onclick="showBedDetails('F-10', 'Occupied', 'Farzana Bano (Age 20)', 'Labor First Stage', '14-Oct 08:00', 'GNM Sunita')">
+<span class="font-mono-data text-[11px] font-bold text-purple-950 block">F-10</span>
+<span class="text-[9px] uppercase font-semibold text-purple-700">Occ</span>
+</button>
+<button class="bed-node p-2 rounded border border-purple-300 bg-purple-50 text-center hover:shadow transition" onclick="showBedDetails('F-11', 'Occupied', 'Suman Kumari (Age 28)', 'Post-partum Day 1', '14-Oct 02:20', 'GNM Sunita')">
+<span class="font-mono-data text-[11px] font-bold text-purple-950 block">F-11</span>
+<span class="text-[9px] uppercase font-semibold text-purple-700">Occ</span>
+</button>
+<button class="bed-node p-2 rounded border border-outline-variant bg-surface-container-low text-center hover:shadow transition" onclick="showBedDetails('F-12', 'Vacant', 'None', 'Prepared for triage overflow', 'N/A', 'GNM Sunita')">
+<span class="font-mono-data text-[11px] font-bold text-outline block">F-12</span>
+<span class="text-[9px] uppercase font-semibold text-outline">Vacant</span>
+</button>
+</div>
+</div>
+<!-- Emergency Observation Ward -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-space-md flex flex-col gap-3">
+<div class="flex items-center justify-between border-b border-surface-container-high pb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-red-600 text-[18px]">medical_services</span>
+<h4 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Emergency Observation</h4>
+</div>
+<span class="font-mono-data text-mono-data text-[12px] font-semibold text-red-800">2 Occupied / 4 Beds</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">24/7 Oxygen Manifold Point connected; Emergency Crash Cart positioned</p>
+<div class="grid grid-cols-4 gap-2 pt-1">
+<button class="p-2 rounded border border-red-300 bg-red-50 text-center hover:shadow transition" onclick="showBedDetails('EM-01', 'Occupied', 'Surendra Singh (Age 48)', 'Acute Angina, ECG monitored', '14-Oct 09:12', 'Staff Nurse Bindu')">
+<span class="font-mono-data text-[11px] font-bold text-red-950 block">EM-01</span>
+<span class="text-[9px] uppercase font-semibold text-red-700">Cardiac</span>
+</button>
+<button class="p-2 rounded border border-red-300 bg-red-50 text-center hover:shadow transition" onclick="showBedDetails('EM-02', 'Occupied', 'Brijesh Pandey (Age 34)', 'Road traffic accident stabilization', '14-Oct 09:40', 'Staff Nurse Bindu')">
+<span class="font-mono-data text-[11px] font-bold text-red-950 block">EM-02</span>
+<span class="text-[9px] uppercase font-semibold text-red-700">Trauma</span>
+</button>
+<button class="p-2 rounded border border-outline-variant bg-surface-container-low text-center hover:shadow transition" onclick="showBedDetails('EM-03', 'Vacant', 'None', 'Ready with O2 Mask', 'N/A', 'Staff Nurse Bindu')">
+<span class="font-mono-data text-[11px] font-bold text-outline block">EM-03</span>
+<span class="text-[9px] uppercase font-semibold text-outline">Vacant</span>
+</button>
+<button class="p-2 rounded border border-outline-variant bg-surface-container-low text-center hover:shadow transition" onclick="showBedDetails('EM-04', 'Vacant', 'None', 'Ready with Syringe Pump', 'N/A', 'Staff Nurse Bindu')">
+<span class="font-mono-data text-[11px] font-bold text-outline block">EM-04</span>
+<span class="text-[9px] uppercase font-semibold text-outline">Vacant</span>
+</button>
+</div>
+</div>
+<!-- Pediatric Isolation Ward -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-space-md flex flex-col gap-3">
+<div class="flex items-center justify-between border-b border-surface-container-high pb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-blue-600 text-[18px]">child_care</span>
+<h4 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Pediatric Isolation Ward</h4>
+</div>
+<span class="font-mono-data text-mono-data text-[12px] font-semibold text-blue-900">1 Occupied / 4 Beds</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Equipped with pediatric drip infusers and viral barrier hygiene kit</p>
+<div class="grid grid-cols-4 gap-2 pt-1">
+<button class="p-2 rounded border border-blue-300 bg-blue-50 text-center hover:shadow transition" onclick="showBedDetails('PED-01', 'Occupied', 'Baby of Chanda (6 Months)', 'Bronchiolitis / Nebulizer', '14-Oct 06:40', 'Sister Anjana')">
+<span class="font-mono-data text-[11px] font-bold text-blue-950 block">PED-01</span>
+<span class="text-[9px] uppercase font-semibold text-blue-700">Occupied</span>
+</button>
+<button class="p-2 rounded border border-outline-variant bg-surface-container-low text-center hover:shadow transition" onclick="showBedDetails('PED-02', 'Vacant', 'None', 'Sanitized', 'N/A', 'Sister Anjana')">
+<span class="font-mono-data text-[11px] font-bold text-outline block">PED-02</span>
+<span class="text-[9px] uppercase font-semibold text-outline">Vacant</span>
+</button>
+<button class="p-2 rounded border border-outline-variant bg-surface-container-low text-center hover:shadow transition" onclick="showBedDetails('PED-03', 'Vacant', 'None', 'Sanitized', 'N/A', 'Sister Anjana')">
+<span class="font-mono-data text-[11px] font-bold text-outline block">PED-03</span>
+<span class="text-[9px] uppercase font-semibold text-outline">Vacant</span>
+</button>
+<button class="p-2 rounded border border-outline-variant bg-surface-container-low text-center hover:shadow transition" onclick="showBedDetails('PED-04', 'Vacant', 'None', 'Sanitized', 'N/A', 'Sister Anjana')">
+<span class="font-mono-data text-[11px] font-bold text-outline block">PED-04</span>
+<span class="text-[9px] uppercase font-semibold text-outline">Vacant</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Live Bed Node Detail Inspector Callout -->
+<div class="rounded-lg bg-surface-container-low border border-primary/40 p-space-md flex flex-col md:flex-row items-start md:items-center justify-between gap-3" id="bedDetailInspector">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px]">airline_seat_individual_suite</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface" id="detailBedId">Selected: Bed M-01 (Male Ward)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant" id="detailBedPatient">Patient: Ramesh Yadav (Age 42) • Diagnosis: Post-fever observation</span>
+</div>
+</div>
+<div class="flex items-center gap-4 text-body-sm font-mono-data">
+<div><span class="text-outline text-[11px] block font-sans">Admitted:</span> <span class="text-on-surface" id="detailBedTime">13-Oct 14:20</span></div>
+<div><span class="text-outline text-[11px] block font-sans">Attending:</span> <span class="text-on-surface" id="detailBedNurse">Sister Pushpa</span></div>
+<button class="px-2.5 py-1 bg-surface-container-lowest border border-outline-variant rounded font-sans text-xs font-semibold hover:bg-white text-primary" onclick="alert('Digital chart requested for Bed ' + document.getElementById('detailBedId').innerText)">View EMR</button>
+</div>
+</div>
+</div>
+</div>
+<!-- ============================================================== -->
+<!-- TAB 3: MEDICAL EQUIPMENT & COLD CHAIN -->
+<!-- ============================================================== -->
+<div class="tab-content" id="tab-content-equipment">
+<div class="flex flex-col gap-space-lg pt-2">
+<div class="rounded-lg bg-surface-container-lowest border border-outline-variant p-space-md">
+<h3 class="font-headline-md text-headline-md text-on-surface font-semibold mb-2">Hospital Critical Equipment Inventory &amp; Calibrations</h3>
+<div class="overflow-x-auto">
+<table class="w-full text-left font-body-md text-body-md border-collapse">
+<thead>
+<tr class="border-b border-surface-container-high text-on-surface-variant font-label-sm text-label-sm uppercase bg-surface-container-low">
+<th class="py-2.5 px-3">Asset Code</th>
+<th class="py-2.5 px-3">Equipment Classification</th>
+<th class="py-2.5 px-3">Location / Ward</th>
+<th class="py-2.5 px-3">Operational Status</th>
+<th class="py-2.5 px-3">Last Bio-Med Check</th>
+<th class="py-2.5 px-3">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high text-on-surface">
+<tr>
+<td class="py-2 px-3 font-mono-data text-xs">EQ-OT-001</td>
+<td class="py-2 px-3 font-medium">Vertical Steam Autoclave 50L</td>
+<td class="py-2 px-3 text-on-surface-variant">Major Operation Theatre</td>
+<td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-red-100 text-red-900 text-xs font-semibold">Defunct (Heating Defect)</span></td>
+<td class="py-2 px-3 font-mono-data text-xs text-outline">14-Oct-2024 (Failed)</td>
+<td class="py-2 px-3"><button class="text-primary hover:underline text-xs font-medium" onclick="alert('Repair order submitted to Samastipur Biomedical Engineer for EQ-OT-001')">Issue Repair Order</button></td>
+</tr>
+<tr>
+<td class="py-2 px-3 font-mono-data text-xs">EQ-OT-004</td>
+<td class="py-2 px-3 font-medium">Ceiling Surgical Shadowless Lamp</td>
+<td class="py-2 px-3 text-on-surface-variant">Major Operation Theatre</td>
+<td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-red-100 text-red-900 text-xs font-semibold">Wiring Fault</span></td>
+<td class="py-2 px-3 font-mono-data text-xs text-outline">14-Oct-2024 (Failed)</td>
+<td class="py-2 px-3"><button class="text-primary hover:underline text-xs font-medium" onclick="alert('Work order dispatched for EQ-OT-004')">Issue Repair Order</button></td>
+</tr>
+<tr>
+<td class="py-2 px-3 font-mono-data text-xs">EQ-BSU-102</td>
+<td class="py-2 px-3 font-medium">Blood Bank Refrigerator (300L)</td>
+<td class="py-2 px-3 text-on-surface-variant">Blood Storage Unit</td>
+<td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 text-xs font-semibold">Nominal (3.8°C Live)</span></td>
+<td class="py-2 px-3 font-mono-data text-xs text-emerald-800">12-Oct-2024 (Passed)</td>
+<td class="py-2 px-3"><span class="text-xs text-outline">Telemetry Synced</span></td>
+</tr>
+<tr>
+<td class="py-2 px-3 font-mono-data text-xs">EQ-NBSU-05</td>
+<td class="py-2 px-3 font-medium">Radiant Infant Warmer (Microprocessor)</td>
+<td class="py-2 px-3 text-on-surface-variant">NBSU Newborn Ward</td>
+<td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 text-xs font-semibold">Active &amp; Calibrated</span></td>
+<td class="py-2 px-3 font-mono-data text-xs text-emerald-800">10-Oct-2024 (Passed)</td>
+<td class="py-2 px-3"><span class="text-xs text-outline">Certified</span></td>
+</tr>
+<tr>
+<td class="py-2 px-3 font-mono-data text-xs">EQ-GEN-01</td>
+<td class="py-2 px-3 font-medium">15kVA Diesel Generator Set</td>
+<td class="py-2 px-3 text-on-surface-variant">Utility Yard</td>
+<td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 text-xs font-semibold">Fuel Log Pending</span></td>
+<td class="py-2 px-3 font-mono-data text-xs text-amber-800">15-Aug-2024</td>
+<td class="py-2 px-3"><button class="text-primary hover:underline text-xs font-medium" onclick="alert('Fuel log audit notice dispatched to Kalyanpur CHC BMO')">Request Log</button></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<!-- ============================================================== -->
+<!-- TAB 4: STAFF ROSTER & BIOMETRICS -->
+<!-- ============================================================== -->
+<div class="tab-content" id="tab-content-staff">
+<div class="flex flex-col gap-space-lg pt-2">
+<div class="rounded-lg bg-surface-container-lowest border border-outline-variant p-space-md">
+<div class="flex items-center justify-between mb-3 border-b border-surface-container-high pb-2">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-semibold">Clinical Cadre Sanction vs On-Roll Presence</h3>
+<p class="text-body-sm text-on-surface-variant">IPHS Standard Mandate for 30-Bed Community Health Centre</p>
+</div>
+<span class="px-2.5 py-1 rounded bg-amber-50 text-amber-800 border border-amber-200 text-xs font-semibold">Specialist Shortage: 50%</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Cadre Summary -->
+<div class="flex flex-col gap-2">
+<div class="p-2.5 rounded bg-surface-container-low flex items-center justify-between">
+<span class="font-medium text-sm">General Duty Medical Officers (GDMO)</span>
+<span class="font-mono-data text-xs text-emerald-800 font-bold">2 Sanctioned • 2 In-Position (100%)</span>
+</div>
+<div class="p-2.5 rounded bg-red-50 border border-red-200 flex items-center justify-between">
+<span class="font-medium text-sm text-red-900">Anaesthetist Specialist (MD/DA)</span>
+<span class="font-mono-data text-xs text-red-700 font-bold">1 Sanctioned • 0 In-Position (VACANT)</span>
+</div>
+<div class="p-2.5 rounded bg-surface-container-low flex items-center justify-between">
+<span class="font-medium text-sm">Gynaecologist &amp; Obstetrician</span>
+<span class="font-mono-data text-xs text-emerald-800 font-bold">1 Sanctioned • 1 In-Position (Dr. M. Kumari)</span>
+</div>
+<div class="p-2.5 rounded bg-surface-container-low flex items-center justify-between">
+<span class="font-medium text-sm">Paediatrician</span>
+<span class="font-mono-data text-xs text-emerald-800 font-bold">1 Sanctioned • 1 In-Position (Dr. S. K. Verma)</span>
+</div>
+<div class="p-2.5 rounded bg-surface-container-low flex items-center justify-between">
+<span class="font-medium text-sm">General Surgeon</span>
+<span class="font-mono-data text-xs text-amber-800 font-bold">1 Sanctioned • Rotational (From Pusa CHC)</span>
+</div>
+</div>
+<!-- Nursing & Paramedics -->
+<div class="flex flex-col gap-2">
+<div class="p-2.5 rounded bg-surface-container-low flex items-center justify-between">
+<span class="font-medium text-sm">Staff Nurses (GNM)</span>
+<span class="font-mono-data text-xs text-emerald-800 font-bold">10 Sanctioned • 8 Active on Shift</span>
+</div>
+<div class="p-2.5 rounded bg-surface-container-low flex items-center justify-between">
+<span class="font-medium text-sm">Auxiliary Nurse Midwives (ANM)</span>
+<span class="font-mono-data text-xs text-emerald-800 font-bold">6 Sanctioned • 6 Active</span>
+</div>
+<div class="p-2.5 rounded bg-surface-container-low flex items-center justify-between">
+<span class="font-medium text-sm">Lab Technicians (BSU + Pathology)</span>
+<span class="font-mono-data text-xs text-emerald-800 font-bold">2 Sanctioned • 2 In-Position</span>
+</div>
+<div class="p-2.5 rounded bg-surface-container-low flex items-center justify-between">
+<span class="font-medium text-sm">Pharmacist</span>
+<span class="font-mono-data text-xs text-emerald-800 font-bold">2 Sanctioned • 2 In-Position</span>
+</div>
+<div class="p-2.5 rounded bg-surface-container-low flex items-center justify-between">
+<span class="font-medium text-sm">OT Technician</span>
+<span class="font-mono-data text-xs text-red-700 font-bold">1 Sanctioned • 0 Qualified (Untrained Orderly)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ============================================================== -->
+<!-- TAB 5: ORIGINAL INSPECTION DOSSIER -->
+<!-- ============================================================== -->
+<div class="tab-content" id="tab-content-dossier">
+<div class="flex flex-col gap-space-lg pt-2">
+<div class="rounded-lg bg-surface-container-lowest border border-outline-variant p-space-md">
+<div class="flex items-center justify-between border-b border-surface-container-high pb-2 mb-3">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-semibold">Government Inspection Memorandum &amp; Dispatch Transcripts</h3>
+<p class="text-body-sm text-on-surface-variant font-mono-data">Office of the District Magistrate &amp; Civil Surgeon, Samastipur (Health Cell)</p>
+</div>
+<button class="px-3 py-1.5 rounded bg-primary-container text-on-primary font-label-md text-label-md" onclick="downloadDossierSummary()">Download Signed Scan (PDF)</button>
+</div>
+<div class="p-4 bg-stone-50 border border-stone-200 rounded text-stone-900 font-mono-data text-xs leading-loose">
+<strong>MEMORANDUM NO:</strong> SAM/H-INSP/2024/0981<br/>
+<strong>DATE OF INSPECTION:</strong> 14TH OCTOBER 2024 (10:15 HOURS)<br/>
+<strong>INSPECTING OFFICERS:</strong> Dr. V. K. Singh (Addl. CMO), Shri Rajesh Ranjan (Executive Magistrate)<br/>
+<strong>FACILITY:</strong> COMMUNITY HEALTH CENTRE, KALYANPUR, DISTRICT SAMASTIPUR (BIHAR)<br/>
+<hr class="my-2 border-stone-300"/>
+<strong>FINDINGS SUMMARY:</strong><br/>
+        1. <strong>Out-Patient Department:</strong> Found functioning. Doctors present in chambers. 140 patients registered till 11:30 AM. Essential generic medicines dispensed via Jan Aushadhi kiosk.<br/>
+        2. <strong>Labour Room:</strong> Standard normal deliveries being conducted. Cleanliness satisfactory. Suction machine operational. Staff nurse Sunita Soren on duty.<br/>
+        3. <strong>Major Operation Theatre:</strong> Padlocked. Upon opening, autoclave vessel was discovered burnt out since early September. Primary surgical overhead lamp not working. No elective or emergency C-section performed since 22-Aug-2024. All high-risk obstetric cases redirected to DMCH Darbhanga.<br/>
+        4. <strong>Blood Storage Unit:</strong> Refrigerator temperature maintained at 3.8°C. Blood group stock log verified. 4 units packed red blood cells intact.<br/>
+        5. <strong>Human Resources:</strong> No regular or bonded Anaesthetist posted. 1 Specialist Surgeon listed on rotational roster was reported absent from block headquarters.<br/>
+<br/>
+<strong>RECOMMENDED ACTION:</strong> Immediate notice to District Civil Surgeon. Revoke 24x7 C-section accreditation flag in National Health Portal until equipment replacement and specialist posting.
+      </div>
+</div>
+</div>
+</div>
+<!-- Modal Dialog Simulation for Investigator Actions -->
+<div class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4" id="investigatorModal">
+<div class="bg-surface-container-lowest rounded-lg max-w-md w-full p-5 border border-outline-variant shadow-xl flex flex-col gap-3">
+<div class="flex items-center justify-between border-b border-surface-container-high pb-2">
+<h3 class="font-headline-md text-headline-md font-semibold text-on-surface" id="modalTitle">Audit Action</h3>
+<button class="material-symbols-outlined text-outline hover:text-on-surface" onclick="closeModal()">close</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface" id="modalDescription">Proceeding with selected administrative disposition.</p>
+<div class="flex justify-end gap-2 pt-2 border-t border-surface-container-high">
+<button class="px-3 py-1.5 rounded border border-outline-variant text-on-surface font-label-md text-label-md hover:bg-surface-container" onclick="closeModal()">Cancel</button>
+<button class="px-3 py-1.5 rounded bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary font-semibold" onclick="executeModalAction()">Confirm Action</button>
+</div>
+</div>
+</div>
+<!-- Forensic Environment Footer Disclaimer -->
+<footer class="mt-space-xl pt-space-md border-t border-surface-variant flex flex-col sm:flex-row items-center justify-between gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[15px] text-primary">local_hospital</span>
+<span>VERITAS Health Intelligence Platform • National Infrastructure Sample BR-2024</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-medium text-on-surface">NIN ID: BR-849201</span>
+<span>•</span>
+<span>IPHS 2022 Tier-II Audit Protocol</span>
+<span>•</span>
+<span>Confidential Healthcare Analyst Access</span>
+</div>
+</footer>
+</div>
+</div></main></div>
+<script>
+// Tab Switching Vanilla JavaScript Logic
+function switchTab(tabKey) {
+  // Hide all tab contents
+  const tabs = document.querySelectorAll('.tab-content');
+  tabs.forEach(tab => tab.classList.remove('active'));
+
+  // Remove active styling on all buttons
+  const buttons = document.querySelectorAll('.tab-button');
+  buttons.forEach(btn => {
+    btn.classList.remove('border-primary', 'text-primary', 'bg-primary/5', 'font-semibold');
+    btn.classList.add('border-transparent', 'text-on-surface-variant', 'font-medium');
+  });
+
+  // Activate selected content & button
+  const targetContent = document.getElementById('tab-content-' + tabKey);
+  const targetBtn = document.getElementById('tab-btn-' + tabKey);
+  if (targetContent) {
+    targetContent.classList.add('active');
+  }
+  if (targetBtn) {
+    targetBtn.classList.remove('border-transparent', 'text-on-surface-variant', 'font-medium');
+    targetBtn.classList.add('border-primary', 'text-primary', 'bg-primary/5', 'font-semibold');
+  }
+}
+
+// Interactive Claims Filtering
+function filterClaims(type) {
+  const cards = document.querySelectorAll('.claim-card');
+  const filters = ['all', 'discrepancy', 'staffing', 'verified'];
+  
+  filters.forEach(f => {
+    const btn = document.getElementById('claim-filter-' + f);
+    if (btn) {
+      if (f === type) {
+        btn.classList.remove('bg-surface-container-low', 'border-transparent');
+        btn.classList.add('bg-primary-container', 'text-on-primary');
+      } else {
+        btn.classList.remove('bg-primary-container', 'text-on-primary');
+        btn.classList.add('bg-surface-container-low');
+      }
+    }
+  });
+
+  cards.forEach(card => {
+    if (type === 'all' || card.getAttribute('data-claim-type') === type) {
+      card.style.display = 'flex';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+// Collapsible Shift Roster
+function toggleShiftRoster() {
+  const drawer = document.getElementById('shiftRosterDrawer');
+  const chevron = document.getElementById('shiftRosterChevron');
+  const txt = document.getElementById('shiftRosterBtnText');
+  if (drawer.classList.contains('hidden')) {
+    drawer.classList.remove('hidden');
+    chevron.innerText = 'expand_less';
+    txt.innerText = 'Hide 30-Day Biometric Shift Roster Logs';
+  } else {
+    drawer.classList.add('hidden');
+    chevron.innerText = 'expand_more';
+    txt.innerText = 'View 30-Day Biometric Shift Roster Logs';
+  }
+}
+
+// Collapsible Temperature Graph
+function toggleTempGraph() {
+  const drawer = document.getElementById('tempGraphDrawer');
+  const chevron = document.getElementById('tempGraphChevron');
+  const txt = document.getElementById('tempGraphBtnText');
+  if (drawer.classList.contains('hidden')) {
+    drawer.classList.remove('hidden');
+    chevron.innerText = 'expand_less';
+    txt.innerText = 'Hide 7-day temperature log graph';
+  } else {
+    drawer.classList.add('hidden');
+    chevron.innerText = 'expand_more';
+    txt.innerText = 'View 7-day temperature log graph';
+  }
+}
+
+// Claim Action Handler
+function confirmClaimAction(claimId, message) {
+  const statusEl = document.getElementById('status-' + claimId);
+  if (statusEl) {
+    statusEl.innerText = message;
+    statusEl.classList.remove('text-red-800');
+    statusEl.classList.add('text-emerald-800');
+  }
+  const notif = document.getElementById('decisionNotification');
+  if (notif) {
+    notif.innerText = 'Updated: ' + message;
+    notif.classList.remove('hidden');
+    setTimeout(() => { notif.classList.add('hidden'); }, 3500);
+  }
+}
+
+// Auditor Workbench decisions
+function saveAuditorDecision(text) {
+  const notif = document.getElementById('decisionNotification');
+  if (notif) {
+    notif.innerText = 'Disposition Logged: ' + text;
+    notif.classList.remove('hidden');
+    setTimeout(() => { notif.classList.add('hidden'); }, 4000);
+  }
+}
+
+// Interactive Text Annotations in Raw Dispatch
+function selectAnnotation(kind) {
+  const box = document.getElementById('inspectorNoteBox');
+  if (!box) return;
+  if (kind === 'ot') {
+    box.innerHTML = '<strong>[OT Contradiction Note]:</strong> Physical verification confirms OT closure due to electrical short circuit and inoperative autoclave. Emergency C-Section accreditation must be temporarily suspended.';
+    box.className = 'p-2.5 rounded bg-red-50 border border-red-300 font-body-sm text-body-sm text-red-950';
+  } else if (kind === 'staff') {
+    box.innerHTML = '<strong>[Specialist Vacancy Note]:</strong> Zero Anaesthetists posted. Single GDMO cannot administer spinal anaesthesia. Direct violation of Tier-II CHC C-Section norms.';
+    box.className = 'p-2.5 rounded bg-amber-50 border border-amber-300 font-body-sm text-body-sm text-amber-950';
+  } else if (kind === 'bsu') {
+    box.innerHTML = '<strong>[Blood Unit Verified]:</strong> 4 PRBC units in cold chain. Valid Drug Control license #BSU-048. Compliant.';
+    box.className = 'p-2.5 rounded bg-emerald-50 border border-emerald-300 font-body-sm text-body-sm text-emerald-950';
+  } else if (kind === 'opd') {
+    box.innerHTML = '<strong>[OPD Footfall]:</strong> 140 patients attended. Generic medicine kiosk operational.';
+    box.className = 'p-2.5 rounded bg-surface-container-low border border-outline-variant font-body-sm text-body-sm text-on-surface';
+  }
+}
+
+// Interactive Bed Details Inspector
+function showBedDetails(bedId, status, patient, diagnosis, admTime, nurse) {
+  const bedTitle = document.getElementById('detailBedId');
+  const bedPat = document.getElementById('detailBedPatient');
+  const bedTime = document.getElementById('detailBedTime');
+  const bedNrs = document.getElementById('detailBedNurse');
+  
+  if (bedTitle) bedTitle.innerText = 'Selected: Bed ' + bedId + ' (' + status + ')';
+  if (bedPat) bedPat.innerText = 'Patient: ' + patient + ' • ' + diagnosis;
+  if (bedTime) bedTime.innerText = admTime;
+  if (bedNrs) bedNrs.innerText = nurse;
+}
+
+// Action Modals simulation
+let currentModalAction = '';
+function triggerActionModal(action) {
+  const modal = document.getElementById('investigatorModal');
+  const title = document.getElementById('modalTitle');
+  const desc = document.getElementById('modalDescription');
+  currentModalAction = action;
+
+  if (action === 'reAudit') {
+    title.innerText = 'Re-score Facility Trust Index';
+    desc.innerText = 'This recalculates Kalyanpur CHC from 88.4% to provisional 64.2% pending OT autoclave restoration. This updates regional ambulance routing protocols.';
+  } else if (action === 'dispatch') {
+    title.innerText = 'Dispatch Field Inspector';
+    desc.innerText = 'Issue immediate electronic field summons to Samastipur District Bio-Medical Engineer for physical inspection of OT electrical lamp and autoclave.';
+  } else if (action === 'flagCMO') {
+    title.innerText = 'Urgent CMO Red-Alert';
+    desc.innerText = 'Transmit formal discrepancy notification to Civil Surgeon, Samastipur and Principal Secretary, Bihar Health Services.';
+  }
+  modal.classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('investigatorModal').classList.add('hidden');
+}
+
+function executeModalAction() {
+  closeModal();
+  saveAuditorDecision('Action successfully executed: ' + currentModalAction.toUpperCase() + ' recorded in Gateway.');
+}
+
+function downloadDossierSummary() {
+  alert('Exporting signed PDF Investigation Dossier for NIN: BR-849201 (Kalyanpur CHC)... File ready for local download.');
+}
+
+function openInspectDrawer() {
+  switchTab('capabilities');
+  window.scrollTo({ top: 350, behavior: 'smooth' });
+}
+</script>
+</body></html>
