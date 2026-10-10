@@ -395,6 +395,7 @@ def search_care_intent(req: CareSearchRequest) -> dict:
             "city": m.city,
             "state": m.state,
             "pin": m.pin,
+            "address": m.address,
             "row_id": m.row_id,
             "relevance_tier": m.relevance_tier,
             "matched_category": m.matched_category,

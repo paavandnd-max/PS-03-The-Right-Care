@@ -45,6 +45,7 @@ class CareFacilityMatch:
     city: str
     state: str
     pin: str
+    address: str
     row_id: int
     lat: Optional[float]
     lon: Optional[float]
@@ -395,12 +396,19 @@ def match_facilities(
 
         ranking_score = round(base_tier_pts + trust_pts + dist_pts, 2)
 
+        l1 = str(row.get("address_line1", "")).strip()
+        l2 = str(row.get("address_line2", "")).strip()
+        full_addr = f"{l1}, {l2}".strip(" ,") if l2 and l2.lower() not in ("nan", "none", "null") else l1
+        if full_addr.lower() in ("nan", "none", "null"):
+            full_addr = ""
+
         matches.append(CareFacilityMatch(
             facility_name=str(row.get("name", "Unknown")),
             facility_type=str(row.get("facilityTypeId", "Healthcare Facility")),
             city=str(row.get("address_city", "")),
             state=str(row.get("address_stateOrRegion", "")),
             pin=str(row.get("address_zipOrPostcode", "")),
+            address=full_addr,
             row_id=int(row.get("row_id", 0)),
             lat=row.get("lat_f"),
             lon=row.get("lon_f"),
