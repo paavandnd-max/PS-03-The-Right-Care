@@ -298,7 +298,7 @@ if nav_selection == "🏥 Hospital Dossier":
 
     # Fetch selected row
     facility_row = df[df["name"] == selected_facility_name].iloc[0]
-    row_idx = int(facility_row["source_row"])
+    row_idx = int(facility_row.get("row_id", facility_row.get("id", facility_row.name if isinstance(facility_row.name, int) else 0)))
 
     # Extract live evidence & contradictions
     evidence_items = extract_evidence_from_row(facility_row)
