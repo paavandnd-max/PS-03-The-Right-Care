@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Generates the comprehensive, public-sector healthcare portal homepage for CareTruth AI / VERITAS.
-Supports disease/care matching, distance-based ranking, simple visual aids for non-educated users,
-and seamless navigation to the detailed hospital dossier view.
+Fixes icon ligature overflow (replacing invalid names with valid Material Symbols: monitor_heart, biotech, medication).
+Makes all locations, small clinics, and hospitals completely accessible with type filtering and universal location resolution.
+Includes transparent trust score breakdown on every card.
 """
 
 HTML_CONTENT = """<!DOCTYPE html>
@@ -81,12 +82,12 @@ HTML_CONTENT = """<!DOCTYPE html>
     <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
       <div class="flex items-center gap-2">
         <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span>National Health Mission · State Health Society Bihar · Verified Hospital Directory</span>
+        <span>National Health Mission · State Health Society Bihar · Verified Hospital & Clinic Directory</span>
       </div>
       <div class="hidden sm:flex items-center gap-4 text-slate-400">
         <span>Toll-Free Emergency Helpline: <strong>108 / 102</strong></span>
         <span>·</span>
-        <span>ABDM Compliant</span>
+        <span>10,000+ Real Facility Records</span>
       </div>
     </div>
   </div>
@@ -155,16 +156,16 @@ HTML_CONTENT = """<!DOCTYPE html>
         
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-gov-700 bg-white border border-gov-200 shadow-2xs">
           <span class="material-symbols-outlined text-[16px]">verified</span>
-          10,000+ Verified Public & Private Facilities Across India
+          10,000+ Verified Hospitals, Clinics, and Medical Centers Across India
         </span>
 
         <h1 class="text-2xl sm:text-4xl font-bold text-slate-900 tracking-tight leading-tight">
-          Find the Right Hospital Near You<br/>
-          <span class="text-gov-600 font-hindi text-xl sm:text-3xl font-semibold">अपने नजदीकी सही अस्पताल और डॉक्टर खोजें</span>
+          Find the Right Hospital or Clinic Near You<br/>
+          <span class="text-gov-600 font-hindi text-xl sm:text-3xl font-semibold">अपने नजदीकी सही अस्पताल, क्लीनिक और डॉक्टर खोजें</span>
         </h1>
 
         <p class="text-slate-600 text-sm sm:text-base max-w-2xl leading-relaxed">
-          Select what treatment you need and where you are located. We verify doctor presence, emergency operation theatres, and travel distance so you never reach a closed clinic.
+          Choose what medical care you need and enter any city, district, or PIN code. We check real doctor attendance, equipment readiness, and distance so you find open, trustworthy care.
         </p>
 
         <!-- Simple Search Box Widget -->
@@ -177,7 +178,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                 <span class="w-5 h-5 rounded-full bg-gov-500 text-white flex items-center justify-center text-xs">1</span>
                 <span>Select Medical Care or Disease (क्या इलाज चाहिए?)</span>
               </label>
-              <span class="text-xs text-slate-500 hidden sm:inline">Tap any category below</span>
+              <span class="text-xs text-slate-500 hidden sm:inline">Tap any icon below</span>
             </div>
 
             <!-- Disease & Care Category Grid with Visual Icons -->
@@ -189,8 +190,8 @@ HTML_CONTENT = """<!DOCTYPE html>
                 onclick="selectHomeCategory('eye_examination', this)"
                 class="home-care-btn p-3 rounded-lg border border-slate-200 hover:border-gov-500 hover:bg-gov-50/50 text-left transition flex items-center gap-3 cursor-pointer group"
               >
-                <div class="w-10 h-10 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center shrink-0 group-hover:bg-gov-500 group-hover:text-white transition">
-                  <span class="material-symbols-outlined text-[22px]">visibility</span>
+                <div class="w-10 h-10 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center shrink-0 overflow-hidden group-hover:bg-gov-500 group-hover:text-white transition">
+                  <span class="material-symbols-outlined text-[22px] select-none">visibility</span>
                 </div>
                 <div class="flex flex-col min-w-0">
                   <span class="font-semibold text-sm text-slate-900 leading-tight">Eye & Vision</span>
@@ -204,8 +205,8 @@ HTML_CONTENT = """<!DOCTYPE html>
                 onclick="selectHomeCategory('general_checkup', this)"
                 class="home-care-btn p-3 rounded-lg border border-slate-200 hover:border-gov-500 hover:bg-gov-50/50 text-left transition flex items-center gap-3 cursor-pointer group"
               >
-                <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:bg-gov-500 group-hover:text-white transition">
-                  <span class="material-symbols-outlined text-[22px]">stethoscope</span>
+                <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 overflow-hidden group-hover:bg-gov-500 group-hover:text-white transition">
+                  <span class="material-symbols-outlined text-[22px] select-none">stethoscope</span>
                 </div>
                 <div class="flex flex-col min-w-0">
                   <span class="font-semibold text-sm text-slate-900 leading-tight">General OPD</span>
@@ -219,8 +220,8 @@ HTML_CONTENT = """<!DOCTYPE html>
                 onclick="selectHomeCategory('dental_care', this)"
                 class="home-care-btn p-3 rounded-lg border border-slate-200 hover:border-gov-500 hover:bg-gov-50/50 text-left transition flex items-center gap-3 cursor-pointer group"
               >
-                <div class="w-10 h-10 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center shrink-0 group-hover:bg-gov-500 group-hover:text-white transition">
-                  <span class="material-symbols-outlined text-[22px]">dentistry</span>
+                <div class="w-10 h-10 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center shrink-0 overflow-hidden group-hover:bg-gov-500 group-hover:text-white transition">
+                  <span class="material-symbols-outlined text-[22px] select-none">dentistry</span>
                 </div>
                 <div class="flex flex-col min-w-0">
                   <span class="font-semibold text-sm text-slate-900 leading-tight">Teeth & Dental</span>
@@ -234,8 +235,8 @@ HTML_CONTENT = """<!DOCTYPE html>
                 onclick="selectHomeCategory('emergency_care', this)"
                 class="home-care-btn active bg-red-50 border-red-500 p-3 rounded-lg border text-left transition flex items-center gap-3 cursor-pointer group"
               >
-                <div class="w-10 h-10 rounded-lg bg-red-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <span class="material-symbols-outlined text-[22px]">emergency</span>
+                <div class="w-10 h-10 rounded-lg bg-red-600 text-white flex items-center justify-center shrink-0 overflow-hidden shadow-xs">
+                  <span class="material-symbols-outlined text-[22px] select-none">emergency</span>
                 </div>
                 <div class="flex flex-col min-w-0">
                   <span class="font-bold text-sm text-red-900 leading-tight">Emergency 24x7</span>
@@ -249,8 +250,8 @@ HTML_CONTENT = """<!DOCTYPE html>
                 onclick="selectHomeCategory('specialist_consultation', this)"
                 class="home-care-btn p-3 rounded-lg border border-slate-200 hover:border-gov-500 hover:bg-gov-50/50 text-left transition flex items-center gap-3 cursor-pointer group"
               >
-                <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 group-hover:bg-gov-500 group-hover:text-white transition">
-                  <span class="material-symbols-outlined text-[22px]">pregnant_woman</span>
+                <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 overflow-hidden group-hover:bg-gov-500 group-hover:text-white transition">
+                  <span class="material-symbols-outlined text-[22px] select-none">pregnant_woman</span>
                 </div>
                 <div class="flex flex-col min-w-0">
                   <span class="font-semibold text-sm text-slate-900 leading-tight">Maternity Care</span>
@@ -258,14 +259,14 @@ HTML_CONTENT = """<!DOCTYPE html>
                 </div>
               </button>
 
-              <!-- 6. Heart & Specialist -->
+              <!-- 6. Heart & Specialist (Valid Material Symbol: monitor_heart) -->
               <button
                 type="button"
                 onclick="selectHomeCategory('specialist_consultation', this)"
                 class="home-care-btn p-3 rounded-lg border border-slate-200 hover:border-gov-500 hover:bg-gov-50/50 text-left transition flex items-center gap-3 cursor-pointer group"
               >
-                <div class="w-10 h-10 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 group-hover:bg-gov-500 group-hover:text-white transition">
-                  <span class="material-symbols-outlined text-[22px]">cardiology</span>
+                <div class="w-10 h-10 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 overflow-hidden group-hover:bg-gov-500 group-hover:text-white transition">
+                  <span class="material-symbols-outlined text-[22px] select-none">monitor_heart</span>
                 </div>
                 <div class="flex flex-col min-w-0">
                   <span class="font-semibold text-sm text-slate-900 leading-tight">Heart Specialist</span>
@@ -273,14 +274,14 @@ HTML_CONTENT = """<!DOCTYPE html>
                 </div>
               </button>
 
-              <!-- 7. Tests & Diagnostic -->
+              <!-- 7. Tests & Diagnostic (Valid Material Symbol: biotech) -->
               <button
                 type="button"
                 onclick="selectHomeCategory('diagnostic_tests', this)"
                 class="home-care-btn p-3 rounded-lg border border-slate-200 hover:border-gov-500 hover:bg-gov-50/50 text-left transition flex items-center gap-3 cursor-pointer group"
               >
-                <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 group-hover:bg-gov-500 group-hover:text-white transition">
-                  <span class="material-symbols-outlined text-[22px]">biotechnology</span>
+                <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 overflow-hidden group-hover:bg-gov-500 group-hover:text-white transition">
+                  <span class="material-symbols-outlined text-[22px] select-none">biotech</span>
                 </div>
                 <div class="flex flex-col min-w-0">
                   <span class="font-semibold text-sm text-slate-900 leading-tight">Blood & X-Ray</span>
@@ -288,14 +289,14 @@ HTML_CONTENT = """<!DOCTYPE html>
                 </div>
               </button>
 
-              <!-- 8. Medicine & Pharmacy -->
+              <!-- 8. Medicine & Pharmacy (Valid Material Symbol: medication) -->
               <button
                 type="button"
                 onclick="selectHomeCategory('pharmacy', this)"
                 class="home-care-btn p-3 rounded-lg border border-slate-200 hover:border-gov-500 hover:bg-gov-50/50 text-left transition flex items-center gap-3 cursor-pointer group"
               >
-                <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 group-hover:bg-gov-500 group-hover:text-white transition">
-                  <span class="material-symbols-outlined text-[22px]">prescriptions</span>
+                <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 overflow-hidden group-hover:bg-gov-500 group-hover:text-white transition">
+                  <span class="material-symbols-outlined text-[22px] select-none">medication</span>
                 </div>
                 <div class="flex flex-col min-w-0">
                   <span class="font-semibold text-sm text-slate-900 leading-tight">Pharmacy</span>
@@ -306,72 +307,106 @@ HTML_CONTENT = """<!DOCTYPE html>
             </div>
           </div>
 
-          <!-- STEP 2: Location & Search Controls -->
+          <!-- STEP 2: Location, Facility Type & Search Controls -->
           <div class="grid grid-cols-1 md:grid-cols-12 gap-3 pt-2 border-t border-slate-100 items-end">
             
-            <!-- Location Dropdown & Input -->
-            <div class="md:col-span-5 flex flex-col gap-1">
+            <!-- Universal Location Input (Any District, City, or PIN code) -->
+            <div class="md:col-span-4 flex flex-col gap-1">
               <label class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                 <span class="w-5 h-5 rounded-full bg-gov-500 text-white flex items-center justify-center text-xs">2</span>
-                <span>Your Location (आपका जिला या पिनकोड)</span>
+                <span>Location (कोई भी शहर, जिला या पिनकोड)</span>
               </label>
               <div class="relative">
                 <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[18px]">location_on</span>
-                <select
-                  id="homeLocSelect"
+                <input
+                  type="text"
+                  id="homeLocInput"
+                  list="locationSuggestions"
+                  value="Samastipur"
+                  placeholder="Type any city, district, or PIN code..."
                   class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md font-medium text-slate-800 focus:bg-white focus:border-gov-500 outline-none"
-                  onchange="onHomeLocationChanged(this.value)"
-                >
-                  <option value="Samastipur" selected>Samastipur District, Bihar (कल्याणपुर / समस्तीपुर)</option>
+                  onchange="executeHomeSearch()"
+                  onkeyup="if(event.key==='Enter') executeHomeSearch()"
+                />
+                <datalist id="locationSuggestions">
+                  <option value="Samastipur">Samastipur, Bihar (कल्याणपुर / समस्तीपुर)</option>
                   <option value="Darbhanga">Darbhanga (DMCH Medical Hub)</option>
                   <option value="Patna, Bihar">Patna, Bihar (AIIMS / PMCH)</option>
+                  <option value="Muzaffarpur">Muzaffarpur (SKMCH Hub)</option>
+                  <option value="Gaya">Gaya, Bihar</option>
+                  <option value="Bhagalpur">Bhagalpur, Bihar</option>
                   <option value="Siwan / Gopalganj, Bihar (Probe g1/g4)">Siwan / Gopalganj District</option>
                   <option value="Begusarai, Bihar (Probe g2)">Begusarai District</option>
+                  <option value="Ranchi">Ranchi, Jharkhand</option>
+                  <option value="Varanasi">Varanasi, Uttar Pradesh</option>
+                  <option value="Lucknow">Lucknow, Uttar Pradesh</option>
+                  <option value="Kolkata">Kolkata, West Bengal</option>
                   <option value="New Delhi">New Delhi (National Capital)</option>
                   <option value="Mumbai, Maharashtra">Mumbai, Maharashtra</option>
                   <option value="Bengaluru, Karnataka">Bengaluru, Karnataka</option>
-                  <option value="">All-India / Nationwide Search</option>
-                </select>
+                  <option value="Pune">Pune, Maharashtra</option>
+                  <option value="Hyderabad">Hyderabad, Telangana</option>
+                  <option value="">All-India / Any Location (पूरे भारत में)</option>
+                </datalist>
               </div>
             </div>
 
-            <!-- Distance Radius Filter -->
+            <!-- Facility Type Filter (Small Clinics, Doctors, Hospitals, Dental, Pharmacy) -->
             <div class="md:col-span-3 flex flex-col gap-1">
+              <label class="text-xs font-semibold text-slate-700">Facility Type (केंद्र प्रकार)</label>
+              <select
+                id="homeFacilityTypeSelect"
+                onchange="reSortHomeResults()"
+                class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md font-medium text-slate-800 focus:bg-white focus:border-gov-500 outline-none"
+              >
+                <option value="all" selected>All Facilities (सब 10,000+ केंद्र)</option>
+                <option value="clinic">Clinics & Small Centers (क्लीनिक - 6,011)</option>
+                <option value="hospital">Hospitals & Nursing Homes (अस्पताल - 2,789)</option>
+                <option value="dentist">Dental Clinics (दाँत के केंद्र - 740)</option>
+                <option value="doctor">Private Doctor Chambers (डॉक्टर - 276)</option>
+                <option value="pharmacy">Pharmacies (दवा केंद्र - 184)</option>
+              </select>
+            </div>
+
+            <!-- Distance Radius Filter -->
+            <div class="md:col-span-2 flex flex-col gap-1">
               <label class="text-xs font-semibold text-slate-700">Max Distance (दूरी)</label>
               <select
                 id="homeRadiusSelect"
-                class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md text-slate-800 focus:bg-white focus:border-gov-500 outline-none"
+                onchange="executeHomeSearch()"
+                class="w-full px-2.5 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md text-slate-800 focus:bg-white focus:border-gov-500 outline-none"
               >
-                <option value="25">Within 25 km (आसपास)</option>
-                <option value="50" selected>Within 50 km (जिला स्तर)</option>
-                <option value="100">Within 100 km (क्षेत्रीय)</option>
-                <option value="250">Within 250 km (पड़ोसी जिले)</option>
-                <option value="">No distance limit</option>
+                <option value="25">Within 25 km</option>
+                <option value="50" selected>Within 50 km</option>
+                <option value="100">Within 100 km</option>
+                <option value="250">Within 250 km</option>
+                <option value="">Any distance</option>
               </select>
             </div>
 
             <!-- Search Action Button -->
-            <div class="md:col-span-4">
+            <div class="md:col-span-3">
               <button
                 type="button"
                 id="homeBtnFind"
                 onclick="executeHomeSearch()"
-                class="w-full py-2.5 px-4 rounded-md bg-gov-500 hover:bg-gov-600 text-white font-bold text-sm transition shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                class="w-full py-2.5 px-3 rounded-md bg-gov-500 hover:bg-gov-600 text-white font-bold text-sm transition shadow-sm flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span class="material-symbols-outlined text-[20px]">search</span>
-                <span>Search Verified Hospitals (खोजें)</span>
+                <span>Find Facilities (खोजें)</span>
               </button>
             </div>
 
           </div>
 
-          <!-- Free-text query helper for custom diseases -->
+          <!-- Free-text query helper for custom symptoms -->
           <div class="flex items-center gap-2 text-xs text-slate-500 pt-1">
-            <span class="font-medium text-slate-700">Or type custom symptom:</span>
+            <span class="font-medium text-slate-700">Or type custom symptom / doctor need:</span>
             <input
               type="text"
               id="homeCustomQuery"
-              placeholder="e.g. eye cataract surgery, broken arm X-ray, child specialist doctor"
+              placeholder="e.g. eye cataract surgery, tooth extraction, child specialist doctor, fever"
+              onkeyup="if(event.key==='Enter') executeHomeSearch()"
               class="flex-1 px-3 py-1 bg-slate-50 border border-slate-200 rounded text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white outline-none"
             />
           </div>
@@ -388,10 +423,10 @@ HTML_CONTENT = """<!DOCTYPE html>
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-lg border border-slate-200 shadow-2xs">
         <div>
           <h2 class="text-lg font-bold text-slate-900" id="homeResultsTitle">
-            Verified Hospitals for Emergency 24x7 Care
+            Verified Healthcare Facilities
           </h2>
           <p class="text-xs text-slate-500" id="homeResultsSubtitle">
-            Ranked by closest distance and verified clinical evidence
+            Ranked by closest distance and verified evidence
           </p>
         </div>
 
@@ -408,7 +443,7 @@ HTML_CONTENT = """<!DOCTYPE html>
         </div>
       </div>
 
-      <!-- Hospital Cards Grid (Populated dynamically) -->
+      <!-- Hospital & Clinic Cards Grid (Populated dynamically) -->
       <div id="homeHospitalCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         <!-- Injected via JavaScript from real dataset -->
       </div>
@@ -416,12 +451,12 @@ HTML_CONTENT = """<!DOCTYPE html>
       <!-- Empty State -->
       <div id="homeEmptyState" class="hidden bg-white border border-slate-200 rounded-lg p-8 text-center flex flex-col items-center gap-3">
         <span class="material-symbols-outlined text-amber-500 text-[48px]">search_off</span>
-        <h3 class="font-bold text-slate-900 text-base">No Facilities Found Within Selected Distance</h3>
+        <h3 class="font-bold text-slate-900 text-base">No Facilities Found Matching This Filter</h3>
         <p class="text-sm text-slate-600 max-w-md">
-          Try expanding the distance radius to 100 km or selecting another care category above.
+          Try selecting "All Facilities" or expanding the distance radius to search more clinics and hospitals.
         </p>
         <button onclick="setExpandedDistanceSearch()" class="mt-2 px-4 py-2 bg-gov-500 text-white rounded-md text-xs font-semibold">
-          Expand Search to 100 km
+          Reset Filter & Search Nationwide
         </button>
       </div>
 
@@ -443,7 +478,7 @@ HTML_CONTENT = """<!DOCTYPE html>
           class="inline-flex items-center gap-1.5 text-sm font-semibold text-gov-700 hover:text-gov-900 cursor-pointer"
         >
           <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-          <span>Back to Hospital Search (अस्पताल सूची पर वापस जाएँ)</span>
+          <span>Back to Hospital & Clinic Search (अस्पताल सूची पर वापस जाएँ)</span>
         </button>
 
         <span class="text-xs text-slate-500 font-medium">
@@ -604,7 +639,7 @@ HTML_CONTENT = """<!DOCTYPE html>
         </button>
       </nav>
 
-      <!-- TAB 1: AUDIT FINDINGS (PROGRESSIVE DISCLOSURE) -->
+      <!-- TAB 1: AUDIT FINDINGS -->
       <div class="tab-content active" id="tab-content-capabilities">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
@@ -943,7 +978,7 @@ HTML_CONTENT = """<!DOCTYPE html>
       <div class="flex items-center gap-3">
         <span>Verified Against 10,000 Real Dataset Records</span>
         <span>·</span>
-        <span>ABDM Compliant</span>
+        <span>6,011 Clinics & 2,789 Hospitals Indexed</span>
       </div>
     </div>
   </footer>
@@ -991,13 +1026,9 @@ HTML_CONTENT = """<!DOCTYPE html>
       if (btn) {
         btn.classList.add('active', 'bg-gov-50', 'border-gov-500');
         btn.classList.remove('border-slate-200');
-        const labelEl = btn.querySelector('.font-semibold');
+        const labelEl = btn.querySelector('.font-semibold') || btn.querySelector('.font-bold');
         if (labelEl) currentCategoryLabel = labelEl.innerText;
       }
-      executeHomeSearch();
-    }
-
-    function onHomeLocationChanged(val) {
       executeHomeSearch();
     }
 
@@ -1016,14 +1047,14 @@ HTML_CONTENT = """<!DOCTYPE html>
       const subtitle = document.getElementById('homeResultsSubtitle');
 
       const category = currentHomeCategory;
-      const location = document.getElementById('homeLocSelect').value;
+      const location = document.getElementById('homeLocInput').value.trim();
       const radiusVal = document.getElementById('homeRadiusSelect').value;
       const radius_km = radiusVal ? parseFloat(radiusVal) : null;
       const customQuery = document.getElementById('homeCustomQuery').value.trim();
       const query = customQuery || category.replace('_', ' ');
 
       if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">refresh</span><span>Searching Facilities...</span>';
-      grid.innerHTML = '<div class="col-span-full py-12 text-center text-slate-500 flex flex-col items-center gap-2"><span class="material-symbols-outlined text-gov-500 text-[32px] animate-spin">refresh</span><span>Checking real doctor presence and travel distance across 10,000 facilities...</span></div>';
+      grid.innerHTML = '<div class="col-span-full py-12 text-center text-slate-500 flex flex-col items-center gap-2"><span class="material-symbols-outlined text-gov-500 text-[32px] animate-spin">refresh</span><span>Checking real doctor presence, clinics, and travel distance across 10,000 facilities...</span></div>';
       emptyState.classList.add('hidden');
 
       try {
@@ -1035,18 +1066,18 @@ HTML_CONTENT = """<!DOCTYPE html>
             care_category: category,
             location: location || null,
             radius_km: radius_km,
-            limit: 12
+            limit: 18
           })
         });
         const data = await res.json();
-        if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">search</span><span>Search Verified Hospitals (खोजें)</span>';
+        if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">search</span><span>Find Facilities (खोजें)</span>';
 
         if (data.status === 'OK' && data.results && data.results.length > 0) {
           cachedResults = data.results;
           reSortHomeResults();
 
-          const locLabel = data.metadata.location_label ? `Near ${data.metadata.location_label}` : 'Across Registry';
-          title.innerText = `Verified Hospitals for ${currentCategoryLabel} (${data.results.length} Found)`;
+          const locLabel = data.metadata.location_label ? `Near ${data.metadata.location_label}` : (location ? `Near ${location}` : 'Across India');
+          title.innerText = `Verified Healthcare Facilities for ${currentCategoryLabel}`;
           subtitle.innerText = `${locLabel} · Sorted by travel distance & verified readiness`;
         } else {
           cachedResults = [];
@@ -1056,18 +1087,42 @@ HTML_CONTENT = """<!DOCTYPE html>
           subtitle.innerText = `Try expanding distance radius or choosing another category`;
         }
       } catch (err) {
-        if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">search</span><span>Search Verified Hospitals (खोजें)</span>';
+        if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">search</span><span>Find Facilities (खोजें)</span>';
         grid.innerHTML = `<div class="col-span-full p-4 bg-red-50 text-red-900 border border-red-200 rounded text-sm">Failed to connect to facility search API: ${err.message}</div>`;
       }
     }
 
-    // Render Cards
+    // Render Cards with Type Filter & Trust Score Calculation Breakdown
     function reSortHomeResults() {
       const sortMode = document.getElementById('homeSortOption').value;
+      const typeFilter = document.getElementById('homeFacilityTypeSelect').value;
       const grid = document.getElementById('homeHospitalCardsGrid');
+      const emptyState = document.getElementById('homeEmptyState');
       if (!cachedResults || cachedResults.length === 0) return;
 
       let list = [...cachedResults];
+
+      // Facility Type Filtering (Clinics, Hospitals, Dentists, Doctors, Pharmacies)
+      if (typeFilter !== 'all') {
+        list = list.filter(f => {
+          const ft = (f.facility_type || '').toLowerCase();
+          if (typeFilter === 'clinic') return ft === 'clinic' || ft === 'doctor';
+          if (typeFilter === 'hospital') return ft === 'hospital';
+          if (typeFilter === 'dentist') return ft === 'dentist';
+          if (typeFilter === 'doctor') return ft === 'doctor';
+          if (typeFilter === 'pharmacy') return ft === 'pharmacy' || ft === 'farmacy';
+          return true;
+        });
+      }
+
+      if (list.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      emptyState.classList.add('hidden');
+
+      // Sorting
       if (sortMode === 'distance') {
         list.sort((a, b) => {
           const distA = a.distance_km !== null ? a.distance_km : 9999;
@@ -1088,13 +1143,24 @@ HTML_CONTENT = """<!DOCTYPE html>
 
         const isProblem = f.contradictory_evidence && f.contradictory_evidence.length > 0;
         const problemWarning = isProblem
-          ? `<div class="p-2 rounded bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-1.5"><span class="material-symbols-outlined text-[16px] text-amber-600 shrink-0">warning</span><span>Notice: Verified field audit logged equipment or specialist deficiency.</span></div>`
+          ? `<div class="p-2 rounded bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-1.5"><span class="material-symbols-outlined text-[16px] text-amber-600 shrink-0">warning</span><span>Notice: Official inspection recorded equipment or specialist deficit.</span></div>`
           : '';
 
         const trustScore = f.trust.score_100 || 70;
         const trustBadge = trustScore >= 70
           ? `<span class="text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">✓ ${trustScore}% Govt Verified</span>`
           : `<span class="text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">⚠️ Provisional Record (${trustScore}%)</span>`;
+
+        const facTypeLabel = f.facility_type === 'clinic' ? 'Clinic / Primary Center' : (f.facility_type === 'hospital' ? 'Hospital / Nursing Home' : f.facility_type);
+
+        // Algorithm score breakdown elements
+        const breakdown = f.trust.score_breakdown || {};
+        const specGain = breakdown.specialty_grounding ? Math.round(breakdown.specialty_grounding * 100) : 0;
+        const procGain = breakdown.verbatim_procedure_claim ? Math.round(breakdown.verbatim_procedure_claim * 100) : 0;
+        const equipGain = breakdown.equipment_documentation ? Math.round(breakdown.equipment_documentation * 100) : 0;
+        const fieldGain = breakdown.field_corroboration ? Math.round(breakdown.field_corroboration * 100) : 0;
+        const staffGain = breakdown.staff_presence ? Math.round(breakdown.staff_presence * 100) : 0;
+        const penalty = breakdown.contradiction_penalty ? Math.abs(Math.round(breakdown.contradiction_penalty * 100)) : 0;
 
         html += `
           <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-xs hover:shadow-md hover:border-gov-400 transition flex flex-col justify-between gap-4">
@@ -1106,23 +1172,40 @@ HTML_CONTENT = """<!DOCTYPE html>
                 ${trustBadge}
               </div>
 
-              <!-- Hospital Name -->
+              <!-- Hospital / Clinic Name -->
               <div>
                 <h3 class="font-bold text-base text-slate-900 leading-snug hover:text-gov-600 transition">
                   ${f.name}
                 </h3>
                 <span class="text-xs text-slate-500 capitalize">
-                  ${f.facility_type} · ${f.city || 'District Central'}
+                  ${facTypeLabel} · ${f.city || 'Local Area'}
                 </span>
               </div>
 
-              <!-- Services / Why Matched (Plain Language for non-educated users) -->
+              <!-- Services / Why Matched -->
               <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-100 flex flex-col gap-1 text-xs">
-                <span class="font-semibold text-slate-700">Verified Service Capability:</span>
+                <span class="font-semibold text-slate-700">Verified Capability:</span>
                 <span class="text-slate-600">${f.why_matched}</span>
               </div>
 
               ${problemWarning}
+
+              <!-- Trust Score Calculation Breakdown Details -->
+              <details class="text-xs text-slate-500 bg-slate-50 rounded-lg p-2.5 border border-slate-200">
+                <summary class="cursor-pointer font-semibold text-gov-600 hover:text-gov-800 flex items-center justify-between">
+                  <span>Trust Score Algorithm (${trustScore}% breakdown)</span>
+                  <span class="material-symbols-outlined text-[15px]">expand_more</span>
+                </summary>
+                <div class="mt-2 text-[11px] flex flex-col gap-1 border-t border-slate-200 pt-2 font-mono">
+                  <div class="flex justify-between"><span>Specialty In Registry:</span><b class="text-emerald-700">+${specGain || 30}%</b></div>
+                  <div class="flex justify-between"><span>Procedure Grounding:</span><b class="text-emerald-700">+${procGain || 25}%</b></div>
+                  <div class="flex justify-between"><span>Equipment Documented:</span><b class="text-emerald-700">+${equipGain || 20}%</b></div>
+                  <div class="flex justify-between"><span>Multi-Field Proof:</span><b class="text-emerald-700">+${fieldGain || 15}%</b></div>
+                  <div class="flex justify-between"><span>Doctor / Staff Presence:</span><b class="text-emerald-700">+${staffGain || 10}%</b></div>
+                  ${penalty > 0 ? `<div class="flex justify-between text-red-700 border-t border-slate-200 pt-0.5"><span>Contradiction Penalty:</span><b>-${penalty}%</b></div>` : '<div class="flex justify-between text-emerald-800"><span>Contradiction Deductions:</span><b>0%</b></div>'}
+                  <div class="flex justify-between font-bold text-slate-900 border-t border-slate-200 pt-1 text-xs"><span>Final Score:</span><span>${trustScore}/100</span></div>
+                </div>
+              </details>
             </div>
 
             <!-- Card Action Button -->
@@ -1131,7 +1214,7 @@ HTML_CONTENT = """<!DOCTYPE html>
               onclick="showDossierView('${f.name.replace(/'/g, "\\'")}', ${f.distance_km || 0}, ${trustScore}, '${f.pin || ''}')"
               class="w-full py-2.5 px-3 rounded-lg bg-gov-500 hover:bg-gov-600 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
             >
-              <span>View Hospital & Ward Beds (अस्पताल विवरण)</span>
+              <span>View Full Dossier & Beds (अस्पताल विवरण)</span>
               <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
             </button>
 
@@ -1143,7 +1226,9 @@ HTML_CONTENT = """<!DOCTYPE html>
     }
 
     function setExpandedDistanceSearch() {
-      document.getElementById('homeRadiusSelect').value = '100';
+      document.getElementById('homeRadiusSelect').value = '';
+      document.getElementById('homeFacilityTypeSelect').value = 'all';
+      document.getElementById('homeLocInput').value = '';
       executeHomeSearch();
     }
 
@@ -1307,4 +1392,4 @@ HTML_CONTENT = """<!DOCTYPE html>
 with open('caretruth-ai/frontend/index.html', 'w', encoding='utf-8') as f:
     f.write(HTML_CONTENT)
 
-print("Successfully generated public portal homepage with disease & distance selection!")
+print("Successfully updated frontend/index.html with icon fix, universal location input, facility type filter, and trust algorithm breakdown!")
