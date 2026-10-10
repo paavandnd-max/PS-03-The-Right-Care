@@ -9,6 +9,8 @@ The dataset is loaded once on startup and cached in memory.
 from __future__ import annotations
 import sys
 import os
+import json
+import ast
 from pathlib import Path
 from typing import Any, Optional
 
@@ -66,6 +68,26 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.middleware("http")
+async def auto_repair_json_body(request: Request, call_next):
+    """Gracefully repair single-quoted JSON bodies (e.g. from curl or python dict str)."""
+    if request.method in ("POST", "PUT", "PATCH"):
+        try:
+            body = await request.body()
+            if body and (body.strip().startswith(b"{'") or b": '" in body):
+                try:
+                    json.loads(body.decode("utf-8", errors="ignore"))
+                except json.JSONDecodeError:
+                    repaired = ast.literal_eval(body.decode("utf-8", errors="ignore"))
+                    new_body = json.dumps(repaired).encode("utf-8")
+                    request._body = new_body
+                    async def receive():
+                        return {"type": "http.request", "body": new_body, "more_body": False}
+                    request._receive = receive
+        except Exception:
+            pass
+    return await call_next(request)
 
 # Mount frontend static files
 frontend_path = Path(__file__).resolve().parent / "frontend"
