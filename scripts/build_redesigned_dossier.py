@@ -1,0 +1,1889 @@
+# -*- coding: utf-8 -*-
+"""
+Generates the calm, trustworthy, public-sector redesigned Hospital Dossier frontend for VERITAS / CareTruth AI.
+"""
+
+HTML_CONTENT = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Hospital Dossier — Kalyanpur CHC | VERITAS Health Intelligence</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
+          },
+          colors: {
+            clinical: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              200: '#bae0fd',
+              500: '#005eb8', /* Standard NHS / Public Health Clinical Blue */
+              600: '#004f9e',
+              700: '#004182',
+              800: '#023466',
+              900: '#052a52'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #1e293b;
+      background-color: #f8fafc;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .annotated-text {
+      background-color: #fef3c7;
+      cursor: pointer;
+      border-bottom: 2px dashed #d97706;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+    .annotated-text:hover { background-color: #fde68a; }
+    .annotated-text.selected { background-color: #fed7aa; border-color: #ea580c; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-slate-50 antialiased min-h-screen flex flex-col text-slate-800">
+
+  <!-- ============================================================== -->
+  <!-- 1. TOP NAVIGATION (Clean, Calm, Single Primary Action) -->
+  <!-- ============================================================== -->
+  <header class="sticky top-0 z-30 bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Brand & Facility Context -->
+      <div class="flex items-center gap-3 min-w-0">
+        <a href="/" class="flex items-center gap-2 text-clinical-700 hover:text-clinical-800 shrink-0">
+          <div class="w-8 h-8 rounded-md bg-clinical-500 text-white flex items-center justify-center font-bold text-sm">
+            <span class="material-symbols-outlined text-[20px]">local_hospital</span>
+          </div>
+          <span class="font-bold text-base tracking-tight text-slate-900 hidden sm:inline">VERITAS</span>
+        </a>
+        <span class="text-slate-300 hidden md:inline">/</span>
+        <nav aria-label="Breadcrumb" class="hidden md:flex items-center gap-1.5 text-xs text-slate-500 truncate">
+          <span>National Health Mission</span>
+          <span class="text-slate-300">/</span>
+          <span>Bihar Health Society</span>
+          <span class="text-slate-300">/</span>
+          <span class="text-slate-700 font-medium truncate">Samastipur District</span>
+        </nav>
+      </div>
+
+      <!-- Search & Actions Bar -->
+      <div class="flex items-center gap-2.5 sm:gap-3">
+        <!-- Search input -->
+        <div class="relative hidden lg:block w-64">
+          <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[18px]">search</span>
+          <input
+            type="text"
+            id="headerSearchInput"
+            placeholder="Search claims, staff, equipment..."
+            onkeyup="handleQuickSearch(event)"
+            class="w-full pl-9 pr-8 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-md text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-clinical-500 focus:ring-1 focus:ring-clinical-500 outline-none transition"
+          />
+          <kbd class="absolute right-2.5 top-2 px-1.5 py-0.5 text-[10px] text-slate-400 bg-slate-200 rounded font-mono">↵</kbd>
+        </div>
+
+        <!-- Care Intent & Location Matching Trigger -->
+        <button
+          type="button"
+          onclick="openSearchModal()"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:text-slate-900 transition shadow-xs"
+        >
+          <span class="material-symbols-outlined text-clinical-600 text-[18px]">near_me</span>
+          <span class="hidden sm:inline">Search by location</span>
+          <span class="sm:hidden">Search</span>
+        </button>
+
+        <!-- Primary Action: Dispatch Inspector -->
+        <button
+          type="button"
+          onclick="triggerActionModal('dispatch')"
+          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-sm font-semibold text-white bg-clinical-500 hover:bg-clinical-600 transition shadow-xs"
+        >
+          <span class="material-symbols-outlined text-[18px]">local_shipping</span>
+          <span>Dispatch inspector</span>
+        </button>
+
+        <!-- More Actions Dropdown Menu -->
+        <div class="relative" id="moreActionsContainer">
+          <button
+            type="button"
+            onclick="toggleMoreActionsMenu()"
+            class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-sm font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 transition"
+            aria-expanded="false"
+            id="moreActionsBtn"
+          >
+            <span>More actions</span>
+            <span class="material-symbols-outlined text-[16px] text-slate-500">expand_more</span>
+          </button>
+          
+          <div
+            id="moreActionsDropdown"
+            class="hidden absolute right-0 mt-1 w-52 bg-white border border-slate-200 rounded-md shadow-lg py-1 z-40 text-sm"
+          >
+            <button
+              onclick="triggerActionModal('reAudit'); closeMoreActionsMenu();"
+              class="w-full text-left px-3.5 py-2 text-slate-700 hover:bg-slate-50 flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-slate-400 text-[17px]">sync</span>
+              <span>Re-score facility trust</span>
+            </button>
+            <button
+              onclick="triggerActionModal('flagCMO'); closeMoreActionsMenu();"
+              class="w-full text-left px-3.5 py-2 text-red-700 hover:bg-red-50 flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-red-500 text-[17px]">flag</span>
+              <span>Flag for District CMO</span>
+            </button>
+            <button
+              onclick="downloadDossierSummary(); closeMoreActionsMenu();"
+              class="w-full text-left px-3.5 py-2 text-slate-700 hover:bg-slate-50 flex items-center gap-2 border-t border-slate-100"
+            >
+              <span class="material-symbols-outlined text-slate-400 text-[17px]">picture_as_pdf</span>
+              <span>Export summary (PDF)</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ============================================================== -->
+  <!-- MAIN CONTAINER (Generous Whitespace, Calm Structure) -->
+  <!-- ============================================================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-6 sm:gap-8">
+
+    <!-- ============================================================== -->
+    <!-- 2. HEADER: Facility Identity & Quiet Metadata (No Coloured Pills) -->
+    <!-- ============================================================== -->
+    <section class="flex flex-col gap-2">
+      
+      <!-- Facility Name and Verified Indicator -->
+      <div class="flex flex-wrap items-center gap-2.5">
+        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+          Kalyanpur Community Health Centre (CHC)
+        </h1>
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200/80">
+          <span class="material-symbols-outlined text-[15px]">verified</span>
+          <span>Verified public facility</span>
+        </span>
+      </div>
+
+      <!-- One line of location -->
+      <div class="flex items-center gap-1.5 text-slate-600 text-[15px]">
+        <span class="material-symbols-outlined text-clinical-600 text-[17px]">location_on</span>
+        <span>Block Kalyanpur, District Samastipur, Bihar · PIN 848302</span>
+      </div>
+
+      <!-- Quiet single line of metadata (plain text, no colored pills) -->
+      <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-slate-500 pt-0.5">
+        <span>NIN: BR-849201</span>
+        <span class="text-slate-300">·</span>
+        <span>IPHS Tier-II secondary care</span>
+        <span class="text-slate-300">·</span>
+        <span>30 sanctioned beds</span>
+        <span class="text-slate-300">·</span>
+        <span>Last field inspection: 14 Oct 2024</span>
+        <span class="text-slate-300">·</span>
+        <span>Reporting CMO: Dr. R. K. Choudhary</span>
+      </div>
+
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- 3. SUMMARY STRIP: 4 Key Facts (Large Values, Status Dots, No Colored Boxes) -->
+    <!-- ============================================================== -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Fact 1: Emergency Services -->
+      <div class="bg-white border border-slate-200 rounded-lg p-5 flex flex-col gap-1 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-medium text-slate-500">Emergency services</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Active"></span>
+        </div>
+        <div class="text-xl font-bold text-slate-900 mt-1">Active 24/7</div>
+        <div class="text-xs text-slate-500">Emergency triage operational</div>
+      </div>
+
+      <!-- Fact 2: Referral Hospital -->
+      <div class="bg-white border border-slate-200 rounded-lg p-5 flex flex-col gap-1 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-medium text-slate-500">Referral hospital</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-slate-400" title="Connected hub"></span>
+        </div>
+        <div class="text-xl font-bold text-slate-900 mt-1 truncate" title="Darbhanga Medical College Hospital (DMCH)">DMCH Darbhanga</div>
+        <div class="text-xs text-slate-500">Tertiary hub · 42 km away</div>
+      </div>
+
+      <!-- Fact 3: Power Backup -->
+      <div class="bg-white border border-slate-200 rounded-lg p-5 flex flex-col gap-1 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-medium text-slate-500">Power backup</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-500" title="Log unverified"></span>
+        </div>
+        <div class="text-xl font-bold text-slate-900 mt-1">15 kVA generator</div>
+        <div class="text-xs text-amber-700">3-phase grid · Log unverified</div>
+      </div>
+
+      <!-- Fact 4: Oxygen Stock -->
+      <div class="bg-white border border-slate-200 rounded-lg p-5 flex flex-col gap-1 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-medium text-slate-500">Oxygen supply</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Adequate"></span>
+        </div>
+        <div class="text-xl font-bold text-slate-900 mt-1">Manifold + 8 cylinders</div>
+        <div class="text-xs text-slate-500">Central supply + D-cylinders</div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- 4. ALERT BANNER: Plain Language, Single Primary Action -->
+    <!-- ============================================================== -->
+    <section class="bg-amber-50/80 border-l-4 border-amber-500 border-y border-r border-amber-200 rounded-lg p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+      <div class="flex items-start gap-3.5">
+        <span class="material-symbols-outlined text-amber-600 text-[24px] shrink-0 mt-0.5">warning</span>
+        <div class="flex flex-col gap-1">
+          <div class="text-base font-semibold text-slate-900">
+            Emergency C-section services may not be available
+          </div>
+          <p class="text-sm text-slate-700 leading-relaxed max-w-3xl">
+            Autoclave and operation theatre sterilisation are not working, and there is no anaesthetist. Refer patients to DMCH Darbhanga for now.
+          </p>
+          <div class="text-xs text-slate-500 mt-1">
+            Case ID: AUD-2024-KLY-91 · Reported 14 Oct 2024
+          </div>
+        </div>
+      </div>
+
+      <div class="shrink-0 self-start sm:self-center">
+        <button
+          type="button"
+          onclick="reviewOtIssue()"
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 transition shadow-xs"
+        >
+          <span>Review issue</span>
+          <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- 5. TABS: 5 Short Plain Names, Action Badges Only Where Needed -->
+    <!-- ============================================================== -->
+    <nav class="border-b border-slate-200 flex items-center gap-2 overflow-x-auto select-none" id="mainTabList">
+      
+      <!-- Tab 1: Audit findings -->
+      <button
+        type="button"
+        onclick="switchTab('capabilities')"
+        id="tab-btn-capabilities"
+        class="tab-button active py-3 px-3.5 border-b-2 border-clinical-500 font-semibold text-clinical-600 text-sm flex items-center gap-2 transition"
+      >
+        <span>Audit findings</span>
+        <span class="px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-red-100 text-red-800">1 issue</span>
+      </button>
+
+      <!-- Tab 2: Beds & occupancy -->
+      <button
+        type="button"
+        onclick="switchTab('census')"
+        id="tab-btn-census"
+        class="tab-button py-3 px-3.5 border-b-2 border-transparent font-medium text-slate-600 hover:text-slate-900 text-sm flex items-center gap-2 transition"
+      >
+        <span>Beds & occupancy</span>
+        <span class="text-xs text-slate-400 font-normal">30 beds</span>
+      </button>
+
+      <!-- Tab 3: Equipment -->
+      <button
+        type="button"
+        onclick="switchTab('equipment')"
+        id="tab-btn-equipment"
+        class="tab-button py-3 px-3.5 border-b-2 border-transparent font-medium text-slate-600 hover:text-slate-900 text-sm flex items-center gap-2 transition"
+      >
+        <span>Equipment</span>
+      </button>
+
+      <!-- Tab 4: Staff roster -->
+      <button
+        type="button"
+        onclick="switchTab('staff')"
+        id="tab-btn-staff"
+        class="tab-button py-3 px-3.5 border-b-2 border-transparent font-medium text-slate-600 hover:text-slate-900 text-sm flex items-center gap-2 transition"
+      >
+        <span>Staff roster</span>
+        <span class="px-1.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-100 text-amber-800">1 vacancy</span>
+      </button>
+
+      <!-- Tab 5: Inspection documents -->
+      <button
+        type="button"
+        onclick="switchTab('dossier')"
+        id="tab-btn-dossier"
+        class="tab-button py-3 px-3.5 border-b-2 border-transparent font-medium text-slate-600 hover:text-slate-900 text-sm flex items-center gap-2 transition"
+      >
+        <span>Inspection documents</span>
+      </button>
+
+    </nav>
+
+    <!-- ============================================================== -->
+    <!-- TAB 1: AUDIT FINDINGS (PROGRESSIVE DISCLOSURE & STICKY ACTIONS) -->
+    <!-- ============================================================== -->
+    <div class="tab-content active" id="tab-content-capabilities">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left: Progressive Disclosure Claim Cards (8 Columns) -->
+        <div class="lg:col-span-8 flex flex-col gap-4">
+          
+          <!-- Plain language filters & summary -->
+          <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-lg border border-slate-200">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-xs font-medium text-slate-500 mr-1">Filter:</span>
+              <button
+                type="button"
+                id="claim-filter-all"
+                onclick="filterClaims('all')"
+                class="px-2.5 py-1 rounded text-xs font-semibold bg-clinical-500 text-white transition"
+              >
+                All claims (4)
+              </button>
+              <button
+                type="button"
+                id="claim-filter-discrepancy"
+                onclick="filterClaims('discrepancy')"
+                class="px-2.5 py-1 rounded text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition"
+              >
+                Issues found (1)
+              </button>
+              <button
+                type="button"
+                id="claim-filter-staffing"
+                onclick="filterClaims('staffing')"
+                class="px-2.5 py-1 rounded text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition"
+              >
+                Staff deficits (1)
+              </button>
+              <button
+                type="button"
+                id="claim-filter-verified"
+                onclick="filterClaims('verified')"
+                class="px-2.5 py-1 rounded text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition"
+              >
+                Verified (2)
+              </button>
+            </div>
+            
+            <div class="text-xs text-slate-500 font-medium">
+              Facility verification: 4 claims reviewed · 1 issue found
+            </div>
+          </div>
+
+          <!-- ======================================================== -->
+          <!-- CLAIM 1: Emergency C-Section & Operation Theatre (Issue) -->
+          <!-- ======================================================== -->
+          <div
+            class="claim-card bg-white border border-slate-200 rounded-lg shadow-xs overflow-hidden transition"
+            id="claim-card-CAP-SURG-01"
+            data-claim-type="discrepancy"
+          >
+            <!-- Collapsed Header (Always Visible) -->
+            <button
+              type="button"
+              onclick="toggleClaimCard('CAP-SURG-01')"
+              class="w-full text-left p-4 sm:p-5 flex items-start justify-between gap-4 hover:bg-slate-50/50 transition cursor-pointer"
+            >
+              <div class="flex items-start gap-3 min-w-0">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500 shrink-0 mt-1.5" title="Problem found"></span>
+                <div class="flex flex-col gap-1 min-w-0">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h2 class="text-base font-semibold text-slate-900">
+                      Emergency C-section & operation theatre readiness
+                    </h2>
+                    <span class="px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-200/60">
+                      Does not match inspection
+                    </span>
+                  </div>
+                  <p class="text-sm text-slate-600 line-clamp-2">
+                    Facility reported 24/7 emergency surgery, but surprise inspection found the theatre locked with a broken autoclave.
+                  </p>
+                </div>
+              </div>
+
+              <div class="shrink-0 text-slate-400 pt-1">
+                <span class="material-symbols-outlined text-[20px]" id="chevron-CAP-SURG-01">expand_less</span>
+              </div>
+            </button>
+
+            <!-- Expanded Body (Revealed via Progressive Disclosure) -->
+            <div class="p-4 sm:p-5 pt-0 border-t border-slate-100 flex flex-col gap-4" id="body-CAP-SURG-01">
+              
+              <!-- Side-by-side comparison -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                
+                <!-- What facility reported -->
+                <div class="bg-slate-50 rounded-lg p-4 border border-slate-200 flex flex-col gap-2">
+                  <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    What the facility reported
+                  </span>
+                  <blockquote class="text-sm text-slate-800 italic leading-relaxed">
+                    “Facility asserts round-the-clock emergency obstetric surgical preparedness, functional Boyle's anaesthesia workstation, and operational major autoclave sterilizer.”
+                  </blockquote>
+                  <span class="text-xs text-slate-400">
+                    Source: State Portal CHC v24.1 (Table 8-A: Institutional delivery capabilities)
+                  </span>
+                </div>
+
+                <!-- What inspector found -->
+                <div class="bg-red-50/70 rounded-lg p-4 border border-red-200 flex flex-col gap-2">
+                  <span class="text-xs font-semibold text-red-700 uppercase tracking-wider">
+                    What the inspector found
+                  </span>
+                  <blockquote class="text-sm text-red-950 font-medium leading-relaxed">
+                    “Operation Theater padlocked during surprise check. Autoclave heating coil burnt out; primary shadowless surgical lamp inoperative due to short-circuit. Reagents for surgical swab tests expired.”
+                  </blockquote>
+                  <span class="text-xs text-red-800">
+                    Source: Inspection log line 184 (14 Oct 2024 audit)
+                  </span>
+                </div>
+
+              </div>
+
+              <!-- Action Bar inside Card -->
+              <div class="bg-slate-50 rounded-lg p-3.5 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="text-xs sm:text-sm text-slate-700">
+                  <span class="font-medium">Action status:</span>
+                  <span class="text-red-700 font-semibold" id="status-CAP-SURG-01">Flagged for District CMO intervention</span>
+                </div>
+
+                <div class="flex items-center gap-2 flex-wrap">
+                  <button
+                    type="button"
+                    onclick="confirmClaimAction('CAP-SURG-01', 'Confirmed finding recorded in audit log.')"
+                    class="px-2.5 py-1.5 rounded text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 transition"
+                  >
+                    Confirm finding
+                  </button>
+                  <button
+                    type="button"
+                    onclick="confirmClaimAction('CAP-SURG-01', 'Re-inspection expedited with District Surgeon.')"
+                    class="px-2.5 py-1.5 rounded text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 transition"
+                  >
+                    Request re-inspection
+                  </button>
+                  <button
+                    type="button"
+                    onclick="confirmClaimAction('CAP-SURG-01', 'Notice dispatched to District CMO Desk.')"
+                    class="px-2.5 py-1.5 rounded text-xs font-semibold text-white bg-red-700 hover:bg-red-800 transition"
+                  >
+                    Flag for District CMO
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ======================================================== -->
+          <!-- CLAIM 2: Anaesthesiology Staffing Allocation (Deficit) -->
+          <!-- ======================================================== -->
+          <div
+            class="claim-card bg-white border border-slate-200 rounded-lg shadow-xs overflow-hidden transition"
+            id="claim-card-CAP-HR-04"
+            data-claim-type="staffing"
+          >
+            <!-- Collapsed Header -->
+            <button
+              type="button"
+              onclick="toggleClaimCard('CAP-HR-04')"
+              class="w-full text-left p-4 sm:p-5 flex items-start justify-between gap-4 hover:bg-slate-50/50 transition cursor-pointer"
+            >
+              <div class="flex items-start gap-3 min-w-0">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0 mt-1.5" title="Staff deficit"></span>
+                <div class="flex flex-col gap-1 min-w-0">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h2 class="text-base font-semibold text-slate-900">
+                      Anaesthesiology & specialist surgeon coverage
+                    </h2>
+                    <span class="px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/60">
+                      Staff deficit
+                    </span>
+                  </div>
+                  <p class="text-sm text-slate-600 line-clamp-2">
+                    Roster lists rotational coverage, but biometric payroll logs show no anaesthetist present or on call.
+                  </p>
+                </div>
+              </div>
+
+              <div class="shrink-0 text-slate-400 pt-1">
+                <span class="material-symbols-outlined text-[20px]" id="chevron-CAP-HR-04">expand_more</span>
+              </div>
+            </button>
+
+            <!-- Expanded Body -->
+            <div class="hidden p-4 sm:p-5 pt-0 border-t border-slate-100 flex flex-col gap-4" id="body-CAP-HR-04">
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                
+                <div class="bg-slate-50 rounded-lg p-4 border border-slate-200 flex flex-col gap-2">
+                  <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    What the facility reported
+                  </span>
+                  <blockquote class="text-sm text-slate-800 italic leading-relaxed">
+                    “Specialist anaesthesia coverage assigned on 48-hour rotational cycle between Kalyanpur CHC and Pusa CHC.”
+                  </blockquote>
+                  <span class="text-xs text-slate-400">
+                    Source: HR-SAM-24 Sub-Division Roster
+                  </span>
+                </div>
+
+                <div class="bg-amber-50/70 rounded-lg p-4 border border-amber-200 flex flex-col gap-2">
+                  <span class="text-xs font-semibold text-amber-700 uppercase tracking-wider">
+                    What the inspector found
+                  </span>
+                  <blockquote class="text-sm text-amber-950 font-medium leading-relaxed">
+                    “October payroll logs zero sanctioned MD/DA Anaesthetist punches at Kalyanpur CHC. 1 General Medical Officer logged on triage duty. No record of on-call specialist compensation.”
+                  </blockquote>
+                  <span class="text-xs text-amber-800">
+                    Source: payroll_q3_2024.csv [Row #8492-STAFF]
+                  </span>
+                </div>
+
+              </div>
+
+              <!-- Collapsible Biometric Shift Roster Toggle -->
+              <div class="pt-1">
+                <button
+                  type="button"
+                  onclick="toggleShiftRoster()"
+                  class="inline-flex items-center gap-1.5 text-xs font-semibold text-clinical-600 hover:text-clinical-700"
+                >
+                  <span class="material-symbols-outlined text-[16px]">calendar_month</span>
+                  <span id="shiftRosterBtnText">View 30-day shift roster logs</span>
+                  <span class="material-symbols-outlined text-[16px]" id="shiftRosterChevron">expand_more</span>
+                </button>
+
+                <div class="hidden mt-3 rounded-lg bg-slate-50 p-3 border border-slate-200 overflow-x-auto" id="shiftRosterDrawer">
+                  <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr class="border-b border-slate-200 text-slate-500">
+                        <th class="py-1.5 px-2">Date</th>
+                        <th class="py-1.5 px-2">Cadre</th>
+                        <th class="py-1.5 px-2">Doctor</th>
+                        <th class="py-1.5 px-2">Biometric In</th>
+                        <th class="py-1.5 px-2">Biometric Out</th>
+                        <th class="py-1.5 px-2">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                      <tr>
+                        <td class="py-1.5 px-2 font-mono">14-Oct-2024</td>
+                        <td class="py-1.5 px-2">General MO</td>
+                        <td class="py-1.5 px-2 font-medium">Dr. Prabhat Mishra</td>
+                        <td class="py-1.5 px-2 text-emerald-700">08:02 IST</td>
+                        <td class="py-1.5 px-2 text-emerald-700">16:15 IST</td>
+                        <td class="py-1.5 px-2 text-emerald-700 font-semibold">Present</td>
+                      </tr>
+                      <tr>
+                        <td class="py-1.5 px-2 font-mono">14-Oct-2024</td>
+                        <td class="py-1.5 px-2">Anaesthetist</td>
+                        <td class="py-1.5 px-2 text-red-600 font-medium">[Unfilled Post]</td>
+                        <td class="py-1.5 px-2 text-slate-400">--:--</td>
+                        <td class="py-1.5 px-2 text-slate-400">--:--</td>
+                        <td class="py-1.5 px-2 text-red-700 font-semibold">Vacant</td>
+                      </tr>
+                      <tr>
+                        <td class="py-1.5 px-2 font-mono">13-Oct-2024</td>
+                        <td class="py-1.5 px-2">Gynaecologist</td>
+                        <td class="py-1.5 px-2 font-medium">Dr. Meena Kumari</td>
+                        <td class="py-1.5 px-2 text-emerald-700">09:10 IST</td>
+                        <td class="py-1.5 px-2 text-emerald-700">14:45 IST</td>
+                        <td class="py-1.5 px-2 text-emerald-700 font-semibold">Present</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ======================================================== -->
+          <!-- CLAIM 3: Blood Storage Unit & Cold Chain (Verified) -->
+          <!-- ======================================================== -->
+          <div
+            class="claim-card bg-white border border-slate-200 rounded-lg shadow-xs overflow-hidden transition"
+            id="claim-card-CAP-BSU-02"
+            data-claim-type="verified"
+          >
+            <!-- Collapsed Header -->
+            <button
+              type="button"
+              onclick="toggleClaimCard('CAP-BSU-02')"
+              class="w-full text-left p-4 sm:p-5 flex items-start justify-between gap-4 hover:bg-slate-50/50 transition cursor-pointer"
+            >
+              <div class="flex items-start gap-3 min-w-0">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0 mt-1.5" title="Matches records"></span>
+                <div class="flex flex-col gap-1 min-w-0">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h2 class="text-base font-semibold text-slate-900">
+                      Blood storage unit & continuous cold chain
+                    </h2>
+                    <span class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                      Matches inspection
+                    </span>
+                  </div>
+                  <p class="text-sm text-slate-600 line-clamp-2">
+                    Licensed blood storage unit maintaining continuous 2–6°C cold chain with 4 verified PRBC units.
+                  </p>
+                </div>
+              </div>
+
+              <div class="shrink-0 text-slate-400 pt-1">
+                <span class="material-symbols-outlined text-[20px]" id="chevron-CAP-BSU-02">expand_more</span>
+              </div>
+            </button>
+
+            <!-- Expanded Body -->
+            <div class="hidden p-4 sm:p-5 pt-0 border-t border-slate-100 flex flex-col gap-4" id="body-CAP-BSU-02">
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                
+                <div class="bg-slate-50 rounded-lg p-4 border border-slate-200 flex flex-col gap-2">
+                  <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    Statutory license
+                  </span>
+                  <blockquote class="text-sm text-slate-800 leading-relaxed">
+                    “Blood storage authorization certified under State Drug Control Authority License #BSU-048-EXP26. Current stock verified: 4 PRBC units (B+ve).”
+                  </blockquote>
+                  <span class="text-xs text-slate-400">
+                    Source: Drug Control Directorate Archive
+                  </span>
+                </div>
+
+                <div class="bg-emerald-50/70 rounded-lg p-4 border border-emerald-200 flex flex-col gap-2">
+                  <span class="text-xs font-semibold text-emerald-800 uppercase tracking-wider">
+                    Sensor telemetry feed
+                  </span>
+                  <div class="flex items-baseline justify-between">
+                    <div>
+                      <span class="text-2xl font-bold font-mono text-emerald-950" id="liveTempDisplay">3.8°C</span>
+                      <span class="text-xs text-emerald-700 block">Within permissible range (2.0°C – 6.0°C)</span>
+                    </div>
+                    <span class="text-xs font-medium text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded">
+                      Zero excursions in 30 days
+                    </span>
+                  </div>
+                  <span class="text-xs text-slate-500">
+                    Device: 8492-FRG1 · AC Grid Connected
+                  </span>
+                </div>
+
+              </div>
+
+              <!-- Temperature Profile Toggle -->
+              <div class="pt-1">
+                <button
+                  type="button"
+                  onclick="toggleTempGraph()"
+                  class="inline-flex items-center gap-1.5 text-xs font-semibold text-clinical-600 hover:text-clinical-700"
+                >
+                  <span class="material-symbols-outlined text-[16px]">show_chart</span>
+                  <span id="tempGraphBtnText">View 7-day temperature log graph</span>
+                  <span class="material-symbols-outlined text-[16px]" id="tempGraphChevron">expand_more</span>
+                </button>
+
+                <div class="hidden mt-3 rounded-lg bg-slate-50 p-4 border border-slate-200" id="tempGraphDrawer">
+                  <div class="text-xs font-medium text-slate-600 mb-2">
+                    Hourly cold chain log (2.0°C to 6.0°C target window)
+                  </div>
+                  <div class="w-full h-20 bg-white rounded p-2 border border-slate-200 flex items-end justify-between gap-2">
+                    <div class="flex-1 flex flex-col items-center justify-end h-full"><div class="w-full bg-emerald-500 rounded-t h-[60%]"></div><span class="text-[10px] text-slate-400 mt-1">D-7</span></div>
+                    <div class="flex-1 flex flex-col items-center justify-end h-full"><div class="w-full bg-emerald-500 rounded-t h-[65%]"></div><span class="text-[10px] text-slate-400 mt-1">D-6</span></div>
+                    <div class="flex-1 flex flex-col items-center justify-end h-full"><div class="w-full bg-emerald-500 rounded-t h-[58%]"></div><span class="text-[10px] text-slate-400 mt-1">D-5</span></div>
+                    <div class="flex-1 flex flex-col items-center justify-end h-full"><div class="w-full bg-emerald-500 rounded-t h-[68%]"></div><span class="text-[10px] text-slate-400 mt-1">D-4</span></div>
+                    <div class="flex-1 flex flex-col items-center justify-end h-full"><div class="w-full bg-emerald-500 rounded-t h-[62%]"></div><span class="text-[10px] text-slate-400 mt-1">D-3</span></div>
+                    <div class="flex-1 flex flex-col items-center justify-end h-full"><div class="w-full bg-emerald-500 rounded-t h-[60%]"></div><span class="text-[10px] text-slate-400 mt-1">D-2</span></div>
+                    <div class="flex-1 flex flex-col items-center justify-end h-full"><div class="w-full bg-emerald-600 rounded-t h-[64%]"></div><span class="text-[10px] text-emerald-800 font-bold mt-1">Today</span></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ======================================================== -->
+          <!-- CLAIM 4: Neonatal Stabilization Unit (Verified) -->
+          <!-- ======================================================== -->
+          <div
+            class="claim-card bg-white border border-slate-200 rounded-lg shadow-xs overflow-hidden transition"
+            id="claim-card-CAP-NBSU-03"
+            data-claim-type="verified"
+          >
+            <!-- Collapsed Header -->
+            <button
+              type="button"
+              onclick="toggleClaimCard('CAP-NBSU-03')"
+              class="w-full text-left p-4 sm:p-5 flex items-start justify-between gap-4 hover:bg-slate-50/50 transition cursor-pointer"
+            >
+              <div class="flex items-start gap-3 min-w-0">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0 mt-1.5" title="Matches records"></span>
+                <div class="flex flex-col gap-1 min-w-0">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h2 class="text-base font-semibold text-slate-900">
+                      Neonatal stabilization unit (NBSU)
+                    </h2>
+                    <span class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                      Matches inspection
+                    </span>
+                  </div>
+                  <p class="text-sm text-slate-600 line-clamp-2">
+                    4 radiant warmers and resuscitation kits verified functional; on-duty pediatrician present.
+                  </p>
+                </div>
+              </div>
+
+              <div class="shrink-0 text-slate-400 pt-1">
+                <span class="material-symbols-outlined text-[20px]" id="chevron-CAP-NBSU-03">expand_more</span>
+              </div>
+            </button>
+
+            <!-- Expanded Body -->
+            <div class="hidden p-4 sm:p-5 pt-0 border-t border-slate-100 flex flex-col gap-4" id="body-CAP-NBSU-03">
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                
+                <div class="bg-slate-50 rounded-lg p-4 border border-slate-200 flex flex-col gap-2">
+                  <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    Equipment specifications
+                  </span>
+                  <p class="text-sm text-slate-800 leading-relaxed">
+                    4 Microprocessor Radiant Warmers with servo control, 2 Phototherapy units, and pediatric resuscitation kits verified in working order.
+                  </p>
+                </div>
+
+                <div class="bg-emerald-50/70 rounded-lg p-4 border border-emerald-200 flex flex-col gap-2">
+                  <span class="text-xs font-semibold text-emerald-800 uppercase tracking-wider">
+                    Audit findings
+                  </span>
+                  <p class="text-sm text-emerald-950 font-medium leading-relaxed">
+                    NBSU stabilized 2 neonates over past 48 hours prior to safe secondary transfer. Attending Pediatrician: Dr. S. K. Verma.
+                  </p>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- Right: Sticky "Actions" Card (Auditor Workbench Collapsed) -->
+        <!-- ======================================================== -->
+        <div class="lg:col-span-4 sticky top-20 flex flex-col gap-4">
+          
+          <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-xs flex flex-col gap-4">
+            
+            <div>
+              <h3 class="text-base font-semibold text-slate-900">Auditor actions</h3>
+              <p class="text-xs text-slate-500 mt-0.5">
+                Take formal administrative action for Samastipur District
+              </p>
+            </div>
+
+            <!-- Single Primary Action -->
+            <button
+              type="button"
+              onclick="saveAuditorDecision('Formal notice served to District CMO: Emergency C-Section accreditation suspended.');"
+              class="w-full py-2.5 px-4 rounded-md bg-red-700 hover:bg-red-800 text-white font-semibold text-sm transition shadow-xs flex items-center justify-center gap-2"
+            >
+              <span class="material-symbols-outlined text-[18px]">gavel</span>
+              <span>Flag for District CMO</span>
+            </button>
+
+            <!-- Two Secondary Actions -->
+            <div class="flex flex-col gap-2">
+              <button
+                type="button"
+                onclick="saveAuditorDecision('Re-inspection scheduled with District Bio-Medical Engineer.');"
+                class="w-full py-2 px-3 rounded-md bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs transition"
+              >
+                Request immediate re-inspection
+              </button>
+              
+              <button
+                type="button"
+                onclick="saveAuditorDecision('Work order dispatched for OT autoclave replacement and surgical lamp rewiring.');"
+                class="w-full py-2 px-3 rounded-md bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs transition"
+              >
+                Schedule equipment repair
+              </button>
+            </div>
+
+            <hr class="border-slate-100"/>
+
+            <!-- Notes Drawer Trigger -->
+            <button
+              type="button"
+              onclick="openInspectorDrawer()"
+              class="w-full py-2 px-3 rounded-md text-clinical-600 bg-clinical-50/60 hover:bg-clinical-100/60 font-medium text-xs transition flex items-center justify-center gap-1.5"
+            >
+              <span class="material-symbols-outlined text-[16px]">notes</span>
+              <span>Review inspector notes & dispatch</span>
+            </button>
+
+            <!-- Feedback Notification Area -->
+            <div id="decisionNotification" class="hidden p-3 rounded-md bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-medium">
+              Action logged successfully into state audit record.
+            </div>
+
+          </div>
+
+          <!-- Quiet Reference Box -->
+          <div class="bg-slate-50 rounded-lg p-4 border border-slate-200 text-xs text-slate-500 flex flex-col gap-1">
+            <span class="font-medium text-slate-700">Governance note:</span>
+            <span>All actions taken here are cryptographically logged with the Bihar State Health Registry.</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 2: BEDS & OCCUPANCY -->
+    <!-- ============================================================== -->
+    <div class="tab-content" id="tab-content-census">
+      <div class="flex flex-col gap-6">
+        
+        <!-- Metrics -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="bg-white border border-slate-200 rounded-lg p-4">
+            <span class="text-xs text-slate-500">Total capacity</span>
+            <div class="text-xl font-bold text-slate-900 mt-1">30 Beds</div>
+            <span class="text-xs text-slate-400">IPHS Sanctioned</span>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-lg p-4">
+            <span class="text-xs text-slate-500">Active occupancy</span>
+            <div class="text-xl font-bold text-emerald-700 mt-1">21 Beds (70%)</div>
+            <span class="text-xs text-slate-400">Normal occupancy</span>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-lg p-4">
+            <span class="text-xs text-slate-500">Maternity ward</span>
+            <div class="text-xl font-bold text-amber-700 mt-1">11 / 12 Beds</div>
+            <span class="text-xs text-amber-700 font-medium">Near capacity (91.6%)</span>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-lg p-4">
+            <span class="text-xs text-slate-500">Vacant available</span>
+            <div class="text-xl font-bold text-slate-700 mt-1">9 Beds</div>
+            <span class="text-xs text-slate-400">Available for intake</span>
+          </div>
+        </div>
+
+        <!-- Ward Beds Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Male Ward -->
+          <div class="bg-white border border-slate-200 rounded-lg p-5 flex flex-col gap-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 class="font-semibold text-slate-900">Male General Ward</h3>
+              <span class="text-xs font-medium text-slate-500">7 occupied / 10 beds</span>
+            </div>
+            <p class="text-xs text-slate-500">Attending nurse: Sister Pushpa Devi</p>
+            <div class="grid grid-cols-5 gap-2 pt-1" id="maleWardGrid">
+              <button class="p-2 rounded border border-emerald-300 bg-emerald-50 text-center hover:shadow-xs transition" onclick="showBedDetails('M-01', 'Occupied', 'Ramesh Yadav (Age 42)', 'Post-fever observation', '13-Oct 14:20', 'Sister Pushpa')">
+                <span class="font-mono text-xs font-bold text-emerald-950 block">M-01</span>
+                <span class="text-[10px] text-emerald-700">Occupied</span>
+              </button>
+              <button class="p-2 rounded border border-emerald-300 bg-emerald-50 text-center hover:shadow-xs transition" onclick="showBedDetails('M-02', 'Occupied', 'Dilip Paswan (Age 55)', 'Respiratory distress', '14-Oct 03:10', 'Sister Pushpa')">
+                <span class="font-mono text-xs font-bold text-emerald-950 block">M-02</span>
+                <span class="text-[10px] text-emerald-700">Occupied</span>
+              </button>
+              <button class="p-2 rounded border border-emerald-300 bg-emerald-50 text-center hover:shadow-xs transition" onclick="showBedDetails('M-03', 'Occupied', 'Mohan Mahto (Age 31)', 'Gastroenteritis', '14-Oct 07:45', 'Sister Pushpa')">
+                <span class="font-mono text-xs font-bold text-emerald-950 block">M-03</span>
+                <span class="text-[10px] text-emerald-700">Occupied</span>
+              </button>
+              <button class="p-2 rounded border border-slate-200 bg-slate-50 text-center hover:shadow-xs transition" onclick="showBedDetails('M-04', 'Vacant', 'None', 'Sanitized & Ready', 'N/A', 'Sister Pushpa')">
+                <span class="font-mono text-xs font-bold text-slate-400 block">M-04</span>
+                <span class="text-[10px] text-slate-500">Vacant</span>
+              </button>
+              <button class="p-2 rounded border border-emerald-300 bg-emerald-50 text-center hover:shadow-xs transition" onclick="showBedDetails('M-05', 'Occupied', 'Alok Ranjan (Age 28)', 'Accident trauma dressing', '14-Oct 09:00', 'Sister Pushpa')">
+                <span class="font-mono text-xs font-bold text-emerald-950 block">M-05</span>
+                <span class="text-[10px] text-emerald-700">Occupied</span>
+              </button>
+              <button class="p-2 rounded border border-emerald-300 bg-emerald-50 text-center hover:shadow-xs transition" onclick="showBedDetails('M-06', 'Occupied', 'Sunil Jha (Age 64)', 'Hypertensive monitoring', '13-Oct 22:30', 'Sister Pushpa')">
+                <span class="font-mono text-xs font-bold text-emerald-950 block">M-06</span>
+                <span class="text-[10px] text-emerald-700">Occupied</span>
+              </button>
+              <button class="p-2 rounded border border-slate-200 bg-slate-50 text-center hover:shadow-xs transition" onclick="showBedDetails('M-07', 'Vacant', 'None', 'Cleaned & Ready', 'N/A', 'Sister Pushpa')">
+                <span class="font-mono text-xs font-bold text-slate-400 block">M-07</span>
+                <span class="text-[10px] text-slate-500">Vacant</span>
+              </button>
+              <button class="p-2 rounded border border-emerald-300 bg-emerald-50 text-center hover:shadow-xs transition" onclick="showBedDetails('M-08', 'Occupied', 'Praveen Das (Age 39)', 'Dengue suspect / Hydration', '14-Oct 01:15', 'Sister Pushpa')">
+                <span class="font-mono text-xs font-bold text-emerald-950 block">M-08</span>
+                <span class="text-[10px] text-emerald-700">Occupied</span>
+              </button>
+              <button class="p-2 rounded border border-emerald-300 bg-emerald-50 text-center hover:shadow-xs transition" onclick="showBedDetails('M-09', 'Occupied', 'Md. Imran (Age 50)', 'Asthma flare', '14-Oct 08:30', 'Sister Pushpa')">
+                <span class="font-mono text-xs font-bold text-emerald-950 block">M-09</span>
+                <span class="text-[10px] text-emerald-700">Occupied</span>
+              </button>
+              <button class="p-2 rounded border border-slate-200 bg-slate-50 text-center hover:shadow-xs transition" onclick="showBedDetails('M-10', 'Vacant', 'None', 'Disinfected', 'N/A', 'Sister Pushpa')">
+                <span class="font-mono text-xs font-bold text-slate-400 block">M-10</span>
+                <span class="text-[10px] text-slate-500">Vacant</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Female Maternity Ward -->
+          <div class="bg-white border border-slate-200 rounded-lg p-5 flex flex-col gap-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 class="font-semibold text-slate-900">Female Maternity Ward</h3>
+              <span class="text-xs font-semibold text-amber-700">11 occupied / 12 beds</span>
+            </div>
+            <p class="text-xs text-slate-500">Attending midwife: GNM Sunita Soren</p>
+            <div class="grid grid-cols-6 gap-2 pt-1" id="maternityWardGrid">
+              <button class="p-2 rounded border border-purple-200 bg-purple-50 text-center hover:shadow-xs transition" onclick="showBedDetails('F-01', 'Occupied', 'Pooja Devi (Age 23)', 'Normal Delivery', '13-Oct 11:20', 'GNM Sunita')">
+                <span class="font-mono text-xs font-bold text-purple-950 block">F-01</span>
+                <span class="text-[10px] text-purple-700">Occ</span>
+              </button>
+              <button class="p-2 rounded border border-purple-200 bg-purple-50 text-center hover:shadow-xs transition" onclick="showBedDetails('F-02', 'Occupied', 'Sita Kumari (Age 26)', 'Active Labor', '14-Oct 04:30', 'GNM Sunita')">
+                <span class="font-mono text-xs font-bold text-purple-950 block">F-02</span>
+                <span class="text-[10px] text-purple-700">Occ</span>
+              </button>
+              <button class="p-2 rounded border border-purple-200 bg-purple-50 text-center hover:shadow-xs transition" onclick="showBedDetails('F-03', 'Occupied', 'Archana Singh (Age 21)', 'Post-partum', '13-Oct 20:10', 'GNM Sunita')">
+                <span class="font-mono text-xs font-bold text-purple-950 block">F-03</span>
+                <span class="text-[10px] text-purple-700">Occ</span>
+              </button>
+              <button class="p-2 rounded border border-purple-200 bg-purple-50 text-center hover:shadow-xs transition" onclick="showBedDetails('F-04', 'Occupied', 'Rekha Devi (Age 29)', 'Severe Anaemia', '14-Oct 01:25', 'GNM Sunita')">
+                <span class="font-mono text-xs font-bold text-purple-950 block">F-04</span>
+                <span class="text-[10px] text-purple-700">Occ</span>
+              </button>
+              <button class="p-2 rounded border border-purple-200 bg-purple-50 text-center hover:shadow-xs transition" onclick="showBedDetails('F-05', 'Occupied', 'Chanda Khatun (Age 24)', 'Observation', '13-Oct 15:40', 'GNM Sunita')">
+                <span class="font-mono text-xs font-bold text-purple-950 block">F-05</span>
+                <span class="text-[10px] text-purple-700">Occ</span>
+              </button>
+              <button class="p-2 rounded border border-purple-200 bg-purple-50 text-center hover:shadow-xs transition" onclick="showBedDetails('F-06', 'Occupied', 'Kavita Kumari (Age 27)', 'Pre-eclampsia', '14-Oct 06:15', 'GNM Sunita')">
+                <span class="font-mono text-xs font-bold text-purple-950 block">F-06</span>
+                <span class="text-[10px] text-purple-700">Occ</span>
+              </button>
+              <button class="p-2 rounded border border-purple-200 bg-purple-50 text-center hover:shadow-xs transition" onclick="showBedDetails('F-07', 'Occupied', 'Manju Devi (Age 22)', 'Post-partum', '12-Oct 21:00', 'GNM Sunita')">
+                <span class="font-mono text-xs font-bold text-purple-950 block">F-07</span>
+                <span class="text-[10px] text-purple-700">Occ</span>
+              </button>
+              <button class="p-2 rounded border border-purple-200 bg-purple-50 text-center hover:shadow-xs transition" onclick="showBedDetails('F-08', 'Occupied', 'Radha Ray (Age 25)', 'Post-partum', '13-Oct 17:30', 'GNM Sunita')">
+                <span class="font-mono text-xs font-bold text-purple-950 block">F-08</span>
+                <span class="text-[10px] text-purple-700">Occ</span>
+              </button>
+              <button class="p-2 rounded border border-purple-200 bg-purple-50 text-center hover:shadow-xs transition" onclick="showBedDetails('F-09', 'Occupied', 'Geeta Devi (Age 32)', 'Post-natal', '13-Oct 19:45', 'GNM Sunita')">
+                <span class="font-mono text-xs font-bold text-purple-950 block">F-09</span>
+                <span class="text-[10px] text-purple-700">Occ</span>
+              </button>
+              <button class="p-2 rounded border border-purple-200 bg-purple-50 text-center hover:shadow-xs transition" onclick="showBedDetails('F-10', 'Occupied', 'Farzana Bano (Age 20)', 'Labor 1st Stage', '14-Oct 08:00', 'GNM Sunita')">
+                <span class="font-mono text-xs font-bold text-purple-950 block">F-10</span>
+                <span class="text-[10px] text-purple-700">Occ</span>
+              </button>
+              <button class="p-2 rounded border border-purple-200 bg-purple-50 text-center hover:shadow-xs transition" onclick="showBedDetails('F-11', 'Occupied', 'Suman Kumari (Age 28)', 'Post-partum', '14-Oct 02:20', 'GNM Sunita')">
+                <span class="font-mono text-xs font-bold text-purple-950 block">F-11</span>
+                <span class="text-[10px] text-purple-700">Occ</span>
+              </button>
+              <button class="p-2 rounded border border-slate-200 bg-slate-50 text-center hover:shadow-xs transition" onclick="showBedDetails('F-12', 'Vacant', 'None', 'Prepared for triage', 'N/A', 'GNM Sunita')">
+                <span class="font-mono text-xs font-bold text-slate-400 block">F-12</span>
+                <span class="text-[10px] text-slate-500">Vacant</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 3: EQUIPMENT -->
+    <!-- ============================================================== -->
+    <div class="tab-content" id="tab-content-equipment">
+      <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-xs">
+        <h3 class="text-base font-semibold text-slate-900 mb-3">Critical medical equipment inventory</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-500 bg-slate-50 text-xs">
+                <th class="py-2.5 px-3">Asset Code</th>
+                <th class="py-2.5 px-3">Equipment</th>
+                <th class="py-2.5 px-3">Ward / Location</th>
+                <th class="py-2.5 px-3">Status</th>
+                <th class="py-2.5 px-3">Last Checked</th>
+                <th class="py-2.5 px-3">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-800">
+              <tr>
+                <td class="py-2.5 px-3 font-mono text-xs text-slate-500">EQ-OT-001</td>
+                <td class="py-2.5 px-3 font-medium">Vertical Steam Autoclave 50L</td>
+                <td class="py-2.5 px-3 text-slate-600">Major Operation Theatre</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Defunct (Heating Defect)</span></td>
+                <td class="py-2.5 px-3 text-xs text-slate-500">14-Oct-2024</td>
+                <td class="py-2.5 px-3"><button class="text-clinical-600 hover:underline text-xs font-medium" onclick="showGlobalToast('Repair work order issued for Autoclave', 'warning')">Issue repair order</button></td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-mono text-xs text-slate-500">EQ-OT-004</td>
+                <td class="py-2.5 px-3 font-medium">Ceiling Surgical Shadowless Lamp</td>
+                <td class="py-2.5 px-3 text-slate-600">Major Operation Theatre</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Wiring Short-Circuit</span></td>
+                <td class="py-2.5 px-3 text-xs text-slate-500">14-Oct-2024</td>
+                <td class="py-2.5 px-3"><button class="text-clinical-600 hover:underline text-xs font-medium" onclick="showGlobalToast('Repair work order issued for Lamp', 'warning')">Issue repair order</button></td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-mono text-xs text-slate-500">EQ-BSU-102</td>
+                <td class="py-2.5 px-3 font-medium">Blood Bank Refrigerator (300L)</td>
+                <td class="py-2.5 px-3 text-slate-600">Blood Storage Unit</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">Nominal (3.8°C)</span></td>
+                <td class="py-2.5 px-3 text-xs text-slate-500">12-Oct-2024</td>
+                <td class="py-2.5 px-3 text-xs text-slate-400">Telemetry verified</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-mono text-xs text-slate-500">EQ-NBSU-05</td>
+                <td class="py-2.5 px-3 font-medium">Radiant Infant Warmer</td>
+                <td class="py-2.5 px-3 text-slate-600">NBSU Newborn Ward</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">Active & Calibrated</span></td>
+                <td class="py-2.5 px-3 text-xs text-slate-500">10-Oct-2024</td>
+                <td class="py-2.5 px-3 text-xs text-slate-400">Certified</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 4: STAFF ROSTER -->
+    <!-- ============================================================== -->
+    <div class="tab-content" id="tab-content-staff">
+      <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-xs flex flex-col gap-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="text-base font-semibold text-slate-900">Clinical cadre sanction vs in-position</h3>
+            <p class="text-xs text-slate-500">IPHS standard mandate for 30-bed Community Health Centre</p>
+          </div>
+          <span class="px-2.5 py-1 rounded bg-amber-50 text-amber-800 border border-amber-200 text-xs font-medium">
+            Specialist shortage: 50%
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex flex-col gap-2">
+            <div class="p-3 rounded bg-slate-50 flex items-center justify-between text-sm">
+              <span>General Duty Medical Officers (GDMO)</span>
+              <span class="font-semibold text-emerald-800 text-xs">2 / 2 In-Position (100%)</span>
+            </div>
+            <div class="p-3 rounded bg-red-50 border border-red-200 flex items-center justify-between text-sm">
+              <span class="font-medium text-red-900">Anaesthetist Specialist (MD/DA)</span>
+              <span class="font-bold text-red-700 text-xs">0 / 1 (VACANT)</span>
+            </div>
+            <div class="p-3 rounded bg-slate-50 flex items-center justify-between text-sm">
+              <span>Gynaecologist & Obstetrician</span>
+              <span class="font-semibold text-emerald-800 text-xs">1 / 1 In-Position</span>
+            </div>
+            <div class="p-3 rounded bg-slate-50 flex items-center justify-between text-sm">
+              <span>Paediatrician</span>
+              <span class="font-semibold text-emerald-800 text-xs">1 / 1 In-Position</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <div class="p-3 rounded bg-slate-50 flex items-center justify-between text-sm">
+              <span>Staff Nurses (GNM)</span>
+              <span class="font-semibold text-emerald-800 text-xs">8 / 10 Active</span>
+            </div>
+            <div class="p-3 rounded bg-slate-50 flex items-center justify-between text-sm">
+              <span>Auxiliary Nurse Midwives (ANM)</span>
+              <span class="font-semibold text-emerald-800 text-xs">6 / 6 In-Position</span>
+            </div>
+            <div class="p-3 rounded bg-slate-50 flex items-center justify-between text-sm">
+              <span>Lab Technicians</span>
+              <span class="font-semibold text-emerald-800 text-xs">2 / 2 In-Position</span>
+            </div>
+            <div class="p-3 rounded bg-slate-50 flex items-center justify-between text-sm">
+              <span>Pharmacists</span>
+              <span class="font-semibold text-emerald-800 text-xs">2 / 2 In-Position</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 5: INSPECTION DOCUMENTS -->
+    <!-- ============================================================== -->
+    <div class="tab-content" id="tab-content-dossier">
+      <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-xs flex flex-col gap-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="text-base font-semibold text-slate-900">Government inspection memorandum</h3>
+            <p class="text-xs text-slate-500">Office of the District Magistrate & Civil Surgeon, Samastipur</p>
+          </div>
+          <button
+            type="button"
+            onclick="downloadDossierSummary()"
+            class="px-3 py-1.5 rounded bg-clinical-500 hover:bg-clinical-600 text-white font-medium text-xs transition"
+          >
+            Download signed copy (PDF)
+          </button>
+        </div>
+
+        <div class="p-4 bg-slate-50 border border-slate-200 rounded font-mono text-xs leading-loose text-slate-800 select-text">
+          <strong>MEMORANDUM NO:</strong> SAM/H-INSP/2024/0981<br/>
+          <strong>DATE OF INSPECTION:</strong> 14TH OCTOBER 2024 (10:15 HOURS)<br/>
+          <strong>INSPECTING OFFICERS:</strong> Dr. V. K. Singh (Addl. CMO), Shri Rajesh Ranjan (Executive Magistrate)<br/>
+          <strong>FACILITY:</strong> COMMUNITY HEALTH CENTRE, KALYANPUR, DISTRICT SAMASTIPUR (BIHAR)<br/>
+          <hr class="my-2 border-slate-200"/>
+          <strong>FINDINGS SUMMARY:</strong><br/>
+          1. <strong>Out-Patient Department:</strong> Functional. 140 patients attended till 11:30 AM.<br/>
+          2. <strong>Labour Room:</strong> Standard normal deliveries active. Cleanliness satisfactory.<br/>
+          3. <strong>Major Operation Theatre:</strong> Padlocked. Autoclave heating coil burnt out. Overhead surgical lamp non-functional. All emergency C-section cases redirected to DMCH Darbhanga.<br/>
+          4. <strong>Blood Storage Unit:</strong> 3.8°C maintained. 4 units PRBC intact.<br/>
+          5. <strong>Human Resources:</strong> No regular or bonded Anaesthetist posted.<br/>
+          <br/>
+          <strong>RECOMMENDED ACTION:</strong> Immediate notice to District Civil Surgeon. Revoke 24x7 C-section accreditation flag in National Health Portal until equipment replacement and specialist posting.
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- 6. SLIDE-OVER DRAWER: INSPECTOR NOTES & RAW DISPATCH -->
+  <!-- ============================================================== -->
+  <div id="inspectorDrawerBackdrop" class="fixed inset-0 bg-slate-900/40 z-40 hidden transition-opacity" onclick="closeInspectorDrawer()"></div>
+  <aside
+    id="inspectorDrawer"
+    class="fixed right-0 top-0 h-full w-full max-w-lg bg-white border-l border-slate-200 z-50 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out"
+  >
+    <!-- Drawer Header -->
+    <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-clinical-600 text-[20px]">notes</span>
+        <h3 class="font-semibold text-slate-900 text-base">Inspector notes & dispatch log</h3>
+      </div>
+      <button onclick="closeInspectorDrawer()" class="p-1 rounded text-slate-400 hover:text-slate-600 hover:bg-slate-100">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <!-- Drawer Content -->
+    <div class="p-5 flex-1 overflow-y-auto flex flex-col gap-4">
+      
+      <p class="text-xs text-slate-500">
+        Click any highlighted text snippet in the dispatch log below to review or append inspector notes.
+      </p>
+
+      <!-- Active Annotation Box -->
+      <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700" id="inspectorNoteBox">
+        Select a highlighted snippet below to review auditor findings.
+      </div>
+
+      <!-- Raw Log -->
+      <div class="rounded-lg bg-slate-900 text-slate-200 p-4 font-mono text-xs leading-relaxed border border-slate-800 select-text">
+        <span class="text-slate-500">--- BEGIN FIELD DISPATCH LOG ---</span><br/>
+        Record #ROW-8492-BR · 14-Oct-2024 10:14 IST<br/><br/>
+        ...Kalyanpur CHC inspected by Sub-Divisional Medical Officer team.<br/>
+        - <span class="annotated-text text-slate-900" onclick="selectAnnotation('opd')">Routine OPD active (140 patients attended)</span>.<br/>
+        - Labor room active for normal deliveries.<br/>
+        - <span class="annotated-text text-slate-900" onclick="selectAnnotation('ot')">Major OT locked due to autoclave maintenance requirement and electrical short in surgical lamp wiring</span>.<br/>
+        - <span class="annotated-text text-slate-900" onclick="selectAnnotation('staff')">Anesthetist requisition pending with district civil surgeon office</span>.<br/>
+        - <span class="annotated-text text-slate-900" onclick="selectAnnotation('bsu')">Blood unit functional; current stock 4 units PRBC B+ve</span>.<br/><br/>
+        <span class="text-slate-500">--- END FIELD DISPATCH LOG ---</span>
+      </div>
+
+      <div class="text-xs text-slate-500 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-slate-400 text-[16px]">touch_app</span>
+        <span>Click highlighted yellow text to load findings.</span>
+      </div>
+
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="p-4 border-t border-slate-200 flex justify-end">
+      <button
+        onclick="closeInspectorDrawer()"
+        class="px-4 py-2 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition"
+      >
+        Close drawer
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============================================================== -->
+  <!-- 7. MODALS (Preserved Actions & Care-Intent Matching Modal) -->
+  <!-- ============================================================== -->
+
+  <!-- Action Confirmation Modal -->
+  <div class="fixed inset-0 bg-slate-900/50 z-50 hidden flex items-center justify-center p-4" id="investigatorModal">
+    <div class="bg-white rounded-lg max-w-md w-full p-5 border border-slate-200 shadow-xl flex flex-col gap-3">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+        <h3 class="font-semibold text-slate-900 text-base" id="modalTitle">Audit Action</h3>
+        <button class="material-symbols-outlined text-slate-400 hover:text-slate-600" onclick="closeModal()">close</button>
+      </div>
+      <p class="text-sm text-slate-700" id="modalDescription">Proceeding with selected administrative action.</p>
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+        <button class="px-3 py-1.5 rounded border border-slate-200 text-slate-700 text-xs font-medium hover:bg-slate-50" onclick="closeModal()">Cancel</button>
+        <button class="px-3.5 py-1.5 rounded bg-clinical-500 hover:bg-clinical-600 text-white text-xs font-semibold" onclick="executeModalAction()">Confirm Action</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Intelligent Care Matching & Evidence Trust Search Modal -->
+  <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4" id="locationSearchModal">
+    <div class="bg-white rounded-xl max-w-3xl w-full p-6 border border-slate-200 shadow-2xl flex flex-col gap-4 max-h-[92vh] overflow-y-auto">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-clinical-500 text-white flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">manage_search</span>
+          </div>
+          <div>
+            <h3 class="text-base font-semibold text-slate-900">Intelligent care matching & evidence trust</h3>
+            <p class="text-xs text-slate-500">Matches patient clinical intent against 10,000 facilities with verbatim record citations</p>
+          </div>
+        </div>
+        <button class="material-symbols-outlined text-slate-400 hover:text-slate-600 cursor-pointer p-1 rounded hover:bg-slate-100" onclick="closeSearchModal()">close</button>
+      </div>
+
+      <!-- 1. Category Selector -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-semibold text-slate-700 uppercase tracking-wider">1. Select care category</label>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5" id="careCategoryPills">
+          <button type="button" onclick="selectCareCategory('eye_examination', this)" class="care-cat-btn px-2.5 py-1.5 rounded-md border border-slate-200 text-xs font-medium hover:border-clinical-500 text-slate-700 text-left flex items-center gap-1.5 transition">
+            <span class="material-symbols-outlined text-[15px] text-clinical-600">visibility</span><span>Eye Examination</span>
+          </button>
+          <button type="button" onclick="selectCareCategory('general_checkup', this)" class="care-cat-btn px-2.5 py-1.5 rounded-md border border-slate-200 text-xs font-medium hover:border-clinical-500 text-slate-700 text-left flex items-center gap-1.5 transition">
+            <span class="material-symbols-outlined text-[15px] text-clinical-600">stethoscope</span><span>General Check-up</span>
+          </button>
+          <button type="button" onclick="selectCareCategory('dental_care', this)" class="care-cat-btn px-2.5 py-1.5 rounded-md border border-slate-200 text-xs font-medium hover:border-clinical-500 text-slate-700 text-left flex items-center gap-1.5 transition">
+            <span class="material-symbols-outlined text-[15px] text-clinical-600">dentistry</span><span>Dental Care</span>
+          </button>
+          <button type="button" onclick="selectCareCategory('emergency_care', this)" class="care-cat-btn active bg-clinical-50 text-clinical-700 border-clinical-500 font-semibold px-2.5 py-1.5 rounded-md border text-xs text-left flex items-center gap-1.5 transition">
+            <span class="material-symbols-outlined text-[15px] text-clinical-600">emergency</span><span>Emergency Care</span>
+          </button>
+          <button type="button" onclick="selectCareCategory('specialist_consultation', this)" class="care-cat-btn px-2.5 py-1.5 rounded-md border border-slate-200 text-xs font-medium hover:border-clinical-500 text-slate-700 text-left flex items-center gap-1.5 transition">
+            <span class="material-symbols-outlined text-[15px] text-clinical-600">medical_services</span><span>Specialist Consult</span>
+          </button>
+          <button type="button" onclick="selectCareCategory('diagnostic_tests', this)" class="care-cat-btn px-2.5 py-1.5 rounded-md border border-slate-200 text-xs font-medium hover:border-clinical-500 text-slate-700 text-left flex items-center gap-1.5 transition">
+            <span class="material-symbols-outlined text-[15px] text-clinical-600">biotechnology</span><span>Diagnostic / Lab</span>
+          </button>
+          <button type="button" onclick="selectCareCategory('pharmacy', this)" class="care-cat-btn px-2.5 py-1.5 rounded-md border border-slate-200 text-xs font-medium hover:border-clinical-500 text-slate-700 text-left flex items-center gap-1.5 transition">
+            <span class="material-symbols-outlined text-[15px] text-clinical-600">prescriptions</span><span>Pharmacy</span>
+          </button>
+          <button type="button" onclick="selectCareCategory('other', this)" class="care-cat-btn px-2.5 py-1.5 rounded-md border border-slate-200 text-xs font-medium hover:border-clinical-500 text-slate-700 text-left flex items-center gap-1.5 transition">
+            <span class="material-symbols-outlined text-[15px] text-clinical-600">search</span><span>Custom Request</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Patient Request Input -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-semibold text-slate-700 uppercase tracking-wider">2. Patient request (natural language)</label>
+        <input
+          type="text"
+          id="careSearchQuery"
+          value="Severe abdominal pain, suspected appendicitis. Father needs emergency surgery tonight."
+          class="p-2.5 rounded-md bg-slate-50 border border-slate-200 text-sm text-slate-900 focus:bg-white focus:border-clinical-500 outline-none"
+        />
+        
+        <!-- Examples -->
+        <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+          <span class="text-xs text-slate-400">Examples:</span>
+          <button type="button" class="px-2 py-0.5 rounded text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer" onclick="setCareQuery('I need a routine eye test and cataract examination.', 'eye_examination')">"Routine eye test"</button>
+          <button type="button" class="px-2 py-0.5 rounded text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer" onclick="setCareQuery('Find a clinic for a general health check-up and blood pressure test.', 'general_checkup')">"General check-up"</button>
+          <button type="button" class="px-2 py-0.5 rounded text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer" onclick="setCareQuery('I need dental care for toothache and root canal treatment.', 'dental_care')">"Dental care"</button>
+          <button type="button" class="px-2 py-0.5 rounded text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer" onclick="setCareQuery('Find facilities offering emergency surgery and trauma services.', 'emergency_care')">"Emergency services"</button>
+        </div>
+      </div>
+
+      <!-- 3. Optional Location & Radius -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 rounded-lg bg-slate-50 border border-slate-200">
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-slate-700">Preset Location Hubs</label>
+          <select id="locSearchPreset" onchange="onPresetSelected(this.value)" class="p-1.5 rounded-md bg-white border border-slate-200 text-xs text-slate-800">
+            <option value="Siwan / Gopalganj, Bihar (Probe g1/g4)">Siwan / Gopalganj (Probe g1/g4)</option>
+            <option value="Begusarai, Bihar (Probe g2)">Begusarai, Bihar (Probe g2)</option>
+            <option value="Patna, Bihar">Patna, Bihar (AIIMS / PMCH)</option>
+            <option value="Darbhanga">Darbhanga (DMCH Hub)</option>
+            <option value="Samastipur">Samastipur District</option>
+            <option value="New Delhi">New Delhi</option>
+            <option value="Mumbai, Maharashtra">Mumbai, Maharashtra</option>
+            <option value="Bengaluru, Karnataka">Bengaluru, Karnataka</option>
+            <option value="">-- No Location (All India / Skill-Only) --</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-slate-700">Custom Location / PIN</label>
+          <input type="text" id="locSearchCustom" placeholder="e.g. Patna, 841226, 26.24, 84.4" class="p-1.5 rounded-md bg-white border border-slate-200 text-xs text-slate-800" />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-slate-700">Max Distance Radius</label>
+          <select id="locSearchRadius" class="p-1.5 rounded-md bg-white border border-slate-200 text-xs text-slate-800">
+            <option value="25">25 km (Local District)</option>
+            <option value="50">50 km (Sub-Regional)</option>
+            <option value="100" selected>100 km (Regional)</option>
+            <option value="250">250 km (Inter-District)</option>
+            <option value="">No Distance Cap</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Action Bar -->
+      <div class="flex items-center justify-between pt-1">
+        <span class="text-xs text-slate-500 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Zero LLM calls · Verbatim citations · Tiered ranking</span>
+        </span>
+
+        <button
+          type="button"
+          id="btnExecuteSearch"
+          onclick="executeIntelligentSearch()"
+          class="px-5 py-2 rounded-md bg-clinical-500 hover:bg-clinical-600 text-white text-xs font-semibold flex items-center gap-2 transition cursor-pointer shadow-xs"
+        >
+          <span class="material-symbols-outlined text-[17px]">travel_explore</span>
+          <span>Match & Rank Facilities</span>
+        </button>
+      </div>
+
+      <!-- Results Container -->
+      <div id="locSearchResultsContainer" class="flex flex-col gap-2.5 pt-3 border-t border-slate-100">
+        <div class="text-xs text-slate-500 flex items-center justify-between">
+          <span id="locResultsHeader" class="font-semibold text-slate-800">Matching Results</span>
+          <span id="locResultsCount" class="font-medium text-clinical-600">Click Match & Rank Facilities</span>
+        </div>
+        <div id="locResultsList" class="flex flex-col gap-2.5 max-h-80 overflow-y-auto pr-1">
+          <div class="p-4 rounded-md bg-slate-50 border border-slate-200 text-center text-slate-500 text-xs">
+            Select a category above or enter a natural-language query to evaluate evidence and rank facilities.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto border-t border-slate-200 bg-white py-4 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+      <div>
+        VERITAS Health Intelligence Platform · National Health Portal & ABDM Compatible
+      </div>
+      <div class="flex items-center gap-3">
+        <span>NIN: BR-849201</span>
+        <span>·</span>
+        <span>IPHS Tier-II Protocol</span>
+        <span>·</span>
+        <span>District Officer Access</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT INTERACTIONS (Preserving all logic & test compatibility) -->
+  <!-- ============================================================== -->
+  <script>
+    // Global Toast Notification System
+    function showGlobalToast(msg, type = 'success') {
+      let toast = document.getElementById('globalToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'globalToast';
+        document.body.appendChild(toast);
+      }
+      let bgClass = 'bg-slate-900 text-white border-slate-700';
+      let iconName = 'check_circle';
+      if (type === 'error') {
+        bgClass = 'bg-red-900 text-white border-red-700';
+        iconName = 'error';
+      } else if (type === 'warning') {
+        bgClass = 'bg-amber-900 text-white border-amber-700';
+        iconName = 'warning';
+      } else if (type === 'info') {
+        bgClass = 'bg-slate-800 text-white border-slate-600';
+        iconName = 'info';
+      }
+      toast.className = 'fixed top-5 right-5 z-50 px-4 py-2.5 rounded-lg shadow-xl text-xs font-medium flex items-center gap-2 border ' + bgClass;
+      toast.innerHTML = `<span class="material-symbols-outlined text-[18px]">${iconName}</span><span>${msg}</span>`;
+      toast.style.display = 'flex';
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(() => { toast.style.display = 'none'; }, 4000);
+    }
+
+    // Tab Switching
+    function switchTab(tabKey) {
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.remove('active');
+        el.style.display = 'none';
+      });
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('border-clinical-500', 'text-clinical-600', 'font-semibold', 'active');
+        btn.classList.add('border-transparent', 'text-slate-600', 'font-medium');
+      });
+
+      const targetContent = document.getElementById('tab-content-' + tabKey);
+      const targetBtn = document.getElementById('tab-btn-' + tabKey);
+      if (targetContent) {
+        targetContent.classList.add('active');
+        targetContent.style.display = 'block';
+      }
+      if (targetBtn) {
+        targetBtn.classList.remove('border-transparent', 'text-slate-600', 'font-medium');
+        targetBtn.classList.add('border-clinical-500', 'text-clinical-600', 'font-semibold', 'active');
+      }
+    }
+
+    // Progressive Disclosure Accordion for Claims
+    function toggleClaimCard(claimId) {
+      const body = document.getElementById('body-' + claimId);
+      const chevron = document.getElementById('chevron-' + claimId);
+      if (!body) return;
+      if (body.classList.contains('hidden')) {
+        body.classList.remove('hidden');
+        if (chevron) chevron.innerText = 'expand_less';
+      } else {
+        body.classList.add('hidden');
+        if (chevron) chevron.innerText = 'expand_more';
+      }
+    }
+
+    // Alert Banner Action: Expand OT claim and scroll
+    function reviewOtIssue() {
+      switchTab('capabilities');
+      const body = document.getElementById('body-CAP-SURG-01');
+      const chevron = document.getElementById('chevron-CAP-SURG-01');
+      if (body) body.classList.remove('hidden');
+      if (chevron) chevron.innerText = 'expand_less';
+      const card = document.getElementById('claim-card-CAP-SURG-01');
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    // Filter Claims
+    function filterClaims(type) {
+      const cards = document.querySelectorAll('.claim-card');
+      const filters = ['all', 'discrepancy', 'staffing', 'verified'];
+      
+      filters.forEach(f => {
+        const btn = document.getElementById('claim-filter-' + f);
+        if (btn) {
+          if (f === type) {
+            btn.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-clinical-500 text-white transition';
+          } else {
+            btn.className = 'px-2.5 py-1 rounded text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition';
+          }
+        }
+      });
+
+      cards.forEach(card => {
+        if (type === 'all' || card.getAttribute('data-claim-type') === type) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // More Actions Menu
+    function toggleMoreActionsMenu() {
+      const menu = document.getElementById('moreActionsDropdown');
+      if (menu) menu.classList.toggle('hidden');
+    }
+    function closeMoreActionsMenu() {
+      const menu = document.getElementById('moreActionsDropdown');
+      if (menu) menu.classList.add('hidden');
+    }
+    document.addEventListener('click', function(e) {
+      const container = document.getElementById('moreActionsContainer');
+      if (container && !container.contains(e.target)) {
+        closeMoreActionsMenu();
+      }
+    });
+
+    // Inspector Notes Slide-over Drawer
+    function openInspectorDrawer() {
+      const drawer = document.getElementById('inspectorDrawer');
+      const backdrop = document.getElementById('inspectorDrawerBackdrop');
+      if (drawer) drawer.classList.remove('translate-x-full');
+      if (backdrop) backdrop.classList.remove('hidden');
+    }
+    function closeInspectorDrawer() {
+      const drawer = document.getElementById('inspectorDrawer');
+      const backdrop = document.getElementById('inspectorDrawerBackdrop');
+      if (drawer) drawer.classList.add('translate-x-full');
+      if (backdrop) backdrop.classList.add('hidden');
+    }
+
+    // Toggle Shift Roster
+    function toggleShiftRoster() {
+      const drawer = document.getElementById('shiftRosterDrawer');
+      const chevron = document.getElementById('shiftRosterChevron');
+      const txt = document.getElementById('shiftRosterBtnText');
+      if (!drawer) return;
+      if (drawer.classList.contains('hidden')) {
+        drawer.classList.remove('hidden');
+        if (chevron) chevron.innerText = 'expand_less';
+        if (txt) txt.innerText = 'Hide shift roster logs';
+      } else {
+        drawer.classList.add('hidden');
+        if (chevron) chevron.innerText = 'expand_more';
+        if (txt) txt.innerText = 'View 30-day shift roster logs';
+      }
+    }
+
+    // Toggle Temperature Graph
+    function toggleTempGraph() {
+      const drawer = document.getElementById('tempGraphDrawer');
+      const chevron = document.getElementById('tempGraphChevron');
+      const txt = document.getElementById('tempGraphBtnText');
+      if (!drawer) return;
+      if (drawer.classList.contains('hidden')) {
+        drawer.classList.remove('hidden');
+        if (chevron) chevron.innerText = 'expand_less';
+        if (txt) txt.innerText = 'Hide temperature log graph';
+      } else {
+        drawer.classList.add('hidden');
+        if (chevron) chevron.innerText = 'expand_more';
+        if (txt) txt.innerText = 'View 7-day temperature log graph';
+      }
+    }
+
+    // Claim Action Handler
+    function confirmClaimAction(claimId, message) {
+      const statusEl = document.getElementById('status-' + claimId);
+      if (statusEl) {
+        statusEl.innerText = message;
+        statusEl.className = 'text-emerald-700 font-semibold';
+      }
+      showGlobalToast(message, 'success');
+    }
+
+    // Save Auditor Decision
+    function saveAuditorDecision(text) {
+      showGlobalToast(text, 'success');
+      const notif = document.getElementById('decisionNotification');
+      if (notif) {
+        notif.innerText = 'Logged: ' + text;
+        notif.classList.remove('hidden');
+      }
+      try {
+        fetch('/api/audit-action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'AUDITOR_DISPOSITION',
+            facility_name: 'Kalyanpur Community Health Centre (CHC)',
+            notes: text
+          })
+        }).catch(e => console.warn('Audit action backend log:', e));
+      } catch(e) {}
+    }
+
+    // Select Annotation inside Dispatch Drawer
+    function selectAnnotation(kind) {
+      const box = document.getElementById('inspectorNoteBox');
+      if (!box) return;
+      if (kind === 'ot') {
+        box.innerHTML = '<strong>OT Contradiction:</strong> Physical check confirms OT closure due to electrical short circuit and inoperative autoclave. Emergency C-Section accreditation must be temporarily suspended.';
+        box.className = 'p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-900';
+        showGlobalToast('OT Contradiction Note loaded', 'warning');
+      } else if (kind === 'staff') {
+        box.innerHTML = '<strong>Specialist Vacancy:</strong> Zero Anaesthetists posted. Single GDMO cannot administer spinal anaesthesia. Violation of Tier-II CHC C-Section norms.';
+        box.className = 'p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-900';
+        showGlobalToast('Specialist Vacancy Note loaded', 'warning');
+      } else if (kind === 'bsu') {
+        box.innerHTML = '<strong>Blood Unit Verified:</strong> 4 PRBC units in cold chain. Valid Drug Control license #BSU-048.';
+        box.className = 'p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-900';
+        showGlobalToast('Blood Unit Verified', 'success');
+      } else if (kind === 'opd') {
+        box.innerHTML = '<strong>OPD Normal:</strong> 140 patients attended. Generic medicine kiosk operational.';
+        box.className = 'p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-800';
+        showGlobalToast('OPD Footfall Normal', 'info');
+      }
+    }
+
+    // Bed Details
+    function showBedDetails(bedId, status, patient, diagnosis, admTime, nurse) {
+      showGlobalToast(`Bed ${bedId} (${status}): ${patient} · ${diagnosis}`, 'info');
+    }
+
+    // Modals
+    let currentModalAction = '';
+    function triggerActionModal(action) {
+      const modal = document.getElementById('investigatorModal');
+      const title = document.getElementById('modalTitle');
+      const desc = document.getElementById('modalDescription');
+      currentModalAction = action;
+
+      if (action === 'reAudit') {
+        title.innerText = 'Re-score Facility Trust Index';
+        desc.innerText = 'Recalculates trust score to reflect inoperative autoclave and anaesthetist vacancy.';
+      } else if (action === 'dispatch') {
+        title.innerText = 'Dispatch Field Inspector';
+        desc.innerText = 'Issues immediate summons to District Biomedical Engineer for OT repair inspection.';
+      } else if (action === 'flagCMO') {
+        title.innerText = 'Flag for District Chief Medical Officer';
+        desc.innerText = 'Transmits formal discrepancy notice to Civil Surgeon, Samastipur.';
+      }
+      if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.remove('hidden');
+      }
+    }
+    function closeModal() {
+      const modal = document.getElementById('investigatorModal');
+      if (modal) {
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+      }
+    }
+    function executeModalAction() {
+      closeModal();
+      saveAuditorDecision('Action executed: ' + currentModalAction);
+    }
+
+    function downloadDossierSummary() {
+      showGlobalToast('Exporting signed PDF Investigation Summary...', 'info');
+      setTimeout(() => { window.print(); }, 400);
+    }
+
+    function openInspectDrawer() {
+      switchTab('capabilities');
+      window.scrollTo({ top: 350, behavior: 'smooth' });
+    }
+
+    // Search Modal Handlers
+    function openSearchModal() {
+      const modal = document.getElementById('locationSearchModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.remove('hidden');
+      }
+    }
+    function closeSearchModal() {
+      const modal = document.getElementById('locationSearchModal');
+      if (modal) {
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+      }
+    }
+    function onPresetSelected(val) {
+      const custom = document.getElementById('locSearchCustom');
+      if (custom) custom.value = val;
+    }
+    function setCareQuery(text, catKey) {
+      const input = document.getElementById('careSearchQuery');
+      if (input) input.value = text;
+      if (catKey) {
+        const btn = Array.from(document.querySelectorAll('.care-cat-btn')).find(b => b.innerText.toLowerCase().includes(catKey.replace('_', ' ')));
+        selectCareCategory(catKey, btn);
+      }
+    }
+
+    let selectedCareCategory = 'emergency_care';
+    function selectCareCategory(catKey, btn) {
+      selectedCareCategory = catKey;
+      document.querySelectorAll('.care-cat-btn').forEach(b => {
+        b.classList.remove('active', 'bg-clinical-50', 'text-clinical-700', 'border-clinical-500', 'font-semibold');
+        b.classList.add('border-slate-200', 'text-slate-700');
+      });
+      if (btn) {
+        btn.classList.add('active', 'bg-clinical-50', 'text-clinical-700', 'border-clinical-500', 'font-semibold');
+        btn.classList.remove('border-slate-200', 'text-slate-700');
+      }
+    }
+
+    // Quick Search in Header
+    function handleQuickSearch(e) {
+      const q = (e.target.value || '').toLowerCase().trim();
+      if (e.key === 'Enter' || q.length > 2) {
+        const cards = document.querySelectorAll('.claim-card');
+        let matched = 0;
+        cards.forEach(c => {
+          const txt = c.innerText.toLowerCase();
+          if (!q || txt.includes(q)) {
+            c.style.display = 'block';
+            matched++;
+          } else {
+            c.style.display = 'none';
+          }
+        });
+        showGlobalToast(`${matched} claim(s) matched "${q}"`, 'info');
+      }
+    }
+
+    // Execute Intelligent Search via Live Backend
+    async function executeIntelligentSearch() {
+      const btn = document.getElementById('btnExecuteSearch');
+      const countEl = document.getElementById('locResultsCount');
+      const listEl = document.getElementById('locResultsList');
+      
+      const query = document.getElementById('careSearchQuery').value.trim();
+      const care_category = selectedCareCategory;
+      const locPreset = document.getElementById('locSearchPreset').value;
+      const locCustom = document.getElementById('locSearchCustom').value.trim();
+      const location = locCustom || locPreset || null;
+      const radiusVal = document.getElementById('locSearchRadius').value;
+      const radius_km = radiusVal ? parseFloat(radiusVal) : null;
+
+      if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span><span>Evaluating Evidence...</span>';
+      if (countEl) countEl.innerText = 'Evaluating...';
+
+      try {
+        const res = await fetch('/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            query: query,
+            care_category: care_category,
+            location: location,
+            radius_km: radius_km,
+            limit: 10
+          })
+        });
+        const data = await res.json();
+        if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[17px]">travel_explore</span><span>Match & Rank Facilities</span>';
+
+        if (data.status === 'OK' && data.results && data.results.length > 0) {
+          const meta = data.metadata;
+          const locText = meta.location_label ? ` near ${meta.location_label}` : ' across registry';
+          if (countEl) countEl.innerText = `${data.results.length} Ranked Facilities for ${meta.category_label}${locText}`;
+
+          let html = '';
+          data.results.forEach((f, idx) => {
+            const isConfirmed = f.relevance_tier === 'confirmed';
+            const tierBadge = isConfirmed
+              ? '<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Confirmed match</span>'
+              : '<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">Possible match</span>';
+
+            const trustStatus = f.trust.status.replace('_', ' ');
+            const trustBadgeClass = f.trust.status === 'verified'
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+              : f.trust.status === 'provisional'
+              ? 'bg-amber-50 text-amber-700 border-amber-200'
+              : 'bg-red-50 text-red-700 border-red-200';
+
+            const distLabel = f.distance_km !== null
+              ? `<span class="inline-flex items-center text-clinical-600 font-medium">📍 ${f.distance_km} km away</span>`
+              : '<span class="text-slate-500">📍 All-India Skill Match</span>';
+
+            let evidenceHtml = '';
+            if (f.supporting_evidence && f.supporting_evidence.length > 0) {
+              evidenceHtml = f.supporting_evidence.map(e => `<div><b>[${e.field}]:</b> "${e.span.slice(0, 90)}..."</div>`).join('');
+            } else {
+              evidenceHtml = '<div>No specific verbatim procedure span found in record.</div>';
+            }
+
+            let missingHtml = '';
+            if (f.trust.missing_evidence && f.trust.missing_evidence.length > 0) {
+              missingHtml = `<div class="mt-1 text-xs text-amber-800"><b>Unverified:</b> ${f.trust.missing_evidence.slice(0, 2).join(' · ')}</div>`;
+            }
+
+            html += `
+              <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 hover:border-clinical-500 transition flex flex-col gap-2">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="font-semibold text-sm text-slate-900">${idx + 1}. ${f.name}</span>
+                      ${tierBadge}
+                      <span class="px-2 py-0.5 rounded text-[10px] font-semibold border ${trustBadgeClass}">${trustStatus}</span>
+                    </div>
+                    <div class="text-xs text-slate-500 flex items-center gap-2 pt-0.5 flex-wrap">
+                      ${distLabel}
+                      <span>•</span>
+                      <span>Type: <b>${f.facility_type}</b></span>
+                      <span>•</span>
+                      <span>Trust Score: <b>${f.trust.score_100}%</b></span>
+                    </div>
+                  </div>
+
+                  <button onclick="selectSearchedFacility('${encodeURIComponent(f.name)}', ${f.distance_km || 0}, ${f.trust.score_100}, '${f.pin || ''}')" class="px-3 py-1.5 rounded bg-clinical-500 text-white text-xs font-semibold hover:bg-clinical-600 cursor-pointer shrink-0 transition">
+                    Inspect in Dossier
+                  </button>
+                </div>
+
+                <div class="p-2.5 rounded bg-white border border-slate-200 text-xs text-slate-600">
+                  <div class="font-semibold text-slate-800 mb-0.5">Why this facility matched:</div>
+                  <div class="text-emerald-800 mb-1">${f.why_matched}</div>
+                  <div class="font-mono text-[11px] text-slate-500 border-t border-slate-100 pt-1">
+                    ${evidenceHtml}
+                  </div>
+                  ${missingHtml}
+                </div>
+              </div>
+            `;
+          });
+          listEl.innerHTML = html;
+          showGlobalToast(`Found ${data.results.length} facilities for ${meta.category_label}`, 'success');
+        } else {
+          if (countEl) countEl.innerText = 'No relevant facilities';
+          listEl.innerHTML = `<div class="p-4 rounded-md bg-amber-50 text-amber-900 border border-amber-200 text-xs">No facilities match this service criteria in the selected area. Try expanding radius or changing category.</div>`;
+          showGlobalToast('No facilities match this service', 'warning');
+        }
+      } catch (err) {
+        if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[17px]">travel_explore</span><span>Match & Rank Facilities</span>';
+        if (countEl) countEl.innerText = 'Search failed';
+        listEl.innerHTML = `<div class="p-4 rounded-md bg-red-50 text-red-900 border border-red-200 text-xs">Search error: ${err.message}</div>`;
+        showGlobalToast('Search request failed', 'error');
+      }
+    }
+
+    function selectSearchedFacility(encodedName, dist, trust, pin) {
+      const name = decodeURIComponent(encodedName);
+      closeSearchModal();
+      const title = document.querySelector('h1');
+      if (title) {
+        title.innerHTML = `${name} <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200/80"><span class="material-symbols-outlined text-[15px]">verified</span> Verified public facility</span>`;
+      }
+      showGlobalToast(`Loaded dossier: ${name} (${dist} km · ${trust}% Trust)`, 'success');
+      switchTab('capabilities');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
+"""
+
+with open('caretruth-ai/frontend/index.html', 'w', encoding='utf-8') as f:
+    f.write(HTML_CONTENT)
+
+print("Successfully wrote redesigned index.html!")
