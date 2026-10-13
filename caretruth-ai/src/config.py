@@ -44,7 +44,7 @@ PARTIAL_CONTRADICTION_PENALTY: float = 0.10
 # Our CONTRADICTION_PENALTY of 0.25 satisfies that requirement.
 
 # ── Verdict thresholds (exclusive upper bounds) ───────────────────────────────
-VERDICT_VERIFIED_MIN_SCORE:       float = 0.55  # score >= this AND strong evidence
+VERDICT_VERIFIED_MIN_SCORE:       float = 0.45  # score >= this AND strong evidence
 VERDICT_ADVERTISED_ONLY_MIN_SCORE: float = 0.25
 
 # ── Night-time check ─────────────────────────────────────────────────────────

@@ -198,4 +198,46 @@ def detect_contradictions(
             conflicting_span=None,
         ))
 
+    # ── Rule 6: Complex surgery vs missing specialty or surgical infrastructure ──
+    cardiac_surgery_claims = [
+        "cardiac bypass", "bypass grafting", "cabg", "heart surgery",
+        "cardiac surgery", "valve repair", "valve replacement", "open heart"
+    ]
+    if any(k in all_text.lower() for k in cardiac_surgery_claims):
+        spec_list = row.get("spec_list", [])
+        if not isinstance(spec_list, list):
+            try:
+                import json
+                spec_list = json.loads(str(spec_list)) if str(spec_list).strip().startswith("[") else [str(spec_list)]
+            except Exception:
+                spec_list = [str(spec_list)]
+        spec_lower = [str(s).lower() for s in spec_list]
+        has_cardiac_specialty = any(
+            any(cs in s for cs in ["cardio", "cardiac", "thoracic"])
+            for s in spec_lower
+        )
+        equip_text = str(row.get("equipment", "")).lower()
+        has_cardiac_equip = any(
+            eq in equip_text
+            for eq in ["catheterization", "cath lab", "heart-lung", "bypass machine", "perfusion"]
+        )
+        is_maternity_or_clinic = any(
+            w in all_text.lower()
+            for w in ["pregnancy treatment center", "maternity clinic", "dental clinic", "maternity center"]
+        )
+        # If claiming complex open-heart / cardiac bypass surgery but lacks cardiac surgical specialty,
+        # or lacks cardiac equipment while being a maternity/general clinic:
+        if not has_cardiac_specialty or (not has_cardiac_equip and is_maternity_or_clinic):
+            matched_span = next((k for k in cardiac_surgery_claims if k in all_text.lower()), "cardiac bypass")
+            flags.append(ContradictionFlag(
+                rule_id="SURGICAL_SPECIALTY_MISMATCH",
+                description=(
+                    "Facility advertises complex cardiac surgery but lacks registered "
+                    "cardiac surgery specialty or required cardiovascular surgical infrastructure."
+                ),
+                severity="critical",
+                source_field="procedure" if "bypass" in str(row.get("procedure", "")).lower() else "capability",
+                conflicting_span=matched_span,
+            ))
+
     return flags

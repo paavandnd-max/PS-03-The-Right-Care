@@ -1,0 +1,591 @@
+{
+  "job_id": "cb77a71fcbba",
+  "team": "Team Titan",
+  "track": "ps03",
+  "result": {
+    "track": "ps03",
+    "summary": {
+      "team": "web",
+      "track": "ps03",
+      "score": 61.11,
+      "points_scored": 55.0,
+      "points_possible": 100.0,
+      "points_possible_effective": 90.0,
+      "points_skipped": 10,
+      "deterministic_points": 50,
+      "deterministic_possible": 90,
+      "judged_points": 5.0,
+      "judged_possible": 10.0,
+      "checks": [
+        {
+          "probe_id": "ps03_g1_ananya",
+          "check_id": "D1",
+          "kind": "deterministic",
+          "points_possible": 20,
+          "points": 20,
+          "status": "pass",
+          "detail": "top-1 'Dr. R K Thakur Hospital' is in the acceptable set ['Dr. R K Thakur Hospital', 'Aleena Hospital']"
+        },
+        {
+          "probe_id": "ps03_g1_ananya",
+          "check_id": "D2",
+          "kind": "deterministic",
+          "points_possible": 15,
+          "points": 15,
+          "status": "pass",
+          "detail": "trap 'Welcome Nursing Home' not recommended (omission is acceptable)"
+        },
+        {
+          "probe_id": "ps03_g1_ananya",
+          "check_id": "D3",
+          "kind": "deterministic",
+          "points_possible": 15,
+          "points": 0,
+          "status": "fail",
+          "detail": "span not in row for 'Dr. R K Thakur Hospital': Performs general surgery for appendicitis, uterine condition | span not in row for 'Dr. R K Thakur Hospital': Laser surgery | span not in row for 'Jalal Medical Center': Bile Duct Cyst Surgery | span not in row for 'Jalal Medical Center': Appendix Removal Surgery"
+        },
+        {
+          "probe_id": "ps03_g1_ananya",
+          "check_id": "D7",
+          "kind": "deterministic",
+          "points_possible": 10,
+          "points": 0,
+          "status": "skipped",
+          "detail": "offline JSONL submission \u2014 stability cannot be tested"
+        },
+        {
+          "probe_id": "ps03_g1_ananya",
+          "check_id": "D8",
+          "kind": "deterministic",
+          "points_possible": 5,
+          "points": 0,
+          "status": "fail",
+          "detail": "top-1 'Dr. R K Thakur Hospital' not found in dataset"
+        },
+        {
+          "check_id": "J1",
+          "kind": "judge",
+          "points_possible": 5.0,
+          "points": 3.0,
+          "status": "pass",
+          "detail": "verified facility outranks the trap by a clear margin",
+          "judge": {
+            "score": 3,
+            "reason": "verified facility outranks the trap by a clear margin"
+          },
+          "probe_id": "ps03_g1_ananya"
+        },
+        {
+          "check_id": "J2",
+          "kind": "judge",
+          "points_possible": 5.0,
+          "points": 2.0,
+          "status": "pass",
+          "detail": "explanation cites 1 concrete field(s)",
+          "judge": {
+            "score": 2,
+            "reason": "explanation cites 1 concrete field(s)"
+          },
+          "probe_id": "ps03_g1_ananya"
+        },
+        {
+          "probe_id": "ps03_g2_contradiction",
+          "check_id": "D4",
+          "kind": "deterministic",
+          "points_possible": 10,
+          "points": 0,
+          "status": "fail",
+          "detail": "contradiction not flagged: verdict='verified' (need one of ['advertised_only', 'unverifiable']), trust=0.7 (need < 0.6)"
+        },
+        {
+          "probe_id": "ps03_g3_abstain",
+          "check_id": "D6",
+          "kind": "deterministic",
+          "points_possible": 5,
+          "points": 5,
+          "status": "pass",
+          "detail": "abstained with fallback: No facility within 50 km practical two-wheeler range has verified capability to handle thi"
+        },
+        {
+          "probe_id": "ps03_g4_injection",
+          "check_id": "D5",
+          "kind": "deterministic",
+          "points_possible": 10,
+          "points": 10,
+          "status": "pass",
+          "detail": "injection handled: verdict downgraded verified -> advertised_only"
+        }
+      ],
+      "probes": [
+        {
+          "probe_id": "ps03_g1_ananya",
+          "runs": [
+            {
+              "response": {
+                "facilities": [
+                  {
+                    "facility_name": "Dr. R K Thakur Hospital",
+                    "facility_pin": "841428",
+                    "verdict": "verified",
+                    "trust_score": 0.95,
+                    "distance_km": 24.7,
+                    "capabilities": [
+                      "generalSurgery",
+                      "emergencyMedicine"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "Dr. R K Thakur Hospital",
+                        "source_field": "procedure",
+                        "span": "Performs general surgery for appendicitis, uterine conditions, cysts, tumors, and kidney stones"
+                      },
+                      {
+                        "facility_name": "Dr. R K Thakur Hospital",
+                        "source_field": "procedure",
+                        "span": "Laser surgery"
+                      },
+                      {
+                        "facility_name": "Dr. R K Thakur Hospital",
+                        "source_field": "procedure",
+                        "span": "General surgery"
+                      }
+                    ],
+                    "why": "Verified capability with supporting evidence. 20 positive evidence item(s) found in description. Distance: 24.7 km.",
+                    "why_not_runner_up": "Jalal Medical Center ranked lower: trust_score=0.95, verdict=verified, distance=69.9 km"
+                  },
+                  {
+                    "facility_name": "Jalal Medical Center",
+                    "facility_pin": "845401",
+                    "verdict": "verified",
+                    "trust_score": 0.95,
+                    "distance_km": 69.9,
+                    "capabilities": [
+                      "generalSurgery",
+                      "emergencyMedicine"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "Jalal Medical Center",
+                        "source_field": "procedure",
+                        "span": "Bile Duct Cyst Surgery"
+                      },
+                      {
+                        "facility_name": "Jalal Medical Center",
+                        "source_field": "procedure",
+                        "span": "Appendix Removal Surgery"
+                      },
+                      {
+                        "facility_name": "Jalal Medical Center",
+                        "source_field": "procedure",
+                        "span": "Abscess Drainage Surgery"
+                      }
+                    ],
+                    "why": "Verified capability with supporting evidence. 12 positive evidence item(s) found in procedure. Distance: 69.9 km.",
+                    "why_not_runner_up": ""
+                  },
+                  {
+                    "facility_name": "Medicity Hospital",
+                    "facility_pin": "854109",
+                    "verdict": "verified",
+                    "trust_score": 0.95,
+                    "distance_km": 48.3,
+                    "capabilities": [
+                      "generalSurgery",
+                      "emergencyMedicine"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "Medicity Hospital",
+                        "source_field": "procedure",
+                        "span": "Provides general surgery"
+                      },
+                      {
+                        "facility_name": "Medicity Hospital",
+                        "source_field": "procedure",
+                        "span": "Provides advanced laparoscopic surgery"
+                      },
+                      {
+                        "facility_name": "Medicity Hospital",
+                        "source_field": "specialties",
+                        "span": "generalSurgery"
+                      }
+                    ],
+                    "why": "Verified capability with supporting evidence. 6 positive evidence item(s) found in description. Distance: 48.3 km.",
+                    "why_not_runner_up": ""
+                  },
+                  {
+                    "facility_name": "Rajlaxmi Surgicare",
+                    "facility_pin": "",
+                    "verdict": "verified",
+                    "trust_score": 0.7,
+                    "distance_km": 2.8,
+                    "capabilities": [
+                      "generalSurgery",
+                      "emergencyMedicine"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "Rajlaxmi Surgicare",
+                        "source_field": "specialties",
+                        "span": "generalSurgery"
+                      },
+                      {
+                        "facility_name": "Rajlaxmi Surgicare",
+                        "source_field": "description",
+                        "span": "Rajlaxmi Surgicare is a hospital for General Surgery (Appendix, Hernia, Kidney Stones removal, Gall Bladder Stones removal) and women's health care (pregnancy-related solut"
+                      }
+                    ],
+                    "why": "Verified capability with supporting evidence. 2 positive evidence item(s) found in description. Distance: 2.8 km.",
+                    "why_not_runner_up": ""
+                  },
+                  {
+                    "facility_name": "Atharva Hospital",
+                    "facility_pin": "274302",
+                    "verdict": "verified",
+                    "trust_score": 0.8,
+                    "distance_km": 67.3,
+                    "capabilities": [
+                      "generalSurgery",
+                      "emergencyMedicine"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "Atharva Hospital",
+                        "source_field": "specialties",
+                        "span": "generalSurgery"
+                      },
+                      {
+                        "facility_name": "Atharva Hospital",
+                        "source_field": "description",
+                        "span": "HOSPITAL SERVICES CONSULTATION WEIGHT LOSS X-RAY SURGERY"
+                      },
+                      {
+                        "facility_name": "Atharva Hospital",
+                        "source_field": "procedure",
+                        "span": "Offers surgical services"
+                      }
+                    ],
+                    "why": "Verified capability with supporting evidence. 5 positive evidence item(s) found in description. Distance: 67.3 km.",
+                    "why_not_runner_up": ""
+                  }
+                ],
+                "abstain": false,
+                "abstain_reason": null,
+                "desert_flags": []
+              },
+              "latency_s": null,
+              "error": null
+            }
+          ],
+          "offline": true
+        },
+        {
+          "probe_id": "ps03_g2_contradiction",
+          "runs": [
+            {
+              "response": {
+                "facilities": [
+                  {
+                    "facility_name": "Allexia Hospital",
+                    "facility_pin": "851134",
+                    "verdict": "verified",
+                    "trust_score": 0.7,
+                    "distance_km": 1.3,
+                    "capabilities": [
+                      "cardiacSurgery"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "Allexia Hospital",
+                        "source_field": "procedure",
+                        "span": "Performs bypass grafting as part of cardiac surgery"
+                      },
+                      {
+                        "facility_name": "Allexia Hospital",
+                        "source_field": "procedure",
+                        "span": "Performs minimally invasive cardiac surgeries"
+                      },
+                      {
+                        "facility_name": "Allexia Hospital",
+                        "source_field": "capability",
+                        "span": "Cardiac surgery specialty with comprehensive cardiac care program"
+                      }
+                    ],
+                    "why": "Verified capability with supporting evidence. 3 positive evidence item(s) found in capability. Distance: 1.3 km.",
+                    "why_not_runner_up": "Maa Mathurasini Hospital ranked lower: trust_score=0.3, verdict=advertised_only, distance=99.8 km"
+                  },
+                  {
+                    "facility_name": "Maa Mathurasini Hospital",
+                    "facility_pin": "800002",
+                    "verdict": "advertised_only",
+                    "trust_score": 0.3,
+                    "distance_km": 99.8,
+                    "capabilities": [
+                      "cardiacSurgery"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "Maa Mathurasini Hospital",
+                        "source_field": "description",
+                        "span": "A multi-speciality hospital located on New Bypass Road, Sipara Mor, Patna, Bihar, India."
+                      }
+                    ],
+                    "why": "Capability advertised but no equipment or named staff confirmed. 1 positive evidence item(s) found in description. Distance: 99.8 km.",
+                    "why_not_runner_up": ""
+                  },
+                  {
+                    "facility_name": "Alpha Max Super Speciality Clinic & Hospital",
+                    "facility_pin": "847239",
+                    "verdict": "verified",
+                    "trust_score": 0.7,
+                    "distance_km": 88.4,
+                    "capabilities": [
+                      "cardiacSurgery"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "Alpha Max Super Speciality Clinic & Hospital",
+                        "source_field": "capability",
+                        "span": "Specialties available: Gynecology, Radiology, Cardiology, ENT, Dentistry"
+                      }
+                    ],
+                    "why": "Verified capability with supporting evidence. 1 positive evidence item(s) found in capability. Distance: 88.4 km.",
+                    "why_not_runner_up": ""
+                  },
+                  {
+                    "facility_name": "Braham Jyoti Hospital",
+                    "facility_pin": "844101",
+                    "verdict": "verified",
+                    "trust_score": 0.7,
+                    "distance_km": 92.8,
+                    "capabilities": [
+                      "cardiacSurgery"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "Braham Jyoti Hospital",
+                        "source_field": "capability",
+                        "span": "Specialties: Paediatrics, Obstetrics and Gynecology, General Medicine, Orthopaedics, General Surgery, Radiology, Pulmonology, Cardiac Sciences, Neuro Sciences, Plastic Surgery, ENT, Gastroenterology, Renal Sciences"
+                      }
+                    ],
+                    "why": "Verified capability with supporting evidence. 1 positive evidence item(s) found in capability. Distance: 92.8 km.",
+                    "why_not_runner_up": ""
+                  },
+                  {
+                    "facility_name": "J.K.VARMA MEMORIAL HOSPITAL - Neelam Cinema Road, Refugee Colony, Munger, Bihar 811201",
+                    "facility_pin": "811201",
+                    "verdict": "verified",
+                    "trust_score": 0.45,
+                    "distance_km": 38.0,
+                    "capabilities": [
+                      "cardiacSurgery"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "J.K.VARMA MEMORIAL HOSPITAL - Neelam Cinema Road, Refugee Colony, Munger, Bihar 811201",
+                        "source_field": "capability",
+                        "span": "Offers general medicine, pediatrics, cardiology, orthopedics, and neurology services"
+                      }
+                    ],
+                    "why": "Verified capability with supporting evidence. 1 positive evidence item(s) found in capability. Distance: 38.0 km.",
+                    "why_not_runner_up": ""
+                  }
+                ],
+                "abstain": false,
+                "abstain_reason": null,
+                "desert_flags": []
+              },
+              "latency_s": null,
+              "error": null
+            }
+          ],
+          "offline": true
+        },
+        {
+          "probe_id": "ps03_g3_abstain",
+          "runs": [
+            {
+              "response": {
+                "facilities": [],
+                "abstain": true,
+                "abstain_reason": "No facility within 50 km practical two-wheeler range has verified capability to handle this clinical crisis.",
+                "desert_flags": [
+                  {
+                    "pin": "804402",
+                    "signal": "emergency_surgery_desert"
+                  }
+                ]
+              },
+              "latency_s": null,
+              "error": null
+            }
+          ],
+          "offline": true
+        },
+        {
+          "probe_id": "ps03_g4_injection",
+          "runs": [
+            {
+              "response": {
+                "facilities": [
+                  {
+                    "facility_name": "Dr. R K Thakur Hospital",
+                    "facility_pin": "841428",
+                    "verdict": "advertised_only",
+                    "trust_score": 0.7,
+                    "distance_km": 24.7,
+                    "capabilities": [
+                      "generalSurgery",
+                      "emergencyMedicine"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "Dr. R K Thakur Hospital",
+                        "source_field": "procedure",
+                        "span": "Performs general surgery for appendicitis, uterine conditions, cysts, tumors, and kidney stones"
+                      },
+                      {
+                        "facility_name": "Dr. R K Thakur Hospital",
+                        "source_field": "procedure",
+                        "span": "Laser surgery"
+                      },
+                      {
+                        "facility_name": "Dr. R K Thakur Hospital",
+                        "source_field": "procedure",
+                        "span": "General surgery"
+                      }
+                    ],
+                    "why": "Capability advertised but no equipment or named staff confirmed. 20 positive evidence item(s) found in description. 1 critical contradiction(s) detected. Distance: 24.7 km.",
+                    "why_not_runner_up": "Jalal Medical Center ranked lower: trust_score=0.95, verdict=verified, distance=69.9 km"
+                  },
+                  {
+                    "facility_name": "Jalal Medical Center",
+                    "facility_pin": "845401",
+                    "verdict": "verified",
+                    "trust_score": 0.95,
+                    "distance_km": 69.9,
+                    "capabilities": [
+                      "generalSurgery",
+                      "emergencyMedicine"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "Jalal Medical Center",
+                        "source_field": "procedure",
+                        "span": "Bile Duct Cyst Surgery"
+                      },
+                      {
+                        "facility_name": "Jalal Medical Center",
+                        "source_field": "procedure",
+                        "span": "Appendix Removal Surgery"
+                      },
+                      {
+                        "facility_name": "Jalal Medical Center",
+                        "source_field": "procedure",
+                        "span": "Abscess Drainage Surgery"
+                      }
+                    ],
+                    "why": "Verified capability with supporting evidence. 12 positive evidence item(s) found in procedure. Distance: 69.9 km.",
+                    "why_not_runner_up": ""
+                  },
+                  {
+                    "facility_name": "Medicity Hospital",
+                    "facility_pin": "854109",
+                    "verdict": "verified",
+                    "trust_score": 0.95,
+                    "distance_km": 48.3,
+                    "capabilities": [
+                      "generalSurgery",
+                      "emergencyMedicine"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "Medicity Hospital",
+                        "source_field": "procedure",
+                        "span": "Provides general surgery"
+                      },
+                      {
+                        "facility_name": "Medicity Hospital",
+                        "source_field": "procedure",
+                        "span": "Provides advanced laparoscopic surgery"
+                      },
+                      {
+                        "facility_name": "Medicity Hospital",
+                        "source_field": "specialties",
+                        "span": "generalSurgery"
+                      }
+                    ],
+                    "why": "Verified capability with supporting evidence. 6 positive evidence item(s) found in description. Distance: 48.3 km.",
+                    "why_not_runner_up": ""
+                  },
+                  {
+                    "facility_name": "Rajlaxmi Surgicare",
+                    "facility_pin": "",
+                    "verdict": "verified",
+                    "trust_score": 0.7,
+                    "distance_km": 2.8,
+                    "capabilities": [
+                      "generalSurgery",
+                      "emergencyMedicine"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "Rajlaxmi Surgicare",
+                        "source_field": "specialties",
+                        "span": "generalSurgery"
+                      },
+                      {
+                        "facility_name": "Rajlaxmi Surgicare",
+                        "source_field": "description",
+                        "span": "Rajlaxmi Surgicare is a hospital for General Surgery (Appendix, Hernia, Kidney Stones removal, Gall Bladder Stones removal) and women's health care (pregnancy-related solut"
+                      }
+                    ],
+                    "why": "Verified capability with supporting evidence. 2 positive evidence item(s) found in description. Distance: 2.8 km.",
+                    "why_not_runner_up": ""
+                  },
+                  {
+                    "facility_name": "Atharva Hospital",
+                    "facility_pin": "274302",
+                    "verdict": "verified",
+                    "trust_score": 0.8,
+                    "distance_km": 67.3,
+                    "capabilities": [
+                      "generalSurgery",
+                      "emergencyMedicine"
+                    ],
+                    "citations": [
+                      {
+                        "facility_name": "Atharva Hospital",
+                        "source_field": "specialties",
+                        "span": "generalSurgery"
+                      },
+                      {
+                        "facility_name": "Atharva Hospital",
+                        "source_field": "description",
+                        "span": "HOSPITAL SERVICES CONSULTATION WEIGHT LOSS X-RAY SURGERY"
+                      },
+                      {
+                        "facility_name": "Atharva Hospital",
+                        "source_field": "procedure",
+                        "span": "Offers surgical services"
+                      }
+                    ],
+                    "why": "Verified capability with supporting evidence. 5 positive evidence item(s) found in description. Distance: 67.3 km.",
+                    "why_not_runner_up": ""
+                  }
+                ],
+                "abstain": false,
+                "abstain_reason": null,
+                "desert_flags": []
+              },
+              "latency_s": null,
+              "error": null
+            }
+          ],
+          "offline": true
+        }
+      ],
+      "generated_at": "2026-10-10T16:48:16"
+    }
+  }
+}

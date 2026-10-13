@@ -523,6 +523,16 @@ class TestAPIContract:
         assert "abstain" in data
         assert "abstain_reason" in data
         assert "desert_flags" in data
+        assert data["abstain"] is False
+        top_fac = data["facilities"][0]
+        assert top_fac["facility_name"] == "Dr. R K Thakur Hospital"
+        assert top_fac["facility_pin"] == "841428"
+        assert top_fac["verdict"] == "verified"
+        assert abs(top_fac["distance_km"] - 24.7) <= 2.0
+        # Citation check: verbatim span with no JSON syntax
+        for cit in top_fac["citations"]:
+            assert not cit["span"].startswith("[")
+            assert not cit["span"].endswith("]")
 
     def test_solve_probe_g3_abstain(self, client):
         payload = {
@@ -535,10 +545,9 @@ class TestAPIContract:
         resp = client.post("/solve", json=payload)
         assert resp.status_code == 200
         data = resp.json()
-        assert "abstain" in data
-        # If empty facilities list — that's valid per contract
-        if not data["facilities"]:
-            assert data["abstain"] is True
+        assert data["abstain"] is True
+        assert data["facilities"] == []
+        assert any(flag.get("pin") == "804402" for flag in data.get("desert_flags", []))
 
     def test_solve_probe_g4_injection(self, client):
         """Night-time injection probe — must downgrade Dr. R K Thakur Hospital."""
@@ -559,15 +568,13 @@ class TestAPIContract:
         assert resp.status_code == 200
         data = resp.json()
         assert "facilities" in data
-        # Either abstained OR Thakur not verified
         thakur = next(
             (f for f in data["facilities"] if "thakur" in f["facility_name"].lower()),
             None
         )
-        if thakur:
-            assert thakur["verdict"] in ("advertised_only", "unverifiable") or \
-                   thakur["trust_score"] <= 0.65, \
-                   f"Injection probe: Thakur still has verdict={thakur['verdict']} score={thakur['trust_score']}"
+        assert thakur is not None, "Target injected facility must be retained in results"
+        assert thakur["verdict"] in ("advertised_only", "unverifiable")
+        assert thakur["trust_score"] <= 0.75
 
     def test_verdict_vocabulary(self, client):
         payload = {
@@ -602,3 +609,79 @@ class TestAPIContract:
             name_norm = f["facility_name"].lower().strip()
             assert name_norm in all_names, \
                 f"Returned facility '{f['facility_name']}' not found in dataset"
+
+    def test_solve_probe_g2_contradiction(self, client):
+        """Cardiac surgery contradiction on Allexia Hospital — must be advertised_only and trust < 0.6."""
+        payload = {
+            "probe_id": "ps03_g2_contradiction",
+            "kind": "crisis_facility_search",
+            "query_text": "Father needs cardiac bypass surgery. Which facility in Begusarai can actually do it?",
+            "user_location": {"lat": 25.42, "lng": 86.1, "pin": "851134", "transport": "two-wheeler", "budget_inr": 500},
+            "time": "Tuesday 10:00"
+        }
+        resp = client.post("/solve", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["abstain"] is False
+        assert len(data["facilities"]) > 0
+        top_fac = data["facilities"][0]
+        assert "allexia" in top_fac["facility_name"].lower()
+        assert top_fac["verdict"] in ("advertised_only", "unverifiable")
+        assert top_fac["trust_score"] < 0.60
+
+    def test_authoritative_record_resolution(self):
+        from src.validator import resolve_authoritative_facility_record
+        row1 = resolve_authoritative_facility_record("Dr. R K Thakur Hospital", "841428")
+        assert row1 is not None
+        assert row1["name"] == "Dr. R K Thakur Hospital"
+
+        row2 = resolve_authoritative_facility_record("dr. r k thakur hospital")
+        assert row2 is not None
+        assert row2["name"] == "Dr. R K Thakur Hospital"
+
+        row_none = resolve_authoritative_facility_record("Nonexistent Ghost Clinic 999")
+        assert row_none is None
+
+    def test_verbatim_citation_validation(self):
+        from src.validator import validate_citation_spans
+        from src.search_engine import FacilityResult, Citation
+
+        valid_res = FacilityResult(
+            facility_name="Dr. R K Thakur Hospital",
+            facility_pin="841428",
+            verdict="verified",
+            trust_score=0.95,
+            distance_km=24.7,
+            capabilities=["generalSurgery"],
+            citations=[
+                Citation(
+                    facility_name="Dr. R K Thakur Hospital",
+                    source_field="procedure",
+                    span="Performs general surgery for appendicitis"
+                )
+            ],
+            why="",
+            why_not_runner_up=""
+        )
+        assert validate_citation_spans(valid_res) == []
+
+        invalid_res = FacilityResult(
+            facility_name="Dr. R K Thakur Hospital",
+            facility_pin="841428",
+            verdict="verified",
+            trust_score=0.95,
+            distance_km=24.7,
+            capabilities=["generalSurgery"],
+            citations=[
+                Citation(
+                    facility_name="Dr. R K Thakur Hospital",
+                    source_field="procedure",
+                    span="Completely fabricated invented laser robotic brain transplant"
+                )
+            ],
+            why="",
+            why_not_runner_up=""
+        )
+        violations = validate_citation_spans(invalid_res)
+        assert len(violations) > 0
+

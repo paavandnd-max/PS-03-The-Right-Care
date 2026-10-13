@@ -50,10 +50,11 @@ def compute_trust_score(
     # ── Positive evidence components ──────────────────────────────────────────
 
     # 1. Relevant specialty match
+    from src.evidence_extractor import _matches_specialty
     spec_list = list(row.get("spec_list", []) or [])
-    spec_text  = " ".join(spec_list).lower()
     has_relevant_specialty = any(
-        cap.lower() in spec_text or spec_text in cap.lower()
+        _matches_specialty(spec_item, cap)
+        for spec_item in spec_list
         for cap in target_capabilities
     )
     breakdown["specialty_match"] = (
@@ -110,15 +111,17 @@ def compute_trust_score(
     raw_score = max(0.0, min(1.0, base_score - penalty))
 
     # ── Verdict assignment (contract rules) ────────────────────────────────────
-    # "verified" requires: equipment OR named staff OR explicit 24/7 claim
-    has_strong_evidence = (
+    # Per contract: "verified" requires actual evidence: equipment or named staff.
+    # An advertised capability with no equipment and no named staff is advertised_only, never verified.
+    has_strong_evidence = bool(
         row.get("has_equipment", False) or
-        row.get("has_named_staff", False) or
-        row.get("open_24h", False)
+        row.get("has_named_staff", False)
     )
 
     if critical_count > 0:
-        # Serious contradiction — cannot be verified regardless of other evidence
+        # Serious contradiction — cannot be verified regardless of other evidence,
+        # and trust score must be strictly below 0.60 per contract requirement
+        raw_score = min(raw_score, 0.55)
         if raw_score >= config.VERDICT_ADVERTISED_ONLY_MIN_SCORE:
             verdict = "advertised_only"
         else:

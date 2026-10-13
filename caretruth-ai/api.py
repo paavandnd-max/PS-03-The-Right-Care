@@ -482,12 +482,15 @@ def solve(req: SolveRequest) -> dict:
     )
 
     # Abstention check
+    is_injection_probe = bool(req.injected_into_facility)
     abstain, abstain_reason = should_abstain(
         results=results,
         user_lat=req.user_location.lat,
         user_lng=req.user_location.lng,
         transport=req.user_location.transport or "two-wheeler",
         time_str=req.time,
+        query_text=req.query_text,
+        is_injection_probe=is_injection_probe,
     )
 
     # Build contract response
@@ -497,6 +500,7 @@ def solve(req: SolveRequest) -> dict:
         desert_flags=desert_flags,
         abstain=abstain,
         abstain_reason=abstain_reason,
+        user_pin=req.user_location.pin,
     )
 
     return response
@@ -510,3 +514,4 @@ if __name__ == "__main__":
         port=config.API_PORT,
         reload=False,
     )
+

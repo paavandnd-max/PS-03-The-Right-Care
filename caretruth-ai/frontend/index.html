@@ -647,7 +647,7 @@
           class="tab-button active py-3 px-3.5 border-b-2 border-gov-500 font-semibold text-gov-600 text-sm flex items-center gap-2 transition"
         >
           <span>Audit findings</span>
-          <span class="px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-red-100 text-red-800">1 issue</span>
+          <span id="dossierTabBadgeAudit" class="px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800">1 issue</span>
         </button>
 
         <button
@@ -657,7 +657,7 @@
           class="tab-button py-3 px-3.5 border-b-2 border-transparent font-medium text-slate-600 hover:text-slate-900 text-sm flex items-center gap-2 transition"
         >
           <span>Beds & occupancy</span>
-          <span class="text-xs text-slate-400 font-normal">30 beds</span>
+          <span id="dossierTabBadgeBeds" class="text-xs text-slate-400 font-normal">30 beds</span>
         </button>
 
         <button
@@ -676,7 +676,7 @@
           class="tab-button py-3 px-3.5 border-b-2 border-transparent font-medium text-slate-600 hover:text-slate-900 text-sm flex items-center gap-2 transition"
         >
           <span>Staff roster</span>
-          <span class="px-1.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-100 text-amber-800">1 vacancy</span>
+          <span id="dossierTabBadgeStaff" class="px-1.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-100 text-amber-800">1 vacancy</span>
         </button>
 
         <button
@@ -698,18 +698,19 @@
             <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-lg border border-slate-200">
               <div class="flex items-center gap-1.5 flex-wrap">
                 <span class="text-xs font-medium text-slate-500 mr-1">Filter:</span>
-                <button type="button" id="claim-filter-all" onclick="filterClaims('all')" class="px-2.5 py-1 rounded text-xs font-semibold bg-gov-500 text-white transition">All claims (4)</button>
-                <button type="button" id="claim-filter-discrepancy" onclick="filterClaims('discrepancy')" class="px-2.5 py-1 rounded text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Issues found (1)</button>
-                <button type="button" id="claim-filter-staffing" onclick="filterClaims('staffing')" class="px-2.5 py-1 rounded text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Staff deficits (1)</button>
-                <button type="button" id="claim-filter-verified" onclick="filterClaims('verified')" class="px-2.5 py-1 rounded text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Verified (2)</button>
+                <button type="button" id="claim-filter-all" onclick="filterClaims('all')" class="px-2.5 py-1 rounded text-xs font-semibold bg-gov-500 text-white transition">All claims (<span id="claim-cnt-all">4</span>)</button>
+                <button type="button" id="claim-filter-discrepancy" onclick="filterClaims('discrepancy')" class="px-2.5 py-1 rounded text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Issues found (<span id="claim-cnt-discrepancy">1</span>)</button>
+                <button type="button" id="claim-filter-staffing" onclick="filterClaims('staffing')" class="px-2.5 py-1 rounded text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Staff deficits (<span id="claim-cnt-staffing">1</span>)</button>
+                <button type="button" id="claim-filter-verified" onclick="filterClaims('verified')" class="px-2.5 py-1 rounded text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Verified (<span id="claim-cnt-verified">2</span>)</button>
               </div>
-              <div class="text-xs text-slate-500 font-medium">Facility verification: 4 claims reviewed · 1 issue found</div>
+              <div id="dossierVerificationSummary" class="text-xs text-slate-500 font-medium">Facility verification: 4 claims reviewed · 1 issue found</div>
             </div>
 
             <!-- DYNAMIC CLAIMS CONTAINER -->
             <div id="dossierClaimsContainer" class="flex flex-col gap-4">
               <!-- Dynamically populated by renderDynamicDossier -->
             </div>
+            <div id="claimFilterEmptyState" class="hidden"></div>
           </div>
 
           <!-- Right Column: Sticky Actions Card -->
@@ -1098,21 +1099,123 @@
       document.getElementById('dossierFactReferralSub').innerText = refHosp.desc;
 
       const trustVal = (f.trust && f.trust.score_100) ? f.trust.score_100 : 70;
-      document.getElementById('dossierFactInfraVal').innerText = trustVal >= 70 ? 'Equipment Verified' : 'Standard Diagnostics';
-      document.getElementById('dossierFactInfraSub').innerText = `Trust Score: ${trustVal}% · Inspection on record`;
+      const loweredFactors = (f.trust && f.trust.factors_lowered) ? f.trust.factors_lowered : [];
+      const hasEquipDeficit = loweredFactors.some(x => x.toLowerCase().includes('equipment'));
+      const hasStaffDeficit = loweredFactors.some(x => x.toLowerCase().includes('doctor') || x.toLowerCase().includes('staff') || x.toLowerCase().includes('headcount'));
+
+      if (hasEquipDeficit) {
+        document.getElementById('dossierFactInfraVal').innerText = 'Unverified Inventory';
+        document.getElementById('dossierFactInfraSub').innerText = 'Equipment unlisted in record';
+      } else {
+        document.getElementById('dossierFactInfraVal').innerText = trustVal >= 70 ? 'Equipment Verified' : 'Standard Diagnostics';
+        document.getElementById('dossierFactInfraSub').innerText = `Trust Score: ${trustVal}% · Inspection on record`;
+      }
 
       document.getElementById('dossierFactStaffVal').innerText = (f.doctor && f.doctor.name) ? f.doctor.name : docSpec;
-      document.getElementById('dossierFactStaffSub').innerText = (f.doctor && f.doctor.staff_summary) ? f.doctor.staff_summary : 'Verified on staff';
+      if (f.doctor && f.doctor.is_named) {
+        document.getElementById('dossierFactStaffSub').innerText = f.doctor.staff_summary || 'Verified resident practitioner';
+      } else if (hasStaffDeficit) {
+        document.getElementById('dossierFactStaffSub').innerText = 'Unconfirmed staff headcount';
+      } else {
+        document.getElementById('dossierFactStaffSub').innerText = (f.doctor && f.doctor.staff_summary) ? f.doctor.staff_summary : 'Resident medical staff';
+      }
 
-      // 5. Alert Banner: REAL CONTRADICTIONS OR CLEAN VERIFIED STATUS
+      // 5. Categorize Evidence & Build Issues (Discrepancies, Staffing Deficits, Verified Claims)
+      const contradictions = f.contradictory_evidence || [];
+      const hasContradictions = contradictions.length > 0;
+      const staffingIssues = [];
+      const discrepancyIssues = [];
+
+      // Add all formal contradictions to discrepancy
+      contradictions.forEach((c, idx) => {
+        discrepancyIssues.push({
+          id: `CONTRA-${idx}`,
+          title: c.rule || 'Field Inspection Discrepancy',
+          desc: c.description || c.span || 'Operational discrepancy detected between registry claim and field audit.',
+          finding: c.description || c.span,
+          claim: 'Continuous operational readiness asserted in registry listing.',
+          badge: 'Does not match inspection',
+          actionText: 'Flagged for District CMO Intervention',
+          actionBtn: 'Serve Official Notice'
+        });
+      });
+
+      // Add factors from factors_lowered
+      loweredFactors.forEach((factor, fIdx) => {
+        const factorLower = factor.toLowerCase();
+        const isStaff = factorLower.includes('doctor') || factorLower.includes('staff') || factorLower.includes('headcount') || factorLower.includes('physician') || factorLower.includes('specialist');
+
+        if (isStaff) {
+          staffingIssues.push({
+            id: `STAFF-LOW-${fIdx}`,
+            title: 'Clinical Staff Headcount Deficit',
+            desc: factor,
+            finding: `${factor}. Attendance register or Medical Council registration unverified during audit.`,
+            claim: `${(f.doctor && f.doctor.specialty) ? f.doctor.specialty : 'Clinical consultation'} specialist availability claimed for patient care.`,
+            badge: 'Unconfirmed roster',
+            actionText: 'Roster Verification Order Issued',
+            actionBtn: 'Verify Medical Council ID'
+          });
+        } else {
+          discrepancyIssues.push({
+            id: `DISC-LOW-${fIdx}`,
+            title: factorLower.includes('equipment') ? 'Equipment Inventory Deficit' : 'Facility Documentation Deficit',
+            desc: factor,
+            finding: `${factor}. Physical calibration and maintenance records missing from inspection file.`,
+            claim: 'Standard diagnostic and procedural capabilities registered.',
+            badge: 'Unconfirmed in field record',
+            actionText: 'Pending Bio-Medical Verification',
+            actionBtn: 'Schedule Equipment Audit'
+          });
+        }
+      });
+
+      // If doctor is not named and no staffing issue was recorded from factors_lowered
+      if (staffingIssues.length === 0 && (!f.doctor || !f.doctor.is_named)) {
+        staffingIssues.push({
+          id: `STAFF-UNCONF-0`,
+          title: 'Rotational Resident Staffing (Unconfirmed Permanent Specialist)',
+          desc: `Consultations handled by ${f.doctor ? f.doctor.staff_summary : 'rotational personnel'} without permanent named practitioner listing.`,
+          finding: `No dedicated specialist medical council registration ID on record for this specific facility.`,
+          claim: `Attending specialist clinical consultations offered.`,
+          badge: 'Provisional roster',
+          actionText: 'Specialist Credential Check Pending',
+          actionBtn: 'Request Doctor Registration Proof'
+        });
+      }
+
+      // Supporting evidence cards
+      const suppList = f.supporting_evidence || [];
+      const verifiedItems = [];
+      suppList.forEach((ev, idx) => {
+        verifiedItems.push({
+          id: `SUPP-${idx}`,
+          title: `Verified ${ev.field.toUpperCase()}`,
+          span: ev.span,
+          field: ev.field,
+          badge: 'Matches inspection'
+        });
+      });
+      if (verifiedItems.length === 0) {
+        verifiedItems.push({
+          id: `SUPP-BASE-0`,
+          title: 'Verified Primary Care & OPD Registration',
+          span: f.why_matched || 'Registered public health operational center',
+          field: 'facilityTypeId',
+          badge: 'Verified'
+        });
+      }
+
+      const totalDeficits = discrepancyIssues.length + staffingIssues.length;
+
+      // Alert Banner Logic
       const alertSec = document.getElementById('dossierAlertSection');
-      const hasIssues = f.contradictory_evidence && f.contradictory_evidence.length > 0;
-      if (hasIssues) {
-        const issue = f.contradictory_evidence[0];
-        alertSec.className = 'bg-amber-50/80 border-l-4 border-amber-500 border-y border-r border-amber-200 rounded-lg p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-start justify-between gap-4';
+      if (hasContradictions) {
+        const issue = contradictions[0];
+        alertSec.className = 'bg-red-50/90 border-l-4 border-red-600 border-y border-r border-red-200 rounded-lg p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-start justify-between gap-4';
         alertSec.innerHTML = `
           <div class="flex items-start gap-3.5">
-            <span class="material-symbols-outlined text-amber-600 text-[24px] shrink-0 mt-0.5">warning</span>
+            <span class="material-symbols-outlined text-red-600 text-[24px] shrink-0 mt-0.5">warning</span>
             <div class="flex flex-col gap-1">
               <div class="text-base font-semibold text-slate-900">
                 Audit Discrepancy Flagged for ${f.name}
@@ -1120,14 +1223,38 @@
               <p class="text-sm text-slate-700 leading-relaxed max-w-3xl">
                 Official inspection recorded: ${issue.description || issue.span || 'Equipment or specialist deficit flagged in audit'}.
               </p>
-              <div class="text-xs text-slate-500 mt-1">
-                Rule Flag: ${issue.rule || 'AUDIT-DEFICIT'} · Registry Case ID: AUD-${stateCode}-${f.row_id}
+              <div class="text-xs text-red-800 font-medium mt-1">
+                Rule Flag: ${issue.rule || 'AUDIT-DEFICIT'} · Registry Case ID: AUD-${stateCode}-${f.row_id} · Trust Score: ${trustVal}%
               </div>
             </div>
           </div>
           <div class="shrink-0 self-start sm:self-center">
-            <button type="button" onclick="switchTab('capabilities')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 transition shadow-xs cursor-pointer">
-              <span>Review issue</span>
+            <button type="button" onclick="switchTab('capabilities'); filterClaims('discrepancy');" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold text-white bg-red-700 hover:bg-red-800 transition shadow-xs cursor-pointer">
+              <span>Review Discrepancy</span>
+              <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+            </button>
+          </div>
+        `;
+      } else if (totalDeficits > 0 || trustVal < 60) {
+        alertSec.className = 'bg-amber-50/90 border-l-4 border-amber-500 border-y border-r border-amber-200 rounded-lg p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-start justify-between gap-4';
+        alertSec.innerHTML = `
+          <div class="flex items-start gap-3.5">
+            <span class="material-symbols-outlined text-amber-600 text-[24px] shrink-0 mt-0.5">info</span>
+            <div class="flex flex-col gap-1">
+              <div class="text-base font-semibold text-slate-900">
+                Provisional Verification — Operational Deficits on Record
+              </div>
+              <p class="text-sm text-slate-700 leading-relaxed max-w-3xl">
+                ${f.why_matched}. ${totalDeficits} verification ${totalDeficits === 1 ? 'deficit' : 'deficits'} flagged (staff presence or equipment documentation incomplete). Patient discretion advised.
+              </p>
+              <div class="text-xs text-amber-900 font-medium mt-1">
+                Status: Provisional (Trust Score ${trustVal}%) · Registry ID: AUD-${stateCode}-${f.row_id}
+              </div>
+            </div>
+          </div>
+          <div class="shrink-0 self-start sm:self-center">
+            <button type="button" onclick="switchTab('capabilities'); filterClaims('all');" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold text-amber-900 bg-amber-200/80 hover:bg-amber-300 transition shadow-xs cursor-pointer">
+              <span>View ${totalDeficits} Deficit${totalDeficits === 1 ? '' : 's'}</span>
               <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
             </button>
           </div>
@@ -1158,104 +1285,174 @@
         `;
       }
 
-      // 6. DYNAMIC TAB 1: CLAIMS & EVIDENCE
+      // 6. Dynamic Tab Badges & Filter Counters
+      const countDiscrepancies = discrepancyIssues.length;
+      const countStaffing = staffingIssues.length;
+      const countVerified = verifiedItems.length;
+      const countAll = countDiscrepancies + countStaffing + countVerified;
+      const countTotalIssues = countDiscrepancies + countStaffing;
+
+      const tabBadgeAudit = document.getElementById('dossierTabBadgeAudit');
+      if (tabBadgeAudit) {
+        if (countTotalIssues > 0) {
+          tabBadgeAudit.innerText = `${countTotalIssues} issue${countTotalIssues === 1 ? '' : 's'}`;
+          tabBadgeAudit.className = 'px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800';
+        } else {
+          tabBadgeAudit.innerText = 'Audit Clean';
+          tabBadgeAudit.className = 'px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800';
+        }
+      }
+
+      const isClinic = f.facility_type === 'clinic' || f.facility_type === 'doctor';
+      const bedCountStr = isClinic ? '4 beds' : '45 beds';
+      const tabBadgeBeds = document.getElementById('dossierTabBadgeBeds');
+      if (tabBadgeBeds) tabBadgeBeds.innerText = bedCountStr;
+
+      const tabBadgeStaff = document.getElementById('dossierTabBadgeStaff');
+      if (tabBadgeStaff) {
+        if (countStaffing > 0) {
+          tabBadgeStaff.innerText = `${countStaffing} deficit${countStaffing === 1 ? '' : 's'}`;
+          tabBadgeStaff.className = 'px-1.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-100 text-amber-800';
+        } else {
+          tabBadgeStaff.innerText = 'Roster verified';
+          tabBadgeStaff.className = 'px-1.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-100 text-emerald-800';
+        }
+      }
+
+      const cntAllEl = document.getElementById('claim-cnt-all');
+      if (cntAllEl) cntAllEl.innerText = countAll;
+      const cntDiscEl = document.getElementById('claim-cnt-discrepancy');
+      if (cntDiscEl) cntDiscEl.innerText = countDiscrepancies;
+      const cntStaffEl = document.getElementById('claim-cnt-staffing');
+      if (cntStaffEl) cntStaffEl.innerText = countStaffing;
+      const cntVerEl = document.getElementById('claim-cnt-verified');
+      if (cntVerEl) cntVerEl.innerText = countVerified;
+
+      const summaryEl = document.getElementById('dossierVerificationSummary');
+      if (summaryEl) {
+        summaryEl.innerText = `Facility verification: ${countAll} claims reviewed · ${countTotalIssues} ${countTotalIssues === 1 ? 'issue' : 'issues'} found`;
+      }
+
+      // 7. DYNAMIC TAB 1: CLAIMS & EVIDENCE CONTAINER
       const claimsContainer = document.getElementById('dossierClaimsContainer');
       if (claimsContainer) {
         let claimsHtml = '';
-        if (hasIssues) {
-          f.contradictory_evidence.forEach((issue, cIdx) => {
-            claimsHtml += `
-              <div class="claim-card bg-white border border-slate-200 rounded-lg shadow-xs overflow-hidden transition" id="claim-card-ISSUE-${cIdx}" data-claim-type="discrepancy">
-                <button type="button" onclick="toggleClaimCard('ISSUE-${cIdx}')" class="w-full text-left p-4 sm:p-5 flex items-start justify-between gap-4 hover:bg-slate-50/50 transition cursor-pointer">
-                  <div class="flex items-start gap-3 min-w-0">
-                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 shrink-0 mt-1.5"></span>
-                    <div class="flex flex-col gap-1 min-w-0">
-                      <div class="flex flex-wrap items-center gap-2">
-                        <h3 class="text-base font-semibold text-slate-900">${issue.rule || 'Audit Discrepancy'}</h3>
-                        <span class="px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-200/60">Does not match inspection</span>
-                      </div>
-                      <p class="text-sm text-slate-600">${issue.description || issue.span}</p>
-                    </div>
-                  </div>
-                  <span class="material-symbols-outlined text-[20px] text-slate-400 shrink-0 pt-1" id="chevron-ISSUE-${cIdx}">expand_more</span>
-                </button>
-                <div class="p-4 sm:p-5 pt-0 border-t border-slate-100 flex flex-col gap-4" id="body-ISSUE-${cIdx}">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-                    <div class="bg-slate-50 rounded-lg p-4 border border-slate-200 flex flex-col gap-2">
-                      <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Facility Claim</span>
-                      <blockquote class="text-sm text-slate-800 italic leading-relaxed">Round-the-clock clinical readiness stated in registry listing.</blockquote>
-                    </div>
-                    <div class="bg-red-50/70 rounded-lg p-4 border border-red-200 flex flex-col gap-2">
-                      <span class="text-xs font-semibold text-red-700 uppercase tracking-wider">Inspection finding</span>
-                      <blockquote class="text-sm text-red-950 font-medium leading-relaxed">${issue.description || issue.span}</blockquote>
-                      <span class="text-xs text-red-800">Source: Official Field Audit · Case #AUD-${stateCode}-${f.row_id}</span>
-                    </div>
-                  </div>
-                  <div class="bg-slate-50 rounded-lg p-3.5 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div class="text-xs sm:text-sm text-slate-700"><span class="font-medium">Action status:</span> <span class="text-red-700 font-semibold">Flagged for District CMO Intervention</span></div>
-                    <button type="button" onclick="confirmClaimAction('ISSUE-${cIdx}', 'Administrative notice served.')" class="px-3 py-1.5 rounded text-xs font-semibold text-white bg-red-700 hover:bg-red-800">Serve Official Notice</button>
-                  </div>
-                </div>
-              </div>
-            `;
-          });
-        }
 
-        // Supporting evidence cards
-        const suppList = f.supporting_evidence || [];
-        if (suppList.length > 0) {
-          suppList.forEach((ev, evIdx) => {
-            claimsHtml += `
-              <div class="claim-card bg-white border border-slate-200 rounded-lg shadow-xs overflow-hidden transition" id="claim-card-SUPP-${evIdx}" data-claim-type="verified">
-                <button type="button" onclick="toggleClaimCard('SUPP-${evIdx}')" class="w-full text-left p-4 sm:p-5 flex items-start justify-between gap-4 hover:bg-slate-50/50 transition cursor-pointer">
-                  <div class="flex items-start gap-3 min-w-0">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0 mt-1.5"></span>
-                    <div class="flex flex-col gap-1 min-w-0">
-                      <div class="flex flex-wrap items-center gap-2">
-                        <h3 class="text-base font-semibold text-slate-900">Verified ${ev.field.toUpperCase()}</h3>
-                        <span class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">Matches inspection</span>
-                      </div>
-                      <p class="text-sm text-slate-600 font-mono text-xs truncate max-w-xl">${(ev.span || '').substring(0, 120)}...</p>
-                    </div>
-                  </div>
-                  <span class="material-symbols-outlined text-[20px] text-slate-400 shrink-0 pt-1" id="chevron-SUPP-${evIdx}">expand_more</span>
-                </button>
-                <div class="hidden p-4 sm:p-5 pt-0 border-t border-slate-100 flex flex-col gap-4" id="body-SUPP-${evIdx}">
-                  <div class="bg-emerald-50/70 rounded-lg p-4 border border-emerald-200 mt-4 flex flex-col gap-2">
-                    <span class="text-xs font-semibold text-emerald-800 uppercase tracking-wider">Ground evidence snippet</span>
-                    <blockquote class="text-sm text-emerald-950 font-mono leading-relaxed">${ev.span}</blockquote>
-                    <span class="text-xs text-emerald-700">Corroborated in Registry Field: ${ev.field}</span>
-                  </div>
-                </div>
-              </div>
-            `;
-          });
-        } else {
+        // Discrepancy cards
+        discrepancyIssues.forEach(issue => {
           claimsHtml += `
-            <div class="claim-card bg-white border border-slate-200 rounded-lg shadow-xs p-5 flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                <div>
-                  <h4 class="font-semibold text-slate-900 text-sm">Verified Primary Care & OPD Registration</h4>
-                  <p class="text-xs text-slate-600">${f.why_matched}</p>
+            <div class="claim-card bg-white border border-slate-200 rounded-lg shadow-xs overflow-hidden transition" id="claim-card-${issue.id}" data-claim-type="discrepancy">
+              <button type="button" onclick="toggleClaimCard('${issue.id}')" class="w-full text-left p-4 sm:p-5 flex items-start justify-between gap-4 hover:bg-slate-50/50 transition cursor-pointer">
+                <div class="flex items-start gap-3 min-w-0">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-500 shrink-0 mt-1.5"></span>
+                  <div class="flex flex-col gap-1 min-w-0">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <h3 class="text-base font-semibold text-slate-900">${issue.title}</h3>
+                      <span class="px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-200/60">${issue.badge}</span>
+                    </div>
+                    <p class="text-sm text-slate-600">${issue.desc}</p>
+                  </div>
+                </div>
+                <span class="material-symbols-outlined text-[20px] text-slate-400 shrink-0 pt-1" id="chevron-${issue.id}">expand_more</span>
+              </button>
+              <div class="p-4 sm:p-5 pt-0 border-t border-slate-100 flex flex-col gap-4" id="body-${issue.id}">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                  <div class="bg-slate-50 rounded-lg p-4 border border-slate-200 flex flex-col gap-2">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Facility Claim</span>
+                    <blockquote class="text-sm text-slate-800 italic leading-relaxed">${issue.claim}</blockquote>
+                  </div>
+                  <div class="bg-red-50/70 rounded-lg p-4 border border-red-200 flex flex-col gap-2">
+                    <span class="text-xs font-semibold text-red-700 uppercase tracking-wider">Inspection finding</span>
+                    <blockquote class="text-sm text-red-950 font-medium leading-relaxed">${issue.finding}</blockquote>
+                    <span class="text-xs text-red-800">Source: Official Field Audit · Case #AUD-${stateCode}-${f.row_id}</span>
+                  </div>
+                </div>
+                <div class="bg-slate-50 rounded-lg p-3.5 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div class="text-xs sm:text-sm text-slate-700"><span class="font-medium">Action status:</span> <span id="status-${issue.id}" class="text-red-700 font-semibold">${issue.actionText}</span></div>
+                  <button type="button" onclick="confirmClaimAction('${issue.id}', 'Administrative notice logged: ${issue.title}')" class="px-3 py-1.5 rounded text-xs font-semibold text-white bg-red-700 hover:bg-red-800">${issue.actionBtn}</button>
                 </div>
               </div>
-              <span class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">Verified</span>
             </div>
           `;
-        }
+        });
+
+        // Staffing deficit cards
+        staffingIssues.forEach(issue => {
+          claimsHtml += `
+            <div class="claim-card bg-white border border-slate-200 rounded-lg shadow-xs overflow-hidden transition" id="claim-card-${issue.id}" data-claim-type="staffing">
+              <button type="button" onclick="toggleClaimCard('${issue.id}')" class="w-full text-left p-4 sm:p-5 flex items-start justify-between gap-4 hover:bg-slate-50/50 transition cursor-pointer">
+                <div class="flex items-start gap-3 min-w-0">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0 mt-1.5"></span>
+                  <div class="flex flex-col gap-1 min-w-0">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <h3 class="text-base font-semibold text-slate-900">${issue.title}</h3>
+                      <span class="px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200/60">${issue.badge}</span>
+                    </div>
+                    <p class="text-sm text-slate-600">${issue.desc}</p>
+                  </div>
+                </div>
+                <span class="material-symbols-outlined text-[20px] text-slate-400 shrink-0 pt-1" id="chevron-${issue.id}">expand_more</span>
+              </button>
+              <div class="p-4 sm:p-5 pt-0 border-t border-slate-100 flex flex-col gap-4" id="body-${issue.id}">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                  <div class="bg-slate-50 rounded-lg p-4 border border-slate-200 flex flex-col gap-2">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Facility Claim</span>
+                    <blockquote class="text-sm text-slate-800 italic leading-relaxed">${issue.claim}</blockquote>
+                  </div>
+                  <div class="bg-amber-50/70 rounded-lg p-4 border border-amber-200 flex flex-col gap-2">
+                    <span class="text-xs font-semibold text-amber-800 uppercase tracking-wider">Inspection finding</span>
+                    <blockquote class="text-sm text-amber-950 font-medium leading-relaxed">${issue.finding}</blockquote>
+                    <span class="text-xs text-amber-800">Source: Official Field Audit · Staff Roster Verification</span>
+                  </div>
+                </div>
+                <div class="bg-slate-50 rounded-lg p-3.5 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div class="text-xs sm:text-sm text-slate-700"><span class="font-medium">Action status:</span> <span id="status-${issue.id}" class="text-amber-800 font-semibold">${issue.actionText}</span></div>
+                  <button type="button" onclick="confirmClaimAction('${issue.id}', 'Staffing notice logged: ${issue.title}')" class="px-3 py-1.5 rounded text-xs font-semibold text-white bg-amber-700 hover:bg-amber-800">${issue.actionBtn}</button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        // Verified cards
+        verifiedItems.forEach(ev => {
+          claimsHtml += `
+            <div class="claim-card bg-white border border-slate-200 rounded-lg shadow-xs overflow-hidden transition" id="claim-card-${ev.id}" data-claim-type="verified">
+              <button type="button" onclick="toggleClaimCard('${ev.id}')" class="w-full text-left p-4 sm:p-5 flex items-start justify-between gap-4 hover:bg-slate-50/50 transition cursor-pointer">
+                <div class="flex items-start gap-3 min-w-0">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0 mt-1.5"></span>
+                  <div class="flex flex-col gap-1 min-w-0">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <h3 class="text-base font-semibold text-slate-900">${ev.title}</h3>
+                      <span class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">${ev.badge}</span>
+                    </div>
+                    <p class="text-sm text-slate-600 font-mono text-xs truncate max-w-xl">${(ev.span || '').substring(0, 120)}${(ev.span || '').length > 120 ? '...' : ''}</p>
+                  </div>
+                </div>
+                <span class="material-symbols-outlined text-[20px] text-slate-400 shrink-0 pt-1" id="chevron-${ev.id}">expand_more</span>
+              </button>
+              <div class="hidden p-4 sm:p-5 pt-0 border-t border-slate-100 flex flex-col gap-4" id="body-${ev.id}">
+                <div class="bg-emerald-50/70 rounded-lg p-4 border border-emerald-200 mt-4 flex flex-col gap-2">
+                  <span class="text-xs font-semibold text-emerald-800 uppercase tracking-wider">Ground evidence snippet</span>
+                  <blockquote class="text-sm text-emerald-950 font-mono leading-relaxed">${ev.span}</blockquote>
+                  <span class="text-xs text-emerald-700">Corroborated in Registry Field: ${ev.field}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        });
 
         claimsContainer.innerHTML = claimsHtml;
+        filterClaims('all');
       }
 
       // Update Auditor Action Subtitle
       const distEl = document.getElementById('dossierAuditorActionsDistrict');
       if (distEl) distEl.innerText = `Take formal administrative action for ${f.city || 'District'} Health Authority`;
 
-      // 7. DYNAMIC TAB 2: BED CENSUS
+      // 8. DYNAMIC TAB 2: BED CENSUS
       const censusBox = document.getElementById('dossierCensusContainer');
       if (censusBox) {
-        const isClinic = f.facility_type === 'clinic' || f.facility_type === 'doctor';
         if (isClinic) {
           censusBox.innerHTML = `
             <h3 class="font-bold text-slate-900 mb-3 text-base">Day-Care & Observation Suite (4 Beds)</h3>
@@ -1281,10 +1478,16 @@
         }
       }
 
-      // 8. DYNAMIC TAB 3: EQUIPMENT INVENTORY
+      // 9. DYNAMIC TAB 3: EQUIPMENT INVENTORY
       const equipTable = document.getElementById('dossierEquipmentTableBody');
       if (equipTable) {
-        if (f.facility_type === 'clinic' || f.facility_type === 'doctor') {
+        if (hasEquipDeficit) {
+          equipTable.innerHTML = `
+            <tr><td class="p-2 font-mono text-amber-700">EQ-INV-DEFICIT</td><td class="p-2 font-medium">Physical Clinical Equipment Inventory</td><td class="p-2 text-amber-700 font-semibold">Unlisted / Missing from Registry Record</td><td class="p-2"><button type="button" onclick="confirmClaimAction('EQ-AUDIT', 'Equipment inspection scheduled.')" class="text-gov-600 underline hover:text-gov-800">Order Field Audit</button></td></tr>
+            <tr><td class="p-2 font-mono">EQ-POCT-01</td><td class="p-2 font-medium">Point-of-Care Vitals & Monitoring Kit</td><td class="p-2 text-slate-500 font-medium">Pending Physical Inspection</td><td class="p-2 text-slate-400">Unverified</td></tr>
+            <tr><td class="p-2 font-mono">EQ-PWR-404</td><td class="p-2 font-medium">Power Backup / Inverter Subsystem</td><td class="p-2 text-slate-500 font-medium">Uncorroborated on Field Record</td><td class="p-2 text-slate-400">Unverified</td></tr>
+          `;
+        } else if (isClinic) {
           equipTable.innerHTML = `
             <tr><td class="p-2 font-mono">EQ-OPD-101</td><td class="p-2 font-medium">Digital Vitals & Examination Monitor</td><td class="p-2 text-emerald-700 font-semibold">Nominal (Calibrated)</td><td class="p-2 text-slate-400">Verified</td></tr>
             <tr><td class="p-2 font-mono">EQ-STER-202</td><td class="p-2 font-medium">Clinical Instrument Autoclave & Sterilizer</td><td class="p-2 text-emerald-700 font-semibold">Operational (121°C)</td><td class="p-2 text-slate-400">Verified</td></tr>
@@ -1294,28 +1497,35 @@
         } else {
           equipTable.innerHTML = `
             <tr><td class="p-2 font-mono">EQ-TRI-101</td><td class="p-2 font-medium">Emergency Triage Crash Cart & Defibrillator</td><td class="p-2 text-emerald-700 font-semibold">Operational</td><td class="p-2 text-slate-400">Verified</td></tr>
-            <tr><td class="p-2 font-mono">EQ-OT-001</td><td class="p-2 font-medium">Operation Theatre Autoclave 50L</td><td class="p-2 ${hasIssues ? 'text-red-700 font-semibold">Discrepancy' : 'text-emerald-700 font-semibold">Nominal (Sterile)'}</td><td class="p-2">${hasIssues ? '<button onclick="dispatchRepairNotice()" class="text-gov-600 underline">Order Repair</button>' : '<span class="text-slate-400">Verified</span>'}</td></tr>
+            <tr><td class="p-2 font-mono">EQ-OT-001</td><td class="p-2 font-medium">Operation Theatre Autoclave 50L</td><td class="p-2 ${hasContradictions ? 'text-red-700 font-semibold">Discrepancy' : 'text-emerald-700 font-semibold">Nominal (Sterile)'}</td><td class="p-2">${hasContradictions ? '<button onclick="dispatchRepairNotice()" class="text-gov-600 underline">Order Repair</button>' : '<span class="text-slate-400">Verified</span>'}</td></tr>
             <tr><td class="p-2 font-mono">EQ-OXY-303</td><td class="p-2 font-medium">Medical Oxygen Manifold + 8 D-Cylinders</td><td class="p-2 text-emerald-700 font-semibold">Active (4.2 Bar)</td><td class="p-2 text-slate-400">Verified</td></tr>
             <tr><td class="p-2 font-mono">EQ-GEN-404</td><td class="p-2 font-medium">15 kVA Diesel Generator & Auto-Transfer</td><td class="p-2 text-emerald-700 font-semibold">3-Phase Nominal</td><td class="p-2 text-slate-400">Verified</td></tr>
           `;
         }
       }
 
-      // 9. DYNAMIC TAB 4: CLINICAL STAFF
+      // 10. DYNAMIC TAB 4: CLINICAL STAFF
       const staffBox = document.getElementById('dossierStaffGrid');
       if (staffBox) {
+        const isNamedDoc = f.doctor && f.doctor.is_named;
         staffBox.innerHTML = `
           <div class="p-2.5 bg-slate-50 rounded border border-slate-200 flex justify-between">
             <span>Specialist Practitioner (${docSpec})</span>
-            <span class="font-bold text-emerald-800">${docName} (Present)</span>
+            <span class="font-bold ${isNamedDoc ? 'text-emerald-800' : (hasStaffDeficit ? 'text-amber-800' : 'text-slate-700')}">
+              ${isNamedDoc ? `${docName} (Verified Present)` : `${docName} (${hasStaffDeficit ? 'Unconfirmed Roster' : 'Rotational'})`}
+            </span>
           </div>
           <div class="p-2.5 bg-slate-50 rounded border border-slate-200 flex justify-between">
             <span>Duty Medical Officer (GDMO)</span>
-            <span class="font-bold text-emerald-800">1 / 1 Present on Roster</span>
+            <span class="font-bold ${hasStaffDeficit ? 'text-amber-800' : 'text-emerald-800'}">
+              ${hasStaffDeficit ? 'Unverified Headcount (Deficit Flagged)' : '1 / 1 Present on Roster'}
+            </span>
           </div>
           <div class="p-2.5 bg-slate-50 rounded border border-slate-200 flex justify-between">
             <span>Clinical Support & Nursing</span>
-            <span class="font-bold text-emerald-800">Verified Active</span>
+            <span class="font-bold ${hasStaffDeficit ? 'text-slate-600' : 'text-emerald-800'}">
+              ${hasStaffDeficit ? 'Uncorroborated Biometrics' : 'Verified Active'}
+            </span>
           </div>
           <div class="p-2.5 bg-slate-50 rounded border border-slate-200 flex justify-between">
             <span>Registered Staff Source</span>
@@ -1324,18 +1534,18 @@
         `;
       }
 
-      // 10. DYNAMIC TAB 5: INSPECTION MEMORANDUM
+      // 11. DYNAMIC TAB 5: INSPECTION MEMORANDUM
       const memoBox = document.getElementById('dossierInspectionMemo');
       if (memoBox) {
         memoBox.innerHTML = `
           MEMORANDUM NO: ${stateCode}/H-INSP/2024/${8000 + (f.row_id || 100)} · DATE: 14TH OCTOBER 2024 (10:15 IST)<br/>
           FACILITY: ${f.name.toUpperCase()}<br/>
           LOCATION: ${(f.address ? f.address.toUpperCase() + ', ' : '') + (f.city || 'LOCAL').toUpperCase()}, ${(f.state || 'IN').toUpperCase()}${f.pin ? ' (PIN ' + f.pin + ')' : ''}<br/>
-          FINDINGS: ${hasIssues ? ('Audit inspection flagged: ' + (f.contradictory_evidence[0].description || f.contradictory_evidence[0].span) + '. Patient referrals redirected to ' + refHosp.name + ' where required.') : ('Clinical consultation wings active. Lead practitioner ' + docName + ' verified on staff. Diagnostic equipment and physical facility compliant with IPHS benchmarks. Trust score calculated at ' + trustVal + '%. Zero active sanctions.')}
+          FINDINGS: ${hasContradictions ? ('Audit inspection flagged: ' + (contradictions[0].description || contradictions[0].span) + '. Patient referrals redirected to ' + refHosp.name + ' where required.') : (totalDeficits > 0 ? ('Field inspection recorded provisional verification status (Trust Score ' + trustVal + '%). Verification deficits on file: ' + loweredFactors.join('; ') + '. Patient referrals redirected to ' + refHosp.name + ' where required.') : ('Clinical consultation wings active. Lead practitioner ' + docName + ' verified on staff. Diagnostic equipment and physical facility compliant with IPHS benchmarks. Trust score calculated at ' + trustVal + '%. Zero active sanctions.'))}
         `;
       }
 
-      // 11. DYNAMIC DRAWER DISPATCH LOG
+      // 12. DYNAMIC DRAWER DISPATCH LOG
       const drawerLog = document.getElementById('dossierDispatchLog');
       if (drawerLog) {
         drawerLog.innerHTML = `
@@ -1345,7 +1555,7 @@
           - Service Classification: ${f.facility_type.toUpperCase()} · ${f.why_matched}<br/>
           - Attending Practitioner: ${docName} (${docSpec})<br/>
           - Referral Center: ${refHosp.name} (${refHosp.desc})<br/>
-          ${hasIssues ? `- Audit Alert: ${f.contradictory_evidence[0].description || f.contradictory_evidence[0].span}` : `- Verification: Physical equipment and staff roster verified active without reported discrepancies.`}<br/>
+          ${hasContradictions ? `- Audit Alert: ${contradictions[0].description || contradictions[0].span}` : (totalDeficits > 0 ? `- Audit Notice: Operational deficits flagged in audit (${loweredFactors.join(', ')}). Provisional trust score ${trustVal}%.` : `- Verification: Physical equipment and staff roster verified active without reported discrepancies.`)}<br/>
           - Statutory Registry: Row ID ${f.row_id} in National Healthcare Registry.<br/><br/>
           <span class="text-slate-500">--- END FIELD DISPATCH LOG ---</span>
         `;
@@ -1581,13 +1791,34 @@
           }
         }
       });
+
+      let visibleCount = 0;
       cards.forEach(card => {
-        if (type === 'all' || card.getAttribute('data-claim-type') === type) {
+        const cType = card.getAttribute('data-claim-type');
+        if (type === 'all' || cType === type) {
           card.style.display = 'block';
+          visibleCount++;
         } else {
           card.style.display = 'none';
         }
       });
+
+      const emptyEl = document.getElementById('claimFilterEmptyState');
+      if (emptyEl) {
+        if (visibleCount === 0) {
+          const label = type === 'staffing' ? 'staff deficits' : (type === 'discrepancy' ? 'audit discrepancies' : (type === 'verified' ? 'verified claims' : 'claims'));
+          emptyEl.className = 'p-8 bg-white border border-slate-200 rounded-lg text-center text-sm text-slate-500 flex flex-col items-center justify-center gap-2 shadow-xs';
+          emptyEl.innerHTML = `
+            <span class="material-symbols-outlined text-[36px] text-slate-400">check_circle</span>
+            <div class="font-semibold text-slate-800 text-base">No ${label} recorded for this facility</div>
+            <p class="text-xs text-slate-500 max-w-sm">This facility has zero records matching this specific filter category in the current audit evaluation.</p>
+            <button type="button" onclick="filterClaims('all')" class="mt-2 text-xs font-semibold text-gov-600 hover:underline">Show all claims</button>
+          `;
+          emptyEl.classList.remove('hidden');
+        } else {
+          emptyEl.classList.add('hidden');
+        }
+      }
     }
 
     function openInspectorDrawer() {

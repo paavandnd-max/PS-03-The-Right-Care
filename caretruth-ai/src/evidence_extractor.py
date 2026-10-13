@@ -31,6 +31,9 @@ class EvidenceFinding:
     constraint:     Optional[str] = None   # e.g. "not after 9 PM"
 
 
+import ast
+import json
+
 # ── Keyword -> capability mapping ────────────────────────────────────────────
 #   Each entry: (capability_label, keyword_patterns, negation_invert=False)
 CAPABILITY_PATTERNS: list[tuple[str, list[str]]] = [
@@ -52,6 +55,66 @@ CAPABILITY_PATTERNS: list[tuple[str, list[str]]] = [
     ("pharmacy",          ["pharmacy", "pharmacist", "medicine", "drug store"]),
 ]
 
+CAPABILITY_SPECIALTIES_MAP: dict[str, set[str]] = {
+    "generalSurgery": {
+        "generalsurgery", "laparoscopicsurgery", "advancelaproscopicsurgery",
+        "laparoscopicsurgeon", "burngeneralsurgery", "uppergiandforegutsurgery",
+        "colorectalsurgery", "traumasurgery"
+    },
+    "cardiacSurgery": {
+        "cardiacsurgery", "cardiothoracicsurgery", "cardiovascularthoracicsurgery",
+        "cardiologist"
+    },
+    "emergencyMedicine": {
+        "emergencymedicine", "criticalcaremedicine", "traumacare"
+    },
+    "anaesthesia": {
+        "anesthesia", "anaesthesia", "anaesthesiology", "anesthesiology"
+    },
+    "radiology": {
+        "radiology", "diagnosticradiology", "interventionalradiology"
+    },
+    "pathology": {
+        "pathology", "biochemistry", "hematology"
+    },
+    "icu": {
+        "criticalcaremedicine", "intensivecare"
+    },
+    "orthopaedics": {
+        "orthopedicsurgery", "arthroscopicsurgery", "jointreplacementsurgery",
+        "orthopedicspinesurgery", "orthopedictraumaandfracturesurgery",
+        "paediatricorthopaedicsurgery", "pediatricorthopedicsurgery",
+        "footandankleorthopedicsurgery", "shoulderandelboworthopedicsurgery"
+    },
+    "gynaecology": {
+        "gynecologyandobstetrics", "gynecologicalsurgery", "obstetricsandmaternitycare",
+        "urogynecologyandreconstructivepelvissurgery"
+    },
+    "paediatrics": {
+        "pediatrics", "paediatrics", "pediatricsurgery", "paediatricorthopaedicsurgery"
+    },
+    "ophthalmology": {
+        "ophthalmology", "cataractandanteriorsegmentsurgery", "refractivesurgeryophthalmology",
+        "vitreo-retinalsurgery", "squinteyesurgery"
+    },
+    "dentistry": {
+        "dentistry", "oralsurgery", "oralandmaxillofacialsurgery",
+        "dentoalveolarsurgery", "endodontics"
+    },
+    "neurology": {
+        "neurology", "neurosurgery", "pediatricneurosurgery", "spineneurosurgery"
+    },
+    "dialysis": {
+        "nephrology", "dialysis"
+    },
+    "physiotherapy": {
+        "physiotherapy", "rehabilitation"
+    },
+    "pharmacy": {
+        "pharmacy", "pharmacology"
+    },
+}
+
 _NEGATION_RE = re.compile(
     r"\b(no|not|without|lack|unable|does not|cannot|no longer|"
     r"temporarily closed|closed|unavailable|not available)\b",
@@ -68,6 +131,35 @@ _TIME_CONSTRAINT_RE = re.compile(
 )
 
 
+def _parse_items(text: str) -> list[str]:
+    """Parse text as JSON list if possible; else fallback to raw or comma-split."""
+    t = text.strip()
+    if not t or t.lower() in ("null", "[]", "none"):
+        return []
+    if t.startswith("[") and t.endswith("]"):
+        try:
+            parsed = json.loads(t)
+            if isinstance(parsed, list):
+                return [str(x).strip() for x in parsed if str(x).strip()]
+        except Exception:
+            try:
+                parsed = ast.literal_eval(t)
+                if isinstance(parsed, list):
+                    return [str(x).strip() for x in parsed if str(x).strip()]
+            except Exception:
+                pass
+    return [t]
+
+
+def _matches_specialty(item: str, cap_label: str) -> bool:
+    """Check if a specialty item matches the target capability label."""
+    allowed = CAPABILITY_SPECIALTIES_MAP.get(cap_label)
+    if not allowed:
+        return False
+    norm = re.sub(r"[^a-zA-Z0-9]", "", item.lower())
+    return norm in allowed
+
+
 def _sentence_context(text: str, match_start: int, match_end: int, window: int = 120) -> str:
     """Return surrounding text context for a match, stopping at sentence boundaries."""
     start = max(0, match_start - window)
@@ -80,7 +172,7 @@ def _sentence_context(text: str, match_start: int, match_end: int, window: int =
         snippet = snippet[dot_before + 1:]
     if dot_after >= 0:
         snippet = snippet[:dot_after + 1]
-    return snippet.strip()
+    return snippet.strip().strip('"').strip("'")
 
 
 def _has_negation_before(text: str, match_start: int, look_back: int = 60) -> bool:
@@ -132,25 +224,88 @@ def extract_evidence_from_row(
             if not field_text or field_text.strip().lower() in ("null", "[]", ""):
                 continue
 
-            field_lower = field_text.lower()
+            # Case A: specialties field — strict specialty mapping
+            if field_name == "specialties":
+                items = _parse_items(field_text)
+                for item in items:
+                    if _matches_specialty(item, cap_label):
+                        # Ensure item is a clean verbatim substring
+                        if item in field_text:
+                            already = any(
+                                f.capability == cap_label
+                                and f.source_field == field_name
+                                and f.span == item
+                                for f in findings
+                            )
+                            if not already:
+                                findings.append(EvidenceFinding(
+                                    source_row_id=row_id,
+                                    facility_name=facility_name,
+                                    source_field=field_name,
+                                    span=item,
+                                    capability=cap_label,
+                                    polarity="positive",
+                                    constraint=None,
+                                ))
+                continue
 
+            # Case B: JSON list fields (procedure, capability, equipment)
+            if field_name in ("procedure", "capability", "equipment"):
+                items = _parse_items(field_text)
+                for item in items:
+                    item_lower = item.lower()
+                    for kw in keywords:
+                        kw_lower = kw.lower()
+                        # Avoid false positives for generic surgery in non-surgical domains
+                        if cap_label == "generalSurgery" and kw_lower in ("surgery", "surgical", "operation"):
+                            non_general = ["dental", "teeth", "tooth", "eye", "cataract", "ortho", "bone", "cosmetic", "joint"]
+                            if any(ng in item_lower for ng in non_general) and not any(g in item_lower for g in ["general", "appendix", "laparoscopic"]):
+                                continue
+
+                        if kw_lower in item_lower:
+                            # Verbatim check: item must appear as a substring in the field_text
+                            span = item
+                            negated = bool(_NEGATION_RE.search(item_lower))
+                            time_con = _extract_time_constraint(item_lower, item_lower.find(kw_lower))
+
+                            if negated:
+                                polarity = "negative"
+                            elif time_con:
+                                polarity = "conditional"
+                            else:
+                                polarity = "positive"
+
+                            already = any(
+                                f.capability == cap_label
+                                and f.source_field == field_name
+                                and f.span == span
+                                for f in findings
+                            )
+                            if not already and span in field_text:
+                                findings.append(EvidenceFinding(
+                                    source_row_id=row_id,
+                                    facility_name=facility_name,
+                                    source_field=field_name,
+                                    span=span,
+                                    capability=cap_label,
+                                    polarity=polarity,
+                                    constraint=time_con,
+                                ))
+                            break  # one keyword match per item is enough
+                continue
+
+            # Case C: Free text fields (description)
+            field_lower = field_text.lower()
             for kw in keywords:
                 kw_lower = kw.lower()
-                idx = 0
-                while True:
-                    pos = field_lower.find(kw_lower, idx)
-                    if pos == -1:
-                        break
-                    idx = pos + 1
-
-                    # Extract verbatim span (context sentence)
+                pos = field_lower.find(kw_lower)
+                if pos != -1:
                     span = _sentence_context(field_text, pos, pos + len(kw))
                     if not span:
                         span = field_text[max(0, pos - 30): pos + len(kw) + 30].strip()
 
-                    # Determine polarity
-                    negated   = _has_negation_before(field_lower, pos)
-                    time_con  = _extract_time_constraint(field_lower, pos)
+                    negated  = _has_negation_before(field_lower, pos)
+                    time_con = _extract_time_constraint(field_lower, pos)
 
                     if negated:
                         polarity = "negative"
@@ -159,24 +314,25 @@ def extract_evidence_from_row(
                     else:
                         polarity = "positive"
 
-                    # De-duplicate: skip if we already have an identical span for this cap/field
-                    already = any(
-                        f.capability == cap_label
-                        and f.source_field == field_name
-                        and f.span == span
-                        for f in findings
-                    )
-                    if not already:
-                        findings.append(EvidenceFinding(
-                            source_row_id=row_id,
-                            facility_name=facility_name,
-                            source_field=field_name,
-                            span=span,
-                            capability=cap_label,
-                            polarity=polarity,
-                            constraint=time_con,
-                        ))
-                    break  # one match per keyword per field is enough
+                    # Verify that span is an exact verbatim substring
+                    if span in field_text:
+                        already = any(
+                            f.capability == cap_label
+                            and f.source_field == field_name
+                            and f.span == span
+                            for f in findings
+                        )
+                        if not already:
+                            findings.append(EvidenceFinding(
+                                source_row_id=row_id,
+                                facility_name=facility_name,
+                                source_field=field_name,
+                                span=span,
+                                capability=cap_label,
+                                polarity=polarity,
+                                constraint=time_con,
+                            ))
+                    break
 
     return findings
 
@@ -216,7 +372,12 @@ def map_query_to_capabilities(query_text: str) -> list[str]:
     qt = query_text.lower()
     matched: list[str] = []
 
+    # If cardiac query, prioritize cardiacSurgery and avoid generalSurgery collision
+    is_cardiac = any(w in qt for w in ["cardiac", "bypass", "cabg", "heart surgery"])
+
     for cap_label, keywords in CAPABILITY_PATTERNS:
+        if is_cardiac and cap_label == "generalSurgery":
+            continue
         for kw in keywords:
             if kw.lower() in qt:
                 if cap_label not in matched:

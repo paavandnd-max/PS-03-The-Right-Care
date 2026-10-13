@@ -28,7 +28,7 @@ from fastapi.testclient import TestClient
 from src.data_loader import load_dataframe
 from src.care_matcher import classify_care_intent, evaluate_service_relevance, CARE_CATEGORIES
 from src.care_scorer import score_facility_trust, match_facilities
-from api import app
+from api import app as _test_app
 
 
 @pytest.fixture(scope="module")
@@ -38,7 +38,7 @@ def df():
 
 @pytest.fixture(scope="module")
 def client():
-    return TestClient(app)
+    return TestClient(_test_app)
 
 
 # ── Scenario 1: Eye Examination Request ──────────────────────────────────────

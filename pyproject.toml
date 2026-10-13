@@ -1,0 +1,2 @@
+[tool.vercel]
+entrypoint = "caretruth-ai.api:app"

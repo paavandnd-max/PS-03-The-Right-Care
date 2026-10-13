@@ -4,3 +4,6 @@ backgroundColor = "#0A1628"
 secondaryBackgroundColor = "#0F2040"
 textColor = "#E8F4FD"
 font = "sans serif"
+
+[tool.vercel]
+entrypoint = "caretruth-ai/api.py"
