@@ -961,6 +961,9 @@
             limit: 18
           })
         });
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: Backend service initializing. Please retry in a moment.`);
+        }
         const data = await res.json();
         if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">search</span><span>Find Facilities (खोजें)</span>';
 
