@@ -145,6 +145,9 @@ class CareSearchRequest(BaseModel):
 
 # ── Endpoints ──────────────────────────────────────────────────────────────────
 @app.get("/")
+@app.get("/index.html")
+@app.get("/api.py")
+@app.get("/api/index.py")
 def root():
     """Serve index.html if available, else redirect to health."""
     index_file = frontend_path / "index.html"
