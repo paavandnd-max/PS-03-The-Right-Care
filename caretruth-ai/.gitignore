@@ -1,4 +1,5 @@
 data/raw/*.csv
+!data/raw/Hackathon_Dataset_India_Larg.csv
 data/processed/
 __pycache__/
 *.pyc

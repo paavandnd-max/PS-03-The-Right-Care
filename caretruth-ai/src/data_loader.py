@@ -84,8 +84,21 @@ def load_dataframe(dataset_path: Path = DATASET_PATH) -> pd.DataFrame:
 
     path = Path(dataset_path)
     if not path.exists():
+        candidates = [
+            Path(__file__).resolve().parent.parent / "data" / "raw" / "Hackathon_Dataset_India_Larg.csv",
+            Path.cwd() / "caretruth-ai" / "data" / "raw" / "Hackathon_Dataset_India_Larg.csv",
+            Path.cwd() / "data" / "raw" / "Hackathon_Dataset_India_Larg.csv",
+            Path("/vercel/path0/caretruth-ai/data/raw/Hackathon_Dataset_India_Larg.csv"),
+            Path("/vercel/path0/data/raw/Hackathon_Dataset_India_Larg.csv"),
+        ]
+        for c in candidates:
+            if c.exists():
+                path = c
+                break
+
+    if not path.exists():
         raise FileNotFoundError(
-            f"Dataset not found at {path}.\n"
+            f"Dataset not found at {path} (checked candidates).\n"
             f"Copy the CSV to that location:\n"
             f"  copy \"<source>\\Hackathon_Dataset_India_Larg.csv\" \"{path}\""
         )

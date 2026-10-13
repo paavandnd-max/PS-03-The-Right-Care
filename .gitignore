@@ -27,6 +27,8 @@ share/python-wheels/
 
 # Data & Large Files
 *.csv
+!caretruth-ai/data/raw/Hackathon_Dataset_India_Larg.csv
+!data/raw/Hackathon_Dataset_India_Larg.csv
 reference/
 data/raw/*.csv
 caretruth-ai/data/raw/*.csv
